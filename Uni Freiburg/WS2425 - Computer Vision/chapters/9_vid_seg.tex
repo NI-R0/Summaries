@@ -1,0 +1,32 @@
+\section{Video Segmentation}
+The issue with video segmentation is to find the object regions for learning. Color and texture might work in some special cases but usually does not. Instead we can find (moving) object regions by motion segmentation. 
+
+\subsection{Motion Segmentation}
+The goal of motion segmentation is to separate regions by their motion. The problem is that the computation of motion is error-prone and not unique in all areas. This leads to a two-variable problem: We need to estimate both motion field and partitioning, but need one to estimate the other. The standard approach to get around this is to:
+\begin{enumerate}
+    \item First compute optical flow
+    \item Then compute segmentation based on optical flow
+\end{enumerate}
+\b{Problem:} Object flow requires distinct object motion in all frames of interest.\\
+
+\b{Motion Segmentation based on Point Trajectories:\\[0.5em]}
+Two-frame optical flow can only separate objects with different motion in these two particular frames. The idea to circumvent this is to make use of the temporal context of the frames and use \b{point trajectories over multiple frames}. These trajectories can be obtained via point tracking (concatenation of optical flow vectors). Clustering based on the full trajectories can separate objects even when they don't move.\\
+
+One issue is that trajectories have different lengths (mostly due to occlusion/disocclusion). Can be solved by:
+\begin{enumerate}
+    \item Establish distances for all pairs that share common frames
+    \item Transitivity in the graph can connect pairs even if they do not share common frames (if a trajectory stops and reappears and another trajectory has the same motion, they are connected and put into the same cluster.)
+    \item Assumption: Points that move together belong together (Gestalt law)\\
+    \f{\to} For each pair consider the maximum motion difference over time \f{d(a,b)=\max_td_t(a,b)}
+\end{enumerate}
+
+In own words: We have multiple frames and concatenate the flow vectors of each frame for each pixel. Then we apply spectral clustering by comparing the trajectories.\\
+
+\b{Note:} A difficulty is if something moves towards the camera (scaling motion instead of translation, density of grid would increase).\\
+
+\b{Dense Estimation:\\[0.5em]}
+So far we only looked at sparse estimation, but we usually want dense estimations (e.g. segmentation map). With given sparse labels it would not be hard to train a model to produce the dense labels (requires training data). There are, however, variational label interpolations as well.
+
+\subsection{Video Tracking}
+An alternative to motion segmentation, which yield multiple objects and can be realized with modern encoder-decoder networks (simplifies the problem). Requires segmentation in the first frame.
+\newpage

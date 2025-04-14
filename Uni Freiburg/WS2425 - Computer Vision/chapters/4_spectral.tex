@@ -1,0 +1,62 @@
+\section{Spectral Clustering}
+\subsection{Clustering Examples without Unary Costs}
+\begin{itemize}
+    \item Motion segmentation based on point trajectories (movement in same direction = same trajectories): It is hard to build models (unary cost) for each object. It's easier to define pairwise cost between point trajectories.
+    \item 3D surface reconstruction: Hard to build model for the interior of the object volume, easier to define pairwise costs for potential surface positions.
+\end{itemize}
+The old fashioned way of achieving these tasks is called \b{agglomerative clustering}, where one simply calculates the pairwise distances \f{d_{ij}} between all (neigboring) data points. It works as follows:
+\begin{enumerate}
+    \item Merge two points/clusters with smallest distance to a single cluster.
+    \item Recompute affected distances.
+    \item Iterate until remaining distances reach a certain threshold.
+\end{enumerate}
+\b{Disadvantages:} Early decisions can not be corrected (does not optimize global criterion) and very sensitive to chosen threshold.
+
+\subsection{Normalized Cut}
+Also based on pairwise distances \f{d_{ij}^2}. The distances however are turned into pairwise affinities \f{w_{ij}=\exp(-\lambda d_{ij}^2)} with \f{\lambda>0}. This results in a symmetric \f{N\times N} affinity matric \f{W}, where \f{N} is the number of pixels (data points).\\
+The affinity matrix can be regarded as a fully conncected graph with \f{N} nodes, where groups of points with strong connections (affinities) generate clusters.\\
+
+For normalized cuts, the task is to find cut(s) of the graph such that each part is strongly connected (e.g. by using the ratio cut).\\
+
+\b{Left out: Random walk}\\
+
+To continue, we define a diagonal matrix \f{D} with \f{d_i = \sum_jw_{ij}}, where each diagonal element is the sum of all edge weights connected to node \f{i}. The graph laplacian is then given by: \f{D-W}. Finding the clusters then corresponds solving the eigenvalue problem of the Laplacian:
+\cf{u^*=\arg\min_u\frac{u\top (D-W)u}{u\top u}.}
+The minimum value of this problem is the smallest eigenvalue of the Laplacian \f{D-W}, where the corresponding argument is the eigenvector for the eigenvalue. As the trivial solution 0 is the constant vector with unit length, we are more interested in the eigenvector corresponding to the \b{second smallest eigenvalue} which is orthogonal to the first eigenvector.\\
+Calculating this eigenvector is a relaxed minimization of the average cut, which is a symmetrized version of the ratio cut:
+\cf{\frac{\text{cut}(A,\Omega-A)}{|A|}+\frac{\text{cut}(A,\Omega-A)}{|\Omega-A|}}
+For the normalized cut the graph Laplacian is often normalized with:
+\cf{D-W \quad\to\quad D^{-\frac{1}{2}}(D-W)D^{-\frac{1}{2}},}
+where the weights are divided by the geometric mean of the row and column sums. Due to the normalization, the eigenvector \f{z} of the normalized problem must be rescaled too. This leads to the normalized cut:
+\cf{\frac{\text{cut}(A,\Omega-A)}{\text{assoc}(A,\Omega)}+\frac{\text{cut}(A,\Omega-A)}{\text{assoc}(\Omega-A,A)},}
+which measures the removed edges (cut) relative to the total edge weight originating in each region (assoc). \f{\Omega} is the whole set of nodes.\\
+
+\b{Advantages:}
+\begin{itemize}
+    \item Looking for similarities is the same as looking for differences
+    \item Can separate areas with higher connectivity from areas with lower connectivity
+\end{itemize}
+\vspace{0.5em}
+\b{Problem:} In many applications, the affinity matrix is large (numerical methods require \f{O(N^3)} to compute eigenvalues). But:
+\begin{enumerate}
+    \item Some graphs may not be fully connected (affinity matrix will be sparse (= many zero entries)).
+    \item We just require smallest eigenvalues and their corresponding eigenvectors, not all of them.\\
+    \f{\to} The \b{Lanczos Method} can compute these eigenvalues in \f{O(N^2)}
+\end{enumerate}
+\vspace{0.5em}
+\b{Note:} As we solve the relaxed problem, there is generally no clear cut of the graph, just soft indicators. We get an approximate solution of the binary segmentation problem by thresholding (rounding) the eigenvector.\\
+
+\b{Note:} Average cut and normalized cut are NP hard problems.
+
+\subsection{Laplacian Eigenmaps}
+The concept from before can be extended to more than two clusters: The \f{k-th} eigenvalue indicates the \f{k-th} alternative partitioning of the graph. Thus, in general, we have to compute the \f{K} smallest eigenvalues. The corresponding eigenvectors span a \f{K}-dimensional subspace, where each data point maps to a \f{K}-dimensional vector. This mapping is called \b{Laplacian eigenmap}.\\
+We can run standard clustering techniques(k-means) to convert the real-valued vectors into integer labels to achieve \b{spectral clustering}.\\
+
+\b{Note:} When affinities are not informative, spectral clustering tends to create equally sized regions (bias zo equally sized regions).
+
+\subsection{Finding Coherent Subsets}
+Another graph based technique (not directly related to the normalized cut) is to find the most connected subset:
+\cf{\max_A(\frac{\text{assoc}(A,A)}{|A|})}
+Here the relaxed problem is to find the largest eigenvector of the affinity matrix, which can simply be done by power iteration (e.g. part of Googles PageRank algorithm).
+
+\newpage

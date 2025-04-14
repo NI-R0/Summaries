@@ -1,0 +1,35 @@
+\subsection{Allgemein}
+\begin{itemize}
+    \item Schreibweise: \f{(a_n)_{n \in \mathbb{N}}}
+    \item Teilfolge von \f{(a_n)_n: (a_{n_k})_k}
+    \begin{itemize}
+        \item Jede Folge reeller Zahlen besitzt eine monotone Teilfolge.
+        \item Jede beschränkte Folge reeller Zahlen besitzt eine konvergente Teilfolge.
+    \end{itemize}    
+    \item Beschränktheit: \f{(x_n)} ist beschränkt falls \f{\exists c>0 \textrm{ so dass } |x_n|\leq c\quad \forall n\in\mathbb{N}}
+    \item Monotonie: \f{(x_n)} ist:
+    \begin{itemize}
+        \item monoton fallend: \f{\forall n : \frac{x_{n+1}}{x_n} \leq 1}
+        \item monoton wachsend: \f{\forall n : \frac{x_{n+1}}{x_n} \geq 1}
+    \end{itemize}
+    \item \f{a} ist Häufungspunkt von \f{(a_n)_n}. \f{\Leftrightarrow \exists (a_{n_k})_k: a_{n_k} \overset{k \to \infty}{\longrightarrow} a}
+    \item \f{(a_n)_n} monoton und beschränkt \f{\Rightarrow (a_n)_n} konvergent.
+    \item \f{(a_n)_n, (b_n)_n} konvergent:
+    \begin{itemize}
+        \item \f{(a_n\dotplus b_n)_n} konvergent, \f{\lim{(a_n\dotplus b_n)}=\lim{(a_n)}\dotplus \lim{(b_n)}}
+        \item \f{\lim(b_n)\neq 0 \Rightarrow \exists N \in \mathbb{N}: b_n \neq 0 \quad \forall n \geq N}, \f{(\frac{a_n}{b_n})_{n\geq N}} konvergent, \\
+        \f{\lim{(\frac{a_n}{b_n})} = \frac{\lim(a_n)}{\lim(b_n)}}
+        \item \f{a_n \leq b_n \quad \forall n \in \mathbb{N} \Rightarrow \lim(a_n) \leq \lim(b_n)}
+        \item \f{\lim_{n\to \infty}|x_n|=|x|}
+        \item Sandwich-Kriterium:\\
+        \f{\lim_{n\to\infty}(a_n)=\lim_{n\to\infty}(b_n)=x} und \f{a_n\leq c_n\leq b_n \Rightarrow \lim_{x\to\infty}(c_n)=x}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Bekannte Folgen}
+\begin{itemize}
+    \item \f{\lim_{n \to \infty}(1\pm \frac{1}{n})^n = e^{\pm 1}}
+    \item \f{\lim_{n \to \infty}\sqrt[n]{a}=1} für \f{a \in \mathbb{R}^+\cup \left\{\infty\right\}}
+    \item \f{(a_n)_{n\in \mathbb{N}}} ist \textbf{Cauchy-Folge}, wenn \f{\forall \varepsilon > 0.} \f{\exists N \in \mathbb{N}.} \f{\forall m,n \geq N: |a_m-a_n|<\varepsilon}\\
+    Reelle Cauchy-Folgen konvergieren immer.
+\end{itemize}

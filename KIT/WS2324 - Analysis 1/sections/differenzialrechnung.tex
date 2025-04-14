@@ -1,0 +1,38 @@
+\subsection{Allgemein}
+\begin{itemize}
+    \item Definition: Eine Funktion \f{f: D\to\mathbb{R}} heißt differenzierbar an der Stelle \f{x_0\in D}, falls folgender Grenzwert existiert:\\
+    \f{\frac{d}{dx}f(x_0)=\lim_{x\to x_0}\frac{f(x)-f(x_0)}{x-x_0}=\lim_{h\to 0}\frac{f(x_0+h)-f(x_0)}{h}}
+    \item \textbf{Mittelwertsatz:} Sei \f{f:\left[a,b\right]\to\mathbb{R}} (mit \f{a<b}) stetig in \f{\left[a,b\right]} und differenzierbar in \f{\left(a,b\right)}. Dann gilt:\\
+    \f{\exists\gamma\in\left(a,b\right): f'(\gamma)=\frac{f(b)-f(a)}{b-a}}
+    \item \textbf{L'Hospital:} Seien \f{f,g:\left(a,b\right)\to\mathbb{C}} differenzierbar, \f{g(x)\neq0} \f{\forall x\in\left(a,b\right)} und \f{\lim_{x\to b}f(x)=\lim_{x\to b}g(x)=0 \textrm{ oder } \infty}. Dann gilt:\\
+    \f{\lim_{x\to b}\frac{f'(x)}{g'(x)}} existiert \f{\Longrightarrow \lim_{x\to b}\frac{f(x)}{g(x)}=\lim_{x\to b}\frac{f'(x)}{g'(x)}}
+\end{itemize}
+
+
+\subsection{Ableitungsregeln}
+Seien \f{u,v} reellwertige, hinreichend oft differenzierbare Funktionen und \f{a\in \mathbb{R}} eine beliebige Konstante. Es gelten folgende Regeln:
+\begin{enumerate}
+    \item Konstanten: \f{(a)'=0}
+    \item Konstanter Vorfaktor: \f{(a\cdot u)'=au'}
+    \item Summenregel: \f{(u\pm v)'=u'\pm v'}
+    \item Produktregel: \f{(u \cdot v)'=u'\cdot v + u \cdot v'}
+    \item Quotientenregel: \f{(\frac{u}{v})' = \frac{u'v-uv'}{v^2}}
+    \item Kettenregel: \f{(u\circ v)'(x)=u'(v(x))v'(x)}
+    \item Logarithmische Ableitung: \f{(\ln(u))'=\frac{u'}{u}}
+\end{enumerate}
+
+\subsection{Wichtige Ableitungen}
+\begin{itemize}
+    \item \f{f(x)=a^x \longrightarrow f'(x)=a^x\cdot\ln(a)\longrightarrow f''(x)=a^x\cdot\ln(a)\cdot\ln(a)}
+    \item \f{f(x)=\ln(x)\longrightarrow f'(x)=\frac{1}{x}\longrightarrow f''(x)=-\frac{1}{x^2}}
+    \item \f{f(x)=\log_{a}(x)\longrightarrow f'(x)=\frac{1}{x\cdot \ln(a)} \longrightarrow f''(x)=-\frac{1}{x^2\cdot \ln(a)}}
+\end{itemize}
+
+
+\subsection{Kurvendiskussion}
+\begin{itemize}
+    \item Extremum: \f{f'(x_0)=0}
+    \item Minimum: \f{x_0} ist Extremum und \f{f''(x_0)>0}
+    \item Maximum: \f{x_0} ist Extremum und \f{f''(x_0)<0}
+    \item Wendepunkt: \f{x_0} ist Extremum, \f{f''(x_0)=0} und \f{f'''(x)\neq 0}
+\end{itemize}

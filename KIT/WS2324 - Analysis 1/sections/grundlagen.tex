@@ -1,0 +1,91 @@
+\subsection{Rechenregeln}
+\subsubsection*{Binomische Formeln}
+\begin{multicols}{3}
+    \begin{itemize}
+        \item \f{(a+b)^2=a^2+2ab+b^2}
+        \item \f{(a-b)^2=a^2-2ab+b^2}
+        \item \f{(a+b)(a-b)=a^2-b^2}
+    \end{itemize}
+\end{multicols}
+\vspace*{1em}
+\begin{itemize}
+    \item Allg. binomische Formel: \f{(x+y)^n=\sum_{k=0}^{n}{n\choose k}x^{n-k}y^k}
+    \item \f{{n\choose k}=\frac{n!}{k!(n-k)!}={n-1\choose k-1}+{n-1\choose k}}, \f{n\ge k > 0}
+\end{itemize}
+
+\subsubsection*{Potenzen}
+\begin{multicols}{3}
+    \begin{itemize}
+        \item \f{x^{-n}=\frac{1}{x^n}}
+        \item \f{x^a*x^b=x^{a+b}}
+        \item \f{\frac{x^a}{x^b}=x^{a-b}}
+        \item \f{x^n*y^n=(xy)^n}
+        \item \f{x^{-n}=\frac{1}{x^n}}
+        \item \f{x^{\frac{1}{n}}=\sqrt[n]{x}}
+    \end{itemize}
+\end{multicols}
+
+\subsubsection*{Logarithmus}
+\begin{multicols}{2}
+    \begin{itemize}
+        \item \f{\log_{a}(b)=\frac{\ln(b)}{\ln(a)}}
+        \item \f{\log_{a}(1)=0}
+        \item \f{\log_{a}(b^n)=n*\log_{a}(b)}
+        \item \f{\log_{a}(x*y)=\log_{a}(x)+\log_{a}(y)}
+        \item \f{\log_{a}(\frac{x}{y})=\log_{a}(x)-\log_{a}(y)}
+        \item \f{\log(x+y)=\log(x)+\log(1+\frac{y}{x})}
+        %\item[\vspace{\fill}]
+    \end{itemize}
+\end{multicols}
+
+\subsubsection*{e-Funktion und ln}
+\begin{multicols}{3}
+    \begin{itemize}
+        %\item \f{e = \sum_{n=0}^{\infty} \frac{1}{n!} \approx 2,718 }
+        \item \f{\ln(e)=1}, \f{\ln(0)=1}
+        \item \f{e^x=b \Leftrightarrow x=\ln(b)}
+        \item \f{e^{\ln(a)}=a=\ln(e^a)}
+    \end{itemize}
+\end{multicols}
+
+\subsection{Summen-/Produktformeln}
+\begin{itemize}
+    \item Gaußsche Summenformel: \f{\sum_{k=1}^{n}k=\frac{n \cdot(n+1)}{2}}
+    \item Teleskopsumme: \f{\sum_{n=0}^{N}(a_{n+1}-a_n)=-a_0+a_{N+1}}
+    \item Geometrische Summenformel: \f{\sum_{k=0}^{n}q^k=\frac{1-q^{k+1}}{1-q}}
+    \item Teleskopprodukt: \f{\prod_{i=1}^{n}\frac{a_{i+1}}{a_i}=\frac{a_{n+1}}{a_1}}
+\end{itemize}
+
+
+\subsection{Ungleichungen}
+\subsubsection{Rechenregeln}
+\begin{itemize}
+    \item Keine Zeichenänderung bei Addition, Subtraktion oder Multiplikation mit positiver Zahl. (\f{a \leq b} und \f{c \leq d \Rightarrow a+c \leq b+d}),(\f{a\leq b} und \f{c \geq 0 \Rightarrow ac \leq bc})
+    \item Zeichenwechsel bei Division und Multiplikation mit negativer Zahl.
+    \item Ungleichungen mit Betrag: Fallunterscheidung (\f{\geq 0} bzw \f{< 0})
+    \item \f{a \leq b \Rightarrow \frac{1}{a}\geq\frac{1}{b}\quad} (Zeichenwechsel bei Kehrwertbildung)
+\end{itemize}
+\subsubsection{Wichtige Ungleichungen}
+\begin{itemize}
+    \item \textbf{Ungleichung vom arithmetischen und geometrischen Mittel:}\\
+    Für \f{a_1,a_2,...,a_n\geq 0} gilt: \f{\frac{a_1+a_2+...+a_n}{n}\geq \sqrt[n]{a_1\cdot a_2 \cdot ... \cdot a_n}}
+    \item \textbf{Bernoulli-Ungleichung:}\\
+    Sei \f{x \in \mathbb{R}} und \f{x \geq -1} und \f{n \in \mathbb{N}}. Es gilt: \f{(1+x)^n \geq 1 +nx}
+    \item \textbf{Young'sche Ungleichung:}\\
+    Sind \f{p,q>1 \textrm{ mit } \frac{1}{p}+\frac{1}{q}=1 \textrm{ und } a,b\geq0}, dann gilt: \f{ab \leq \frac{a^p}{q}+\frac{b^q}{q}}
+\end{itemize}
+
+
+
+\subsection{Tricks}
+\begin{itemize}
+    %\item \f{e = \sum_{n=0}^{\infty} \frac{1}{n!} \approx 2,718 }
+    \item Summen auseinanderziehen: \f{\sum_{k=1}^{n+1}k^3=\sum_{k=1}^{n}k^3+(n+1)^3}
+    \item Dritte bin. Formel für Wurzelfolgen: \f{a-b=\frac{a^2-b^2}{a+b}}\\
+    Beispiel: \f{\sqrt{x}-\sqrt{y}=\frac{x-y}{\sqrt{x}+\sqrt{y}}}
+\end{itemize}
+
+% \subsection{Polynomdivision}
+
+
+%TODO: Polarkoordinaten (komplexe Zahlen), Tricks zur Grenzwertbestimmung, Taylor 

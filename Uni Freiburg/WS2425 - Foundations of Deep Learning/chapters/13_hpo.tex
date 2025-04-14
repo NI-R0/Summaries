@@ -1,0 +1,91 @@
+Neural networks are very sensitive to many hyperparameters, e.g.:
+\begin{itemize}
+    \item Optimization: SGD variant, lr-schedule, momentum, batchsize, \dots
+    \item Regularization: dropout rates, weight decay, data augmentation, \dots
+\end{itemize}
+
+\definition{
+    Let \f{\theta} be the hyperparameters of an ML algorithm \f{\mathcal{A}} with domain \f{\Theta}, \f{\mathcal{D}_{opt}} be a training set which is split into training and validation split and \f{\mathcal{L}(\mathcal{A}_\theta, \mathcal{D}_{train}, \mathcal{D}_{val})} denote the loss of \f{\mathcal{A}_\theta} trained on \f{\mathcal{D}_{train}} and evaluated on \f{\mathcal{D}_{val}}.\\
+    The HPO problem is to find a hyperparameter configuration which minimizes the loss:
+    \cf{
+        \theta^*\in\arg\min_{\theta\in\Theta}\fL(\mathcal{A}_\theta, \mathcal{D}_{train}, \mathcal{D}_{val})
+    }
+}
+Hyperparameters can have different types, such as numerical (continuous, integer) or categorial (boolean, categories e.g. choice of optimizer). Additionally, some hyperparams are only active if other hyperparams take certain values. Furthermore, some hyperparams (learning rate) naturally lay on a logarithmic scale. Tuning all these parameters manually could be a tedious task.
+
+\subsection{Practical Tips}
+In general, HPO is useless unless the model can overfit the training dataset. For this reason, one good strategy is to make sure that the model (i.e. training loss) can overfit the subset and then move tothe HPO of validation loss on the full dataset. As another tip, the learning rate is typically important, so one heuristic is to increase learning rate until the loss diverges and then reduce it a little bit.
+
+\subsection{Black-Box Optimization}
+Black-box optimization is to optimize functions without derivative information. The most basic algorithm is random search and it maintains global search and can be computed in parallel. Additionally, it can deal with low intrinsic dimensionality compared to grid search. Another famous example is local search and it fixes the best configuration and changes the configuration along only a single axis.
+
+\subsection{Bayesian Optimization}
+\b{General approach:}
+\begin{itemize}
+    \item Fit a probabilistic model to the collection functions samples
+    \item Use the model to guide optimization, trading off exploration vs exploitation
+\end{itemize}
+
+\subsection{Population-based Methods}
+Uses a population of configurations and the "survival of the fittest" principle. Based on evolutionary strategies.
+
+\subsection{HPO Speedup Techniques}
+There are several techniques to speed up black-box HPO optimization:
+\begin{enumerate}
+    \item \b{Meta-Learning:} Follows the idea of learning about learning methods by optimizing the performance of known learning methods and generating new ones, transferring the learned knowledge in the process.
+    \item \b{Extrapolating of learning curves:} Terminate learning curves that are not promising.
+    \item \b{Multi-Fidelity optimization:} Using iterative ML algorithms, poor runs can be stopped early. Using k-fold cross-validation, poor hyperparam settings can be rejected after a few folds. Bad models can be ruled out based on their performance on data subsets.
+\end{enumerate}
+
+\b{Successive Halving:}
+\begin{itemize}
+    \item Try different configurations and drop the worst ones after a certain time.
+    \item Next, drop the next generation after double the time. Repeat.
+    \item Problem: Some configurations might be bad in the beginning but good in the end.
+\end{itemize}
+
+\b{Hyperband:}
+\begin{itemize}
+    \item Same as successive halving, but takes different time budgets as lowest fidelity.
+    \item This is done without taking already tested settings into account.
+\end{itemize}
+
+\b{BOHB:}
+\begin{itemize}
+    \item Uses Bayesian optimization for choosing configurations.
+    \item Uses Hyperband for selecting the budgets.
+\end{itemize}
+
+\subsection{Combining User Beliefs with Bayesian Optimization}
+Prior user knowledge could be helpful for selecting well-performing hyperparameter configurations.\\
+
+\b{PriorBand:}
+\begin{itemize}
+    \item Combines user priors with multi-fidelity optimization
+    \item Uses three different configuration sampling schemes: random, user prior over location of good configurations, loccaly around incumbent
+    \item Less uniform random configurations for higher fidelities
+    \item Over time, give higher weight to strategies that were more successful in this run
+    \item Advantage: Even performs well (in the long run) if given a bad prior
+\end{itemize}
+
+\subsection{Hyperparameter Gradient Descent}
+Let \f{\fL_{val}(w,\theta)} denote the validation loss of a network with weights \f{w} and
+hyperparameters \f{\theta}; likewise, \f{\fL_{train}(w,\theta)} is the training loss.\\
+Then, the optimization of \f{\theta} can be written as the following bilevel optimization problem:
+\cf{
+    \min_\theta\fL_{val}(w^*(\theta),\theta)
+}
+\cf{
+    s.t.\quad w^*(\theta)\in\arg\min_w\fL_{train}(w,\theta)
+}
+This enables us to compute gradients for \f{\theta} by differentiating through the entire SGD optimization run that leads to \f{w^*(\theta)}. Weight and hyperparameter optimization steps can then be interleaved (does not guarantee convergence).
+
+\subsection{Neural Architecture Search (NAS)}
+NAS aims to automatically optimize architectural choices, making it a special case of HPO. NAS also allows for special speedup techniques: sharing \& inheriting weights.\\
+All possible architectures are subgraphs of a large supergraph: the one-shot model. Weights are shared between different architectures with common edges in the supergraph. Search costs are reduced drastically since one only has to train a single model.\\
+
+\b{DARTS:} Use one-shot model with continuous architecture weight \f{\alpha} for each operator. By optimizing the architecture weights, DARTS assigns importance to each operation. And since \f{\alpha} is continuous, we can optimze them with gradient descent. In the end, DARTS discretizes to obtain a single architecture.\\
+
+\b{Weight Entanglement:} Weight entanglement reduces memory complexity of the supernet by reusing weights, not only between architectures that share the same operation (i.e. edge in the graph) but also between operations.\\
+
+\b{Weight Inheritance:} When locally expanding a network (e.g., adding a layer), we can inherit the weights of the unchanged part, which avoids costly retraining of the unchanged part. The newly introduced weights can be initialized to yield a \b{network morphism} (operators that change the network structure, but not the modelled function).

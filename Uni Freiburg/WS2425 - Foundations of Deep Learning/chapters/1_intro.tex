@@ -1,0 +1,45 @@
+\subsection{Representation Learning vs. \ac{dl}}
+
+\definition{Representation Learning is a set of methods that allows a machine to be fed with \b{raw data} and to \b{automatically discover the representations} needed for detection/classification.\\
+
+\ac{dl} is Representation Learning with multiple levels of representations, obtained by \b{composing simple but nonlinear modules}.}
+In Deep Learning, features are learned from raw data in an \b{end-to-end} fashion.
+
+\subsection{\ac{ml} Concepts}
+\subsubsection{Linear Regression}
+Linear regression is a supervised learning algorithm that models the relationship between a dependent variable \f{y} and one or more independent variables \f{x} using a linear function.\\
+
+The objective in linear regression is to minimize the \b{\ac{mse}} loss, given by:
+\cf{\fL_{MSE}(\hat{y}, y) = \frac{1}{2N} \sum_{i=1}^{N} (\hat{y}_i - y_i)^2,}
+where \f{\hat{y}=h_{\theta}(x)} is the prediction of the model and \f{N} is the total number of datapoints in the dataset.
+
+\subsection{Logistic Regression}
+Logistic regression is a classification algorithm that estimates the probability of a binary outcome using a logistic function.\\
+
+For logistic regression, the objective is to minimize the \b{binary cross-entropy} loss:
+
+\cf{\fL_{BCE}(\hat{y}, y) = -\frac{1}{N} \sum_{i=1}^{N} y_i \log \hat{y}_i + (1 - y_i) \log (1 - \hat{y}_i),}
+where \f{\hat{y}=h_{\theta}(x)=g(w^Tx)} with \f{g(z)=\sigma(z)=\frac{1}{1+e^{-z}}} (\f{g} is the \b{sigmoid} function).\footnote{The correct formulation of the loss functions would be \f{\fL(\theta)} or \f{\fL(w)}.} For the Multi-Class classification case, the loss generalizes to:
+\cf{
+    \fL_{CE}(\theta) = -\frac{1}{N} \sum_{n=1}^{N}\sum_{k=1}^{K} y_{kn} \log \hat{y}_k(x_n, \theta).
+}
+
+
+\subsubsection{Overfitting and Underfitting}
+\definition{\b{Overfitting} occurs when a model memorizes the training data. This leads to poor generalization on unseen data (e.g. the validation/test set).\\
+
+\b{Underfitting} on the other hand means, that the model is not able to capture the complexity of the training data (e.g. because the model is too small).}
+
+\subsubsection{Cross-Validation}
+Cross-validation is a technique for assessing the performance of a model by dividing the dataset into multiple subsets, training the model on some subsets and testing it on others to ensure it generalizes well to unseen data.
+
+\subsection{Basics of Neural Networks}
+\subsubsection{Types of Tasks}
+\begin{itemize}
+    \item \b{Possible Inputs:} Sound, Text, Images, Graphs
+    \item \b{Possible Outputs:} Classification, Regression, Sound, Text, Images, ... 
+\end{itemize}
+
+\subsubsection{Single Neurons}
+A neuron in a neural network computes the \b{weighted sum \f{z} of its inputs \f{x}} and performs a \b{nonlinear transformation} \f{h(z)} afterwards:
+\cf{a = h(z)\quad,\quad z = x_1w_1 + x_2w_2+ ... + x_nw_n}

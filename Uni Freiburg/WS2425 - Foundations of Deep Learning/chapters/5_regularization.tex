@@ -1,0 +1,98 @@
+Usually deep neural networks habe low bias and high variance (meaning that if you change the training data a little the fitted function may change a lot). The standard bias-variance tradeoff is defined by:
+\cf{\text{expected loss} = (\text{bias})^2+\text{variance}+\text{noise}}
+\b{The goal of regularization is to introduce \it{some} bias, to substantially reduce variance and therefore to lower the generalization loss.}
+
+\definition{\b{Early Stopping} stops the training when the error on the validation set has reached its minimum (i.e. as soon as it starts to increase again). The disadvantage is that this need perpetual oberservation of the error.}
+
+\subsection{Small Weights (Shrinkage Methods)}
+Idea: Extend the loss function with an extra \b{regularizer} (penalty) term of strength \f{\lambda} to prevent overfitting:
+\cf{
+    \fL(\theta) = \fL_D(\theta) + \lambda\fL_{reg}(\theta)
+}
+\cf{
+    \fL_{reg}(\theta) = \frac{1}{q}\sum_{j=1}^{M}|\theta_j|^q \quad \to \quad \begin{cases}
+        q=1: L_1 \text{ regularizer (lasso)}\\
+        q=2: L_2 \text{ regularizer (ridge)}
+    \end{cases}
+}
+
+\subsection{Decoupled Weight Decay}
+\f{L_2} regularization is typically implemented by directly changing the gradient to:
+\cf{g^\prime = g + \lambda\theta,}
+and thus changing the SGD update to:
+\cf{
+    \theta \leftarrow \theta- \alpha g^\prime = (1-\alpha\lambda)\theta - \alpha g
+}
+\b{Decoupled Weight Decay} pulls the weights towards zero at each update step of SGD (note that for \f{\lambda = w/\alpha} this is equivalent to \f{L_2}):
+\cf{\theta\leftarrow(1-w)\theta-\alpha g}
+The difference to \f{L_2} is that in \f{L_2} the hyperparameters \f{\lambda} and \f{\alpha} are coupled!\\
+Decoupled weight decay gave rise to the popular \b{AdamW} algorithm, which is essentially Adam combined with weight decay.
+
+\subsection{Parameter Sharing/Tying}
+Idea: Sharing parameters across the network. This is, e.g., used in \acp{cnn} where the same filters are used across the input image, which makes feature detection invariant to translations. It is also used in \acp{rnn} where the same network is applied at each time step.\\
+Sharing the parameters \b{controls the networks capacity}, \b{encourages the search for regular patterns} and \b{limits memory cost}.
+\definition{Parameter sharing is e.g. applied in \b{multitask learning}, where one network is used to tackle multiple tasks at once by an intermediate shared layer and individual models branching off of it. If the tasks are related, this can have a similar effect as additional training data.}
+\b{Parameter tying} allows models to be similar to each other, by adding a soft constraints to the parameters of each model. If the tasks are similar, this can be done by for example leveraging the \f{L_2} regularization:
+\cf{
+    \Omega(\theta^{(A)}, \theta^{(B)}) = \Vert \theta^{(A)} - \theta^{(B)}\Vert_2^2
+}
+
+\subsection{Dropout}
+\b{Dropout} randomly drops units from the network during training by multiplying their output by zero with a probability of \f{p}. For each datapoint a different dropout mask is sampled. This avoids co-adaption of the weights (reliance on previous units). It is important to note that we have to store the location of dropped weights in the forward pass to ignore the update in the backward pass.\\[0.5em]
+
+Applying dropout can be seen as training an ensemble of \f{2^n} networks with shared weights, where \f{n} is the number of dropped units.
+
+\subsection{Data Augmentation}
+Data augmentation is used to increase the data amount by applying some simple transformation to a training dataset and adding this transformed data to the training dataset.\\[0.5em]
+Possible transformations: \b{translation, scaling, reflection, rotation, stretching}\\
+Domain-Specific: replacing words with synonyms, adding background noise, change speed\\
+
+Note that since CNNs have invariance with respect to the movement along each axis, trans-
+lation does not make sense. The drawback of data augmentation is to require more computational time proportional to the data size. Additionally, the improvement diminishes as the augmented amount increases.\\
+
+There exist several techniques to find suitable augmentations automatically:
+\begin{enumerate}
+    \item \b{AutoAugment:} Search for best augmentation combinations automatically, large comp. cost.
+    \item \b{RandAugment:} Randomly sample \f{N} augmentations with strength \f{M}, similar results as AutoAugment but much cheaper.
+    \item \b{TrivialAugment:} Randomly sample one augmentation and \f{M} for each image in a batch.
+\end{enumerate}
+
+\subsection{Noise Robustness}
+Goal: Improving robustness by training with randomly added noise. Note that data augmentations are the noise added to the inputs. Noise can be added in several more places:
+\begin{itemize}
+    \item Hidden Units: Data augmentation at various levels of abstractness
+    \item Weights: Stochastic implementation of Bayesian inference
+    \item Outputs: Label smoothing
+\end{itemize}
+
+\subsection{Adversarial Training}
+Adversarial data is data which can decept a trained model. The procedure for adversarial training is as follows:
+\begin{enumerate}
+    \item Train network on training examples.
+    \item Generate adversarial examples for this network.
+    \item Add adversarial examples to training data and repeat.
+\end{enumerate}
+
+
+\subsection{Ensemble Methods}
+\begin{itemize}
+    \item \b{Bagging:}
+    \begin{enumerate}
+        \item Randomly draw data with "zurücklegen" for each model
+        \item Aggregate the output of all trained models in an ensemble classifier
+        \item[\f{=>}] Introduces bias but reduces variance
+    \end{enumerate} 
+    \item \b{Deep Ensembles:}
+    \begin{enumerate}
+        \item Train several deep networks on the same data, rely on SGD to find different minima
+        \item Aggregate the output of all models (e.g. by averaging)
+        \item[\f{=>}] Does not introduce bias, but reduces variance
+        \item[\f{=>}] \f{k}-fold increase in complexity of all types (\f{k} models)
+    \end{enumerate}
+    \item \b{Hyperdeep Ensembles:}
+    \begin{enumerate}
+        \item Train using SGD with weight restarts
+        \item Take snapshots of weights before each restart and ensemble them 
+        \item[\f{=>}] Reduces time complexity to a single training run
+    \end{enumerate}
+\end{itemize}

@@ -1,0 +1,45 @@
+\acp{cnn} are specially structured neural networks that are very well suited to process grid-like data such as images and time series. They make use of convolutional layers, which perform a \b{convolution operation} followed by some nonlinearity and \b{pooling}.
+
+\definition{The \b{operation of convolution} works by sliding a kernel/filter over the input and computing the dot products, thus reducing dimensionality and resulting in the so called "activation map" (one for each filter). Note that the filter always matches the depth channel of the input data. Convolutions are defined as:
+\cf{
+    S(i,j)=(K*I)(i,j)=\sum_{m}^{}\sum_{n}^{}I(i-m,j-n)K(m,n)
+}
+Note that convolutions and cross-correlation are similar. Flipping the kernel by 180° and applying cross-correlation is equal to convolution.}
+
+\subsection{More Properties of Convolutions}
+In order to \b{keep the spatial dimension} after applying convolution, typically we see Convolutional layers with stride 1, \f{F\times F} filters and zero padding with \f{(F-1/2)} pixels.\\
+
+\b{Valid Convolution:} When no padding is applied and the kernel is fully contained within the image.\\
+
+\b{Same Convolution:} Applying padding to keep the image dimension constant.\\
+
+With an input of shape \f{W_1\times H_1\times D_1}, the size of the convolution output \f{W_2\times H_2\times D_2} is given by:
+\cf{W_2 = (W_1 - F + 2P)/S+1}
+\cf{H_2 = (H_1 - F + 2P)/S+1}
+\cf{D_2 = K}
+
+\vspace{0.5em}
+Using filters of size \f{F\times F\times D_1} and enabling parameter sharing, convolutions introduce \f{(FFD_1)K} weights and \f{K} biases.\\
+
+Convolution leverages three important ideas:
+\begin{itemize}
+    \item Sparse interactions (if kernel \f{<} input) \f{\to} Receptive field increases with depth
+    \item Parameter sharing
+    \item Equivariant Representations: Change of input leads to same change of output
+\end{itemize}
+
+\subsection{Miscellaneous Convolutions}
+\begin{enumerate}
+    \item \b{3D-Convolutions:} The filter can move in all three directions and the filter depth should be smaller than the input layer depth (i.e. kernel depth \f{<} channel size). Useful for data such as videos or MRI images.
+    \item \b{\f{1\times 1} Convolution:} Also called feature pooling, reduces dimensionality for efficient computations to \f{W\times H\times 1}. Enables more complex representations using non-linearity.
+    \item \b{Transposed Convolution:} This convolution up-samples data by combining the padding and convolution.
+    \item \b{Dilated Convolution:} It in ates the kernel by inserting spaces between kernel elements while keeping the kernel size; therefore no additional cost is required. Since it convolutes elements from a larger range, we can often get much larger receptive field.
+    \item \b{Grouped Convolution:} Filters at each layer are separated into certain numbers of groups and each group is responsible for convolutions of the corresponding group. The advantage of this convolution is efficient training.
+    \item \b{Spacially Separable convolutions:} It first convolutes only along one axis and then it convolutes the convoluted data along the other axis in two separate steps. The adavantages of this convolution are less parameters and less matrix multiplications. On the other hand, training results can be suboptimal.
+    \item \b{Depthwise Separable Convolutions:} It first convolutes each channel separately, and then it applies \f{1\times 1} convolution to the data. This convolution also yields the same benefits and problems as spatially separable convolutions.
+\end{enumerate}
+
+\subsection{Pooling}
+\b{Pooling layers} (separately) reduce the size of the activation maps (downsampling) with the effect of making representations approximately invariant to small input translations.\\
+One popular choice, namely \b{max-pooling} selects the maximum value in the area of the filter.\\
+The formulas for the output size are the same as for convolutional layers, but without padding.

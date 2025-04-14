@@ -1,0 +1,59 @@
+\subsection{Batch Normalization}
+\b{Problem:} Training and test data and the internal representations have different variance and mean. This leads to SGD being slow and hard to optimize. Therefore, we would like our network to normalize the data, as every batch is a different distribution that must be adaptable.\\
+
+\b{Goal:} Make all dimensions 0-mean and unit-variance by applying:
+\cf{\hat{x}^{(k)}=\frac{x^{(k)}-\mathbb{E}\left[x^{(k)}\right]}{\sqrt{\text{Var}\left[x^{(k)}\right]}}}
+
+Batch Normalization should be applied after FC/Conv. layers and before the activation function. During testing batch norm becomes a linear operator.\\
+
+Advantages of using batch norm:
+\begin{itemize}
+    \item Makes deep networks much easier to train.
+    \item Improves gradient flow.
+    \item Allows for higher learning rates and thus faster convergence.
+    \item Networks become more robust to initialization.
+    \item Acts as regularization during training.
+\end{itemize}
+
+\subsection{Layer Normalization}
+In contrast to batch norm layer norm normalizes across the dimensions of the input instead of the batch size. It behaves the same for train and test.
+
+\subsection{Transfer Learning}
+Weights from self-supervised learning can be used to initialize weights for a target task. Adding classifiers or fine-tuning layers is required.\\
+
+\b{Transfer learning methods in Vision:} Self-prediction, contrastive learning, supervised image classification, \dots\\
+\b{Transfer learning methods in NLP:} Next sentence prediction, masked language modeling, \dots
+
+\definition{\b{Meta-Learning} describes learning assumptions (inductive bias or prior) that can be transfered to new tasks.\\
+It can be utilized to learn better architectures, hyperparameters, good initial weights and better loss functions.}
+
+\subsection{Parameter Initialization}
+How we choose the initial parameters affects the convergence, minimal cost and generalization error of our model.\\
+
+\b{Current strategy:} Initialize weights for each unit separately and avoid symmetry. The weights are initialized at random following a uniform or normal distribution, the biases are initialized constant. For initializing weights, the scale is important as it could lead to gradient explosion, generalization, activation flow or symmetry breaks. We e.g. use \b{Xavier initialization}, which is a normalized initialization defined as:
+\cf{W_{i,j}\sim U\left(-\sqrt{\frac{6}{m+n}}, \sqrt{\frac{6}{m+n}}\right),}
+where \f{m} are the layers inputs and \f{n} the layers outputs. To compromise between goals of initializing all layers have the same activation variance and gradient variance.\\
+The bias is most often set to 0, except for output units where it is set to match the desired output statistics; ReLU where it is set to 0.1 to avoid saturation; and gating units where it is set to \f{\sim 1} to open the gate.\\
+
+\b{Other strategies:}
+\begin{itemize}
+    \item \b{Warm-starting:} Initialize with weights that have been optimized on a different task.
+    \item \b{Meta-learning:} Learning the "best" initialization strategy for different tasks.
+\end{itemize}
+
+\subsection{CNN Architectures}
+\b{U-Net:}
+\begin{itemize}
+    \item Consists of a contracting and expanding path.
+    \item Uses up-convolution to increase the resolution after the bottleneck.
+    \item Uses \f{1\times 1} convolutions in the final layer to generate the final segmentation mask.
+    \item Applies data augmentations.
+\end{itemize}
+
+\b{ResNet:}
+\begin{itemize}
+    \item Introduces residual (identity) mappings (skip connections) around convolutional layers.
+    \item Enables very deep networks.
+    \item Uses batch normalization.
+    \item Only one FC layer at the end.
+\end{itemize}

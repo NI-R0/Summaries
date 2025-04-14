@@ -1,0 +1,44 @@
+\section{Deep Learning based 3D Vision}
+\subsection{Depth from Single Images}
+Depth estimation does not need motion parallax but can also be computed from single images.\\
+Networks for this task utilize the same principle structure as for semantic segmentation, just with depth values as output.\\
+Newer works use modern encoder-decoder architectures.\\
+
+\b{Training Data\\[.5em]}
+Training these models requires training data which consists of RGB images with the corresponding depth map. These can be obtained (indoors) from RGB-D sensors. Generally, synthetic data does not work very well. This leads to problems with generalization.\\
+
+Signals that map from RGB to depth are:
+\begin{itemize}
+    \item Recognizes objects
+    \item Scene priors (e.g. roads tend to be largely planar)
+    \item Shading and texture
+\end{itemize}
+
+Out of these, only shading and texture are generic (again not good for generalization).\\
+
+\b{Self-supervised Monocular Depth Estimation from Videos\\[.5em]}
+Videos with egomotionin mostly static scenes comprise all necessary information about depth. The motion parallax contained within these videos can be used as training signal.\\
+The best suited videos for this are videos that are diverse but boring in terms of motion.\\
+
+The goal is then to optimize the photometric error between a frame pair. For this, the pixel coordinates are transformed via:
+\cf{
+    p'_{t+k}=K\hat{P}_{t+k}D_t(p_t)K^{-1}p_t
+}
+where all parameters are predicted by the network (\f{K} = camera intrinsics, \f{\hat{P}} = egomotion, \f{D} = depth).\\
+
+\subsection{3D Hand Pose Estimation from Single Images}
+This task is about lifting things from 2D to 3D and is thus related to depth estimation. The hand pose is estimated in 2D using keypoint localization and then lifted into 3D space.\\
+In and of itself the task of hand pose estimation can be very challenging due to self-occlusion.\\
+
+Network: Hand segmentation and cropping \f{\to} pose estimation network \f{\to} viewpoint creation \\
+
+For training the network it is possible to generate and use synthetic data. Even better is it to create multiview data capturing setups. Using mutliple views of real hands can help resolve many ambiguities, which leads to much better generalization.
+
+\subsection{Neural Radiance Fields (NeRF)}
+Network learns for \b{one particular scene} how the scene projects along rays to render unseen views using viewpoint interpolation. This does not generalize to new scenes.\\
+Poses of input images are assumed to be known.\\
+Network takes 5D input and produces color and density as an output.
+
+
+
+\newpage

@@ -1,0 +1,83 @@
+\section{Background Concepts}
+\begin{itemize}
+    \item \b{Bias:} Bias measures the error introduced by approximating a complex real-world problem with a simplified model. It describes the inability for a ML method to capture the true relationship.
+    \item \b{Variance:} Quantifies the sensitivity of the model to fluctuations in the training data, causing high variability in predictions across different datasets.
+    \item \b{Bias-Variance-Tradeoff:} Reducing bias increases variance and vice versa. An optimal model minimizes both to achieve good generalization.
+    \item \b{Kernel Trick:} Kernel functions only calculate relationships between every pair of points as if they are in higher dimensions; the don't actually do the transformation.
+\end{itemize}
+
+\subsection{Probability Theory}
+\begin{itemize}
+    \item \b{Marginal Probability:} \f{p(x) = \sum_{Y}^{}p(X,Y)}\\
+    Example: \f{p(\text{red car}) = p(\text{red Ford}) + p(\text{red VW}) + ...}, with \f{X = \text{red}} and \f{Y=\text{car type}}
+    \item \b{Rules:}
+    \begin{itemize}
+        \item \b{Product Rule:} \f{p(x,y) = p(y|x)p(x)}
+        \item \b{Bayes Rule:} \f{p(x,y)=\frac{p(y|x)p(x)}{p(y)},\quad} with \f{p(x,y) = posterior = \frac{likelihood\cdot prior}{evidence}}
+    \end{itemize}
+    \item \b{Expected Value:} The expected value of a random variable \f{X} with a PDF given by a function \f{f} (or PMF \f{P} with \f{X\sim P(X)})is defined by:
+    \cf{
+        \mathbb{E}[X] = \int xf_X(x)dx, \quad\text{(cont. case)}
+    }
+    \cf{
+        \mathbb{E}[X] = \sum_X x_ip_i = \sum_X x_iP(X=x_i), \quad\text{(discrete case)}
+    }
+    The expected value of a measurable function of \f{X}, \f{g(X)}, given that \f{X} has a probability density function (PDF) \f{f(x)}, is given by:
+    \cf{
+        \mathbb{E}[g(X)] = \int g(x)f(x)dx.
+    }
+    \item \b{Mean:} The mean of a random variable \f{X} is \f{\pmb{\mu} = \mathbb{E}[X]}
+    \item \b{Variance:} Measures the expected squared deviation from its mean:
+    \cf{
+        \text{Var}[X] = \pmb{\sigma^2} = \text{Cov}[X,X] = \mathbb{E}[(X-\mathbb{E}[X])^2] = \mathbb{E}[(X-\mu)^2]
+    }
+    \item \b{Covariance:} The covariance between two random variables \f{X} and \f{Y} measures how they vary together:
+    \cf{
+        \text{Cov}(X,Y) = \Sigma_{XY} = \mathbb{E}[(X-\mathbb{E}[X])(Y- \mathbb{E}[Y])].
+    }
+    \item \b{Sample Mean:} Average of the observations (samples):
+    \cf{
+        \bar{x} = \hat{mu} = \frac{1}{N}\sum_{n=1}^{N}x_n
+    }
+\end{itemize}
+
+\subsection{Maximum Likelihood Estimation and MAP}
+
+\definition{The \b{Maximum Likelihood Estimation (MLE)} method estimates the parameter \( \theta \) of a statistical model by maximizing the likelihood function \( p(X|\theta) \), which represents the probability of observing the given data \( X \) under the parameter \( \theta \). The MLE is defined as:
+\[
+\theta_{\text{MLE}} = \arg\max_{\theta} p(X|\theta).
+\]
+}  
+For computational convenience, the log-likelihood function is often maximized instead:  
+\[
+\theta_{\text{MLE}} = \arg\max_{\theta} \log p(X|\theta).
+\]
+
+MLE provides a frequentist approach to parameter estimation, assuming no prior distribution on \( \theta \), unlike the MAP estimator.
+
+
+
+\definition{The Maximum A Posteriori (MAP) estimator is a Bayesian estimation method that finds the most probable parameter value \( \theta \) given the observed data \( X \). It is defined as:  
+\[
+\theta_{\text{MAP}} = \arg\max_{\theta} p(\theta|X).
+\]
+}
+Using Bayes' theorem, this can be rewritten as:  
+\[
+\theta_{\text{MAP}} = \arg\max_{\theta} \frac{p(X|\theta) p(\theta)}{p(X)}.
+\]
+Since \( p(X) \) is constant with respect to \( \theta \), the MAP estimate simplifies to:  
+\[
+\theta_{\text{MAP}} = \arg\max_{\theta} p(X|\theta) p(\theta),
+\]
+which maximizes the product of the likelihood and the prior (i.e. the posterior). The MAP estimator extends Maximum Likelihood Estimation (MLE) by incorporating prior knowledge about \( \theta \).
+
+\subsection{Normal Distribution}
+The PDF of a Gaussian Distribution is defined for univariate/multivariate cases of \f{X} (\f{k}-dim.) as:
+\cf{
+    \mathcal{N}(x|(\mu, \sigma^2)) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+}
+\cf{
+    \mathcal{N}(x|(\mu,\Sigma)) = \frac{1}{(2\pi)^{k/2}\sqrt{\det(\Sigma)
+    }}\exp\left(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\right)
+}

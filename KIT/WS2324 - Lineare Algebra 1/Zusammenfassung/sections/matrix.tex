@@ -1,0 +1,69 @@
+\subsection{Allgemein}
+\begin{itemize}
+    \item Sei \f{A\in \mathbb{R}^{m\times n}} eine \f{(m\times n)}-Matrix. Dann hat \f{A} \f{m} Zeilen und \f{n} Spalten.
+    \item \textbf{Quadratisch}, wenn \f{m=n}
+    \item Transponierte zu \f{A: \quad A^{T}\in\mathbb{R}^{n\times m}} mit \f{(A^T)_{i,j}=A_{j,i}}
+    \item Sei \f{A\in\mathbb{R}^{m\times k}, B\in\mathbb{R}^{k\times n}}. Dann ist \f{C:=A\cdot B \in \mathbb{R}^{m\times n}} mit \f{C_{i,j}=\sum_{t=1}^{k}A_{i,t}\cdot B_{t,j}}\\
+    (A wird zeilenweise und B spaltenweise durchlaufen)
+    \item Ein LGS kann als Matrix-Vektor-Produkt geschrieben werden.
+\end{itemize}
+\subsection{Rechenregeln}
+\begin{multicols}{2}
+    \begin{itemize}
+        \item \f{(\lambda A)^T = \lambda A^T}
+        \item \f{(A +B)^T=A^T+B^T}
+        \item \f{(AB)^T=B^TA^T}
+        \item \f{(A^T)^T=A}
+    \end{itemize}
+\end{multicols}
+
+\subsection{Invertierbare Matrizen}
+\begin{itemize}
+    \item Sei R ein Ring. Eine Matrix \f{A\in R^{m\times m} } heißt invertierbar, falls\\ 
+    \f{\exists B \in R^{m\times m}: AB = BA = I_m}
+    \item GL\f{_m(R)} ist die Menge der invertierbaren Matrizen aus \f{R^{m\times m}} 
+    \item Wenn \f{A\in R^{m\times m}} invertierbar ist, gilt:\\
+    \f{\Leftrightarrow A^T} ist invertierbar\\
+    \f{\Leftrightarrow} ker\f{(A) = \left\{0\right\}}\\
+    \f{\Leftrightarrow} rg\f{(A) = m}
+    \item \textbf{Vorgehen:} Mittels Gauß-Algorithmus \f{(A|I)\leadsto (I|X)\Longrightarrow X = A^{-1}}
+\end{itemize}
+
+\subsection{Bild einer Matrix}
+Das Bild einer Matrix gibt an, welche Menge an Vektoren als Lösungen auftreten können.\\
+Das Bild einer linearen Abbildung \f{f:V\rightarrow W} ist die Menge aller Vektoren in \f{W}, die von \f{f} getroffen werden.
+
+\subsection{Zeilenstufenform}
+Wenn eine Matrix die Form \f{\begin{pmatrix}* & * & * & * \\ 0 & * & * & * \\ 0 & 0 & 0 & *\\ 0&0&0&0\end{pmatrix}} hat, ist sie in Zeilenstufenform. Wenn sie die Form \f{\begin{pmatrix}1 & 0 & * & 0 \\ 0 & 1 & * & 0 \\ 0 & 0 & 0 & 1\\ 0&0&0&0\end{pmatrix}} hat, ist sie in normierter Zeilenstufenform. 
+
+\subsubsection*{Eigenschaften der Zeilenstufenform}
+\begin{itemize}
+    \item Der \textbf{Rang} der Matrix ist die Anzahl der Stufen.
+    \item Die Anzahl der Lösungen lässt sich wie folgt ablesen:
+    \begin{itemize}
+        \item \textbf{Keine Lösung:} Wenn eine Zeile die Form \f{(0 ... 0|b\neq 0)} hat.
+        \item \textbf{Eine Lösung:} Wenn die Matrix in optimaler Form ist.
+        \item \textbf{Mehrere Lösungen:} Wenn die Matrix eine Zeile \f{(0...0|0)} hat.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Ähnlichkeit von Matrizen}
+Seien \f{A,B\in K^{n\times n}} quadratisch. \f{A} und \f{B} sind ähnlich wenn:
+\begin{center}
+    \f{\exists S\in GL_n(K): \quad B = SAS^{-1}}
+\end{center}
+
+\subsection{Äquivalenz von Matrizen}
+Seien \f{A,B\in K^{m\times n}}. \f{A} und \f{B} sind äquivalent, wenn:
+\begin{center}
+    \f{\exists T \in GL_m(K), S\in GL_n(K): \quad B = TAS}\\
+    \f{A} und \f{B} äquivalent \f{\Leftrightarrow} Rang(\f{A}=) Rang(\f{B})
+\end{center}
+
+\subsection{Spur einer Matrix}
+Sei \f{A\in K^{n\times n}} eine quadratische Matrix. Die Spur ist definiert als:
+\begin{center}
+    tr\f{(A)=\text{Spur}(A)=\sum_{i=1}^{n}a_{ii}}
+\end{center}
+
+

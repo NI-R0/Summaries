@@ -1,0 +1,116 @@
+\section{Diffusion Filters, TV Minimization}
+\subsection{Diffusion in Physics}
+Diffusion in Physics describes a mass preserving process which equilibrates concentration differences. This works by a concentration gradient \f{\nabla u} creating a flux (Fluss) \f{j}:
+\cf{
+    j = -D\cdot\nabla u,
+}
+where \f{D} is a positive definite, symmetric diffusion tensor describing the magnitude and orientation of the \f{j}. Usually, \f{j} is \it{parallel} to the gradient \f{\nabla u}, in which case \f{D} degenerates to a scalar-valued diffusivity (often called \f{g}). Combining this with the conservation of mass leads to the PDE:
+\cf{
+    \delta_t u = \frac{\delta u}{\delta t} = - \text{div}(j) = \text{div}(D\nabla u),
+}
+meaning the change over time is the divergence over the flux. For a vector field \f{F}, the divergence is defined as \f{\text{div}(F) = \nabla F}.
+
+\subsection{Operators for Images}
+\begin{itemize}
+    \item \b{Partial derivatives:}
+    \f{
+        \frac{\delta}{\delta x}I(x,y) = \delta_xI=I_x
+    }
+    \item \b{Gradient:}
+    \f{
+        \nabla I(x,y) = (I_x, I_y)^\top
+    }
+    \item \b{Divergence:} \f{\text{div}(\vec{n}) = \delta_xn_1 + \delta_yn_2 = \nabla n}
+    \item \b{Laplace Operator:} \f{\Delta I = \text{div}(\nabla I) = I_{xx} + I_{yy}}
+\end{itemize}
+
+\subsection{Diffusion in Image Processing}
+The diffusion filter in image processing smoothes intensities (brighter areas) \f{u(x,y,t=0) = I(x,y)} by spreading the intensity along the intensity gradient from brighter to darker areas. \\
+\b{Idea:} We want to denoise the picture by understanding how the noise is "diffused" over the picture. If we know the diffusion process, we can restore the original picture.\\
+
+The diffusion tensor allows adaptions to local image structures, e.g. edge preserving smoothing. The name of the diffusion process depends on the diffusion tensor:
+\begin{itemize}
+    \item \b{Homogeneous diffusion:} \f{D} is the identity matrix
+    \item \b{Linear isotropic:} Scalar \f{D} that is independent of \f{u}
+    \item \b{Linear anisotropic:} General \f{D} that is independent of \f{u}
+    \item \b{Nonlinear isotropic:} Scalar \f{D} that depends on \f{u}
+    \item \b{Nonlinear anisotropic:} General \f{D} that depends on \f{u}
+\end{itemize}
+
+\subsection{Homogeneous Diffusion}
+Homogeneous diffusion describes linear diffusion with diffusivity \f{g=1}. With the initial condition \f{u(x,y,0)=I(x,y)} this diffusion is then described by the PDE:
+\cf{
+    \delta_t u = \text{div}(\nabla u) = u_{xx} + u_{yy} = \Delta u.
+}
+We are looking for a solution of \f{u(x,y,t)} at a certain time \f{t}. Larger times correspond to more smoothing. Usually this solution is obtained numerically, only for HD there exists an analytic solution.\\
+
+Solving the PDE requires discretization in space and time, which means deriving the PDE temporally and spatially into \f{\delta_tu_{i,j}^k, \delta_{xx}u_{i,j}^k, \delta_{yy}u_{i,j}^k}.
+% \cf{
+%     \delta_tu_{i,j}^k=\frac{u_{i,j}^{k+1}-u_{i,j}^k}{\tau}+ O(\tau)
+% }
+% \cf{
+%     \delta_{xx}u_{i,j}^k = \frac{u_{i+1,j}^k-2u_{i,j}^k+u_{i-1,j}^k}{h^2}+O(\tau)
+% }
+% \cf{
+%     \delta_{yy}u_{i,j}^k = \frac{u_{i,j+1}^k-2u_{i,j}^k+u_{i,j-1}^k}{h^2}+O(\tau)
+% }
+
+These three derivatives can then be substituted in the original PDE to form the so called \b{discrete scheme}, which can be solved (reordered) for \f{u_{i,j}^{k+1}} to get the \b{iterative scheme}:
+\cf{
+    u_{i,j}^{k+1} = \left(1-\frac{4\tau}{h^2}\right)u_{i,j}^k+\frac{\tau}{h^2}(u_{i+1,j}^{k}+u_{i-1,j}^{k}+u_{i,j+1}^{k}+u_{i,j-1}^{k})
+}
+This scheme, which is called \b{explicit finite difference scheme}, can then be computed explicitly from known values. \\
+\b{Properties:}
+\begin{itemize}
+    \item Consistency order is 1 in time, and 2 in space.
+    \item Due to mass conservation, all weights (\f{\tau=} timesteps, \f{h=} position steps) sum to one.
+    \item Scheme is stable if all weights are non negative (\f{\frac{\tau}{h^2}\leq\frac{1}{4}}).
+\end{itemize}
+
+For homogeneous diffusion defined as \f{u(x,0)=I(x)}, \f{\delta_tu=\Delta u} an analyitic solution exists by convolution with a Gaussian kernel \f{G_\sigma}. For \f{t>0} this is defined as \f{u(x,t)=(G_{\sqrt{2t}}*I)(x)}. The stopping time \f{T} of the diffusion process is related to the standard deviation \f{\sigma} of the kernel via \f{T = \frac{1}{2}\sigma^2}.\\[1em]
+\b{Problem:} Gaussian smoothing removes noise but blurrs and dislocates edges too.
+
+\subsection{Linear Isotropic Diffusion}
+\b{Idea:} Reduce smoothing in the presence of edges.\\
+
+The smoothing is weighted by a scalar factor which is derived from a precomputed measurement (e.g. the gradient magnitude of the image serving as an edge detector, \f{\delta_tu=\text{div}(g(|\nabla I|^2)\nabla u)}). This means that \f{g} must be a positive, decreasing function, since a higher gradient means intensity changes which we do not want to blur. This means that the result of \f{g} is a scalar, dependent only on \f{x} and \f{y}, not \f{t}.
+
+\subsection{Nonlinear Isotropic Diffusion}
+In nonlinear isotropic diffusion, the edge detector is more reliable when it's derived from the denoised image \f{u}: \f{\delta_tu=\text{div}(g(|\nabla u|^2)\nabla u)}. Thus, \f{g} is nonlinear as it depends on both position and time. This can be solved numerically (iterative scheme), where at each \f{t} a new diffusivity \f{g} is calculated.\\
+
+The iterative scheme leads to noise being removed while preserving edges. When the flux function \f{\Phi} is defined as a Gaussian with parameter \f{\lambda}, if there is an edge (\f{\nabla u} is high and \f{\nabla u >> \lambda}), the diffusivitiy goes towards zero, which leads to \f{\Phi} decreasing and the diffusion stopping (or even leading to backwards diffusion (i.e. edge enhancing)).
+
+\subsection{Well-Posedness}
+A problem is called \b{well-posed} (otherwise ill-posed), if:
+\begin{enumerate}
+    \item it has a unique solution AND
+    \item this solution depends continuously on the input data.
+\end{enumerate}
+
+Pure space-continuous \b{forward-backward diffusion is ill-posed}, as a small perturbation in the input image is increased to an infinitely steep edge.
+
+\subsection{Relationship with Variational Methods}
+With variational methods denoising can be formulated as the energy minimization problem:
+\cf{E(u)=\int_\Omega(u-I)^2+\alpha\Psi(|\nabla u|^2)dx}
+with various potential functions \f{\Psi(s^2)} (penalizer). This problem can be rewritten to the corresponding Euler-Lagrange equation:
+\cf{\text{div}\left(\Psi'\left(|\nabla u|^2\right)\nabla u\right)-\frac{u-I}{\alpha}=0,}
+where \f{\Psi'(s^2)} corresponds to the diffusivity in a related diffusion process. Typical penalizers include:
+\begin{itemize}
+    \item Quadratic penalizer \f{\leftrightarrow} Homogeneous diffusion: \f{\quad\Psi(s^2)=s^2 \quad\Rightarrow\quad \Psi'(s^2)=1}
+    \item Total variation (TV) penalizer \f{\leftrightarrow} TV flow: \f{\quad
+        \Psi(s^2)=\sqrt{s^2} \quad\Rightarrow\quad \Psi'(s^2)=\frac{1}{2\sqrt{s^2}}
+    }
+\end{itemize}
+
+\subsection{TV Minimization}
+Total variation is a very special case, defined as:
+\cf{E(u)=\int_\Omega(u-I)^2+\alpha|\nabla u|dx}
+The TV potential is the limiting case between convex and non-convex energies, which enables global optimization. The problem is that the potential (\f{\Psi'(s^2)=\frac{1}{2\sqrt{s^2}}}) is not differentiable in 0, which leads to infinite diffusivities for \f{|\nabla u|\to0}.\\
+
+\b{Solution 1:} Regularize the potential in 0 by adding a small constant \f{\epsilon\to\Psi(s^2)=\sqrt{s^2+\epsilon^2}}. However, large \f{\epsilon} conteract the properties of total variation and small \f{\epsilon} require very small time steps when using explicit schemes (such as gradient descent), which makes them very slow.\\
+
+\b{Solution 2:} Dual formulation of the TV norm, by which the problem is reduced to a saddle point problem:
+\cf{\min_u\max_{\left\lVert p\right\rVert \leq1}\left\{\int(u-I)^2+\alpha(p\cdot\nabla u)dx\right\},}
+where \f{p\in\mathbb{R}^2} is a dual variable. It requires special algorithms, i.e. the "primal-dual algorithm", to implement this efficiently.
+
+\newpage

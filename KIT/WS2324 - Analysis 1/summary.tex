@@ -1,0 +1,130 @@
+\documentclass[ngerman,12pt,a4paper
+,pdftex]{article}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{blindtext}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{cleveref}
+\usepackage[printonlyused]{acronym}
+\usepackage[center]{caption}
+\usepackage{tocbibind}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{latexsym}              
+\usepackage[mathletters]{ucs}   
+\usepackage[a4paper,hmargin=2.5cm,bottom=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{multicol}
+\renewcommand\cftbeforetoctitleskip{-2cm}        % -> To fit TOC on one page
+
+\title{Zusammenfassung Analysis 1 \\[1ex] \large Karlsruher Institut für Technologie \\[1ex] Wintersemester 2023/2024}
+\author{Niklas Rodenbüsch}
+\date{}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{$#1$}
+
+\newtheoremstyle{nodot}
+  {\topsep}   % Space above
+  {\topsep}   % Space below
+  {}          % Body font
+  {}          % Indent amount
+  {\bfseries} % Theorem head font
+  {}          % Punctuation after theorem head
+  { }         % Space after theorem head
+  {}          % Theorem head spec (can be left empty, meaning `normal`)
+
+% Define theorem envirnment
+\theoremstyle{nodot}
+\newtheorem*{definition}{Definition:}
+
+\theoremstyle{nodot}
+\newtheorem*{trick}{Trick:}
+
+\begin{document}
+
+
+    \pagestyle{fancy}
+    \fancyhf{}
+    \fancyhead[L]{\nouppercase{\leftmark}}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0.2pt}
+
+    \maketitle
+    \newpage
+    \pagenumbering{Roman}
+    
+
+    \begin{onehalfspace}
+        \tableofcontents
+        \newpage
+        \newcounter{savepage}
+        \setcounter{savepage}{\value{page}}
+        \pagenumbering{arabic}
+        \newpage
+
+        \section{Grundlagen}
+        \input{sections/grundlagen}
+        % \subsection{Aussagenlogik}
+        % \begin{definition}
+        %     Eine \textit{Aussage} ist eine wohlgeformte mathematische Behauptung, die entweder \textit{wahr} oder \textit{falsch} ist.
+        % \end{definition}
+        \section{Komplexe Zahlen \f{\mathbb{C}}}
+        \input{sections/komplex.tex}
+        \section{Vollständige Induktion}
+        \input{sections/induktion.tex}
+        \section{Folgen \& Grenzwerte}
+        \input{sections/folgen.tex}
+        \section{Reihen \& Konvergenz}
+        \input{sections/reihen.tex}
+        % \section{Potenzreihen}
+        % \input{sections/potenzreihen.tex}
+        %\section{Stetigkeit}
+        \section{Stetige Funktionen}
+        \input{sections/stetigkeit.tex}
+        % \section{Gleichungen \& Grenzwerte}
+        % \input{sections/gleichungen.tex}
+        \section{Differenzialrechnung}
+        \input{sections/differenzialrechnung.tex}
+        % \section{Funktionen \& Konvergenz}
+        % \input{sections/funktionen.tex}
+        % \section{Mittelwertsatz}
+        % \input{sections/mittelwertsatz.tex}
+        \section{Taylorreihen/-polynome}
+        \input{sections/taylor.tex}
+    \end{onehalfspace}
+
+    
+
+\end{document}
+
+
+
+
+
+% Altklausuren
+
+% Wurzrl Sandwich Majoranten / Kriterien
+
+% Ungleichungen (alles auf eine seite -> funktion -> ableiten), Betragsungleichung
+
+% Reihen die als bruch geschrieben werden können um Summe zu eliminieren
+
+% Konvergenz Folgen
+
+% Zwischen/Mittelwertsatz
+
+% Induktionsbew.
+
+% Rekursive Folgen

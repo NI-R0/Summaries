@@ -1,0 +1,69 @@
+\subsection{Allgemein}
+\begin{itemize}
+    \item Schreibweise: Reihe \f{A_n=\sum_{k=n_0}^{^n}a_k,\quad (a_k)_k} ist "`zugehörige"' Folge
+    \item \f{A_n} konvergent: \f{\sum_{k=n_0}^{n}a_k=\lim(A_n)}
+    \item \f{\sum_{k=n_0}^{n}a_k} konvergent \f{\Rightarrow a_n \overset{n \to \infty}{\longrightarrow} 0}
+    \item Die Summe zweier konvergenter Reihen ist konvergent. Eine konvergente Reihe bleibt bei Multiplikation mit einem reellen Skalar konvergent.
+    \item \f{\sum a_n} absolut konvergent \f{:\Leftrightarrow\sum |a_n|} konvergent
+    \item \f{\sum a_n} absolut konvergent \f{\Rightarrow \sum a_n} konvergent, \f{\quad|\sum a_n|\leq\sum|a_n|}
+\end{itemize}
+
+\subsection{Kriterien}
+Sei die Reihe \f{A_n := \sum_{n=1}^{\infty}a_n}.
+\begin{enumerate}
+    \item \textbf{Nullfolge:}\\ 
+    Für die Konvergenz muss \f{\lim_{n \to \infty}a_n = 0} gelten. Ist \f{a_n} keine Nullfolge, folgt daraus direkt Divergenz.
+    \item \textbf{Cauchy's Konvergenzkriterium:}\\
+    \f{A_n} konvergent \f{\Leftrightarrow \forall\varepsilon>0 \quad \exists N\in\mathbb{N}: |\sum_{k=m}^{n}a_k|<\varepsilon\quad\forall m,n \geq N}\\
+    Gilt nur für \f{\mathbb{R}, \mathbb{C}}, nicht aber für \f{\mathbb{Q}}
+    \item \textbf{Quotientenkriterium:}\\
+    Sei \f{\lim_{n \to \infty}|\frac{a_{n+1}}{a_n}| =L}.\\
+    Die Reihe konvergiert absolut, wenn \f{L < 1} und divergiert wenn \f{L > 1}.
+    \item \textbf{Wurzelkriterium:}\\
+    Sei \f{\lim_{n \to \infty}\sqrt[n]{|a_n|}=L}. \\
+    Die Reihe konvergiert absolut, wenn \f{L < 1} und divergiert wenn \f{L > 1}.
+    \item \textbf{Majorantenkriterium:}\\
+    Sei die Reihe \f{\sum_{n=1}^{\infty}b_n} konvergent. Wenn \f{|b_n| \geq |a_n| \geq 0} für alle \f{n \geq n_0}, dann konvergiert auch die Reihe \f{\sum_{n=1}^{\infty}a_n} (absolut).
+    \item \textbf{Minorantenkriterium:}\\
+    Sei die Reihe \f{\sum_{n=1}^{\infty}b_n} divergent. Wenn \f{0 \leq b_n \leq a_n} für alle \f{n \geq n_0}, dann divergiert auch die Reihe \f{\sum_{n=1}^{\infty}a_n}.
+    \item \textbf{Leibniz-Kriterium (alternierende Reihen):}\\
+    Eine alternierende Reihe \f{\sum_{n=1}^{\infty}(-1)^na_n} konvergiert, wenn die folgenden Bedingungen erfüllt sind:
+    \begin{enumerate}
+        \item \f{0\leq a_{n+1}\leq a_n} für alle \f{n} (monoton fallend),
+        \item \f{\lim_{n \to \infty}a_n=0} (Nullfolge)
+    \end{enumerate}
+    \item \textbf{Umordnungsgesetz:}\\
+    \f{A_n} absolut konvergent \f{\Rightarrow} jede Umordnung der Reihe konvergiert gegen \f{A}
+\end{enumerate}
+
+\subsection{Bekannte Reihen}
+\begin{itemize}
+    \item \textbf{(Allgemeine) Harmonische Reihe:}
+    \begin{itemize}
+        \item \f{\sum_{k=1}^{n}\frac{1}{k} \to} divergent
+        \item \f{\sum_{k=1}^{n}\frac{1}{k^\alpha} \to} konvergent für \f{\alpha > 1}
+    \end{itemize}
+    \item \textbf{Geometrische Reihe:}
+    \begin{itemize}
+        \item \f{|q| < 1 \Rightarrow\sum_{k=1}^{n}q^k=\frac{1}{1-q} \to} konvergent
+        \item \f{|q| \geq 1 \Rightarrow\sum_{k=1}^{n}q^k \to} divergent
+    \end{itemize}
+    \item \f{\sum_{k=0}^{\infty}\frac{1}{k!} \to} konvergent \f{(=e)}
+\end{itemize}
+
+\newpage
+\subsection{Potenzreihen}
+\begin{itemize}
+    \item Sei \f{(a_n)} ein Folge in \f{\mathbb{C}} und \f{z \in \mathbb{C}}, dann ist \f{P(z) := \sum_{n=1}^{\infty}a_nz^n} eine Potenzreihe.
+    \item Konvergenzradius \f{R := \limsup_{n\to\infty}\frac{1}{\sqrt[n]{|a_n|}} }\\
+    Falls \f{\lim_{n\to\infty}|\frac{a_n}{a_{n+1}}|} existiert, dann gilt: \f{R = \lim_{n\to\infty}|\frac{a_n}{a_{n+1}}|}
+    \begin{itemize}
+        \item \f{|z|<R \Rightarrow P(z)} konvergiert
+        \item \f{|z|>R \Rightarrow P(z)} divergiert
+        \item \f{|z|=R \Rightarrow} beides kann passieren
+    \end{itemize}
+    \item Verhalten am Rand des Konvergenzradius:\\
+    Sei der Konvergenzradius \f{R > 0} der Potenzreihe \f{\sum_{n=1}^{\infty}a_nx^n} gegeben. Falls gefragt wird, wie sich die Reihe am Rand des Konvergenzkreises verhält, so sollte man \f{x = -R} und \f{x = R} auf Konvergenz überprüfen. Da \f{R = |\varrho |}:\\
+    \f{\sum_{n=1}^{\infty}a_n(-R)^n = \sum_{n=1}^{\infty}a_n(-1)^nR^n\quad \Rightarrow } Leibnizkriterium verwenden.\\
+    \textbf{Tipp:} Überprüfen, ob \f{a_n} eine Nullfolge ist.
+\end{itemize}

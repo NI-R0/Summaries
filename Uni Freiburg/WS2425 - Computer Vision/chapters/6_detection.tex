@@ -1,0 +1,66 @@
+\section{Object Detection and Semantic Segmentation}
+\subsection{Object Detection}
+Much harder than classification due to many possible outputs (false positives possible) and necessary localization of objects. Defining a suitable loss is also much harder.
+
+\subsection{R-CNN (Region-based CNN)}
+\b{Classic strategy:}
+\begin{enumerate}
+    \item Extract an arbitrary amount of region proposals (far more than actual objects)
+    \item Forward pass through classification CNN for each region. CNN decides on class in region (incl. "background" class)
+    \item No end-to-end training due to region proposals \f{\to} Slow
+\end{enumerate}
+\vspace{0.5em}
+\b{Left out: Overfeat\\}
+
+\vspace{0.5em}
+\b{Fast R-CNN:}
+\begin{itemize}
+    \item Compute ConvNetfeatures for the whole image once
+    \item Pool features for each region proposal and classify it
+    \item Additional bounding box regression
+    \item Much faster (most of the network is run only once), still requires pre-computed region proposals
+    \item[\f{\to}] RCNN: Feature map for each region proposal; Fast RCNN: Feature map for whole picture and then extract parts of region proposals from that
+\end{itemize}
+\vspace{0.5em}
+\b{Faster R-CNN:}
+\begin{itemize}
+    \item Region proposals computed by a CNN: Network that produces feature representation (like in Fast R-CNN). Region proposal network decides/predicts if a bounding box is worth considering or not
+    \item From that you regress more detailed bounding boxes through RoI pooling
+    \item Non-maximum suppression among overlapping bounding boxes
+\end{itemize}
+\vspace{0.5em}
+\b{YOLO:}
+\begin{itemize}
+    \item Divide image into \f{S\times S} grid.
+    \item One network predicts bounding bixes AND class probabilites for each gridpoint.
+    \item Both are combined by weighting the bounding boxes by probability.
+    \item[\f{\to}] Fast, only one network and iteration per image.
+    \item Problem: Small objects appear in groups as one gridpoint is limited to one object.
+\end{itemize}
+\vspace{0.5em}
+\b{Left out: DETR\\}\newpage
+
+\b{Recurrent Neural Networks:}
+RNNs are iterative networks, that share weights for each iteration. Consequences are:
+\begin{itemize}
+    \item They have memory (internal state)
+    \item They can produce a flexibly sized sequence of outputs
+    \item They can read in a flexibly sized sequence of inputs
+    \item They are harder to train
+\end{itemize}
+For more details on RNNs and LSTMs see DL summary.\\
+
+RNNs can be used for detection by taking in the feature maps of a preprocessing network and producing a sequence of bounding boxes!
+
+\subsection{Semantic Segmentation}
+Semantic segmentation is the task of assigning a class label to each pixel of the input image.\\
+Generating the segmented output image in its original resolution requires up-convolution, which synthesizes high-res features from low-res features. The first network to successfully utilize this strategy was the U-Net.\\
+
+\b{Panoptic Segmentation:} Segmentation for background classes, instance segmentation for object classes.\\
+
+\b{Mask-R-CNN:}
+This extension of the Faster-R-CNN can be used for instance segmentation. For each detected region have a decoder for segmentation, creating the segmentation map.\\
+
+\b{Left out: Mask2Former} (Transformer-based instance segmentation)
+
+\newpage

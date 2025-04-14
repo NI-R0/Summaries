@@ -1,0 +1,116 @@
+\documentclass[a4paper,11pt]{article}
+
+% Package imports
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+
+% Page layout
+\geometry{left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\graphicspath{ {./images/} }
+
+% Header definition
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Deep Learning Summary - WS24/25}
+\rhead{\thepage}
+
+% Theorem and definition styles with rounded borders and numbering
+\newtcolorbox{definitionbox}{colback=white, colframe=black, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{theorembox}{colback=white, colframe=blue, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+
+% Custom commands for numbered definitions and theorems
+\newcounter{definitioncounter}
+\newcounter{theoremcounter}
+
+\setlength{\parindent}{0pt}
+\setlength{\skip\footins}{0.5cm} % Adjust this to change the space above the footnotes
+\raggedbottom
+
+\newcommand{\definition}[1]{%
+    \refstepcounter{definitioncounter}%
+    \begin{definitionbox}
+    \textbf{Definition \thedefinitioncounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{definitionbox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\theorem}[1]{%
+    \refstepcounter{theoremcounter}%
+    \begin{theorembox}
+    \textbf{Theorem \thetheoremcounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{theorembox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{${#1}$}
+\renewcommand{\b}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+\newcommand{\pL}{\f{\mathcal{L}}}
+\newcommand{\fL}{\mathcal{L}}
+
+\begin{document}
+
+\input{acronyms.tex}
+
+% Title section
+\begin{center}
+    {\huge Deep Learning - WS24/25 \par}
+    \vspace{0.5cm}
+    {\large Niklas Rodenbüsch \par}
+    \vspace{0.5cm}
+    {\large \today \par}
+\end{center}
+\vspace{0.5cm}
+
+\section{Introduction}
+\input{chapters/1_intro}
+
+\section{\acp{mlp}}
+\input{chapters/2_mlp}
+
+\section{Backpropagation}
+\input{chapters/3_backprop.tex}
+
+\section{Optimization}
+\input{chapters/4_optim.tex}
+
+\section{Regularization}
+\input{chapters/5_regularization.tex}
+
+\section{\acp{cnn}}
+\input{chapters/6_cnn.tex}
+
+\section{\acp{rnn}}
+\input{chapters/7_rnn.tex}
+
+\section{Attention \& Transformers}
+\input{chapters/8_attention.tex}
+
+\section{Methodology}
+\input{chapters/9_methods.tex}
+
+\section{\acp{vae}}
+\input{chapters/10_vae.tex}
+
+\newpage
+
+\section{\acp{gan}}
+\input{chapters/11_gan.tex}
+
+\section{Uncertainty Estimation}
+\input{chapters/12_uncertainty.tex}
+
+\section{AutoML / \ac{hpo}}
+\input{chapters/13_hpo.tex}
+
+\end{document}

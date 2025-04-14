@@ -1,0 +1,14 @@
+Anstatt eine Funktion lokal durch eine lineare Abbildung darzustellen, können wir sie, falls die Funktion genügend oft differenzierbar ist, durch polynomiale Funktionen annähern.\\
+Sei \f{D \subset \mathbb{R}} offen, \f{x_0 \in D, f:D\to\mathbb{R}} n-mal differenzierbar.
+\begin{itemize}
+    \item \textbf{Entwicklungspunkt:} \f{x_0}
+    \item \textbf{n-tes Taylorpolynom:} \f{T_{n,x_0}f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k}
+    \item \textbf{Taylorreihe im Entwicklungspunkt:} \f{T_{x_0}f(x):=\sum_{k=0}^{\infty}\frac{f^{(k)}(a)}{k!}(x-a)^k}
+    \item Es gilt: \f{T_{0,x_0}f(x)=f(x_0)}
+    \item \f{f:D\to\mathbb{R} n}-mal diff.bar, \f{x_0\in D, f^{'}(x_0)=0, ..., f^{(n-1)}=0, f^{(n)}:}
+    \begin{itemize}
+        \item \f{n\in2\mathbb{N}, f^{(n)}<0 \Rightarrow x_0} strikt lokales Maximum
+        \item \f{n\in2\mathbb{N}, f^{(n)}>0 \Rightarrow x_0} strikt lokales Minimum
+        \item \f{n\in2\mathbb{N}+1, f^{(n)}<0 \Rightarrow x_0} kein lokales Extremum
+    \end{itemize}
+\end{itemize}

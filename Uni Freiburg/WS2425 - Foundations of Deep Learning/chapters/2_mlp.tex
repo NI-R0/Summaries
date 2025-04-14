@@ -1,0 +1,56 @@
+\subsection{Entropy \& \ac{kl}-Divergence}
+\definition{\b{Information entropy} quantifies the uncertainty about a random variable \f{X} (assume \f{X} has \f{K} possible outcomes):
+\cf{H(P) = - \mathbb{E}_{x\sim P}\left[\log P(x)\right]}
+\cf{H(P) = - \sum_{k=1}^{K}P(X=x_k)\log P(X=x_k)}}
+
+\definition{Given a true probability distribution \( P \) and a predicted distribution \( Q \), the \b{Cross-Entropy} of the same random variable \f{X} is defined as:
+\cf{H(P,Q) = - \mathbb{E}_{x\sim P}\left[\log Q(x)\right]}
+\cf{H(P,Q) = - \sum_{k=1}^{K}P(x_k)\log Q(x_k)}}
+
+\definition{\b{\ac{kl}-Divergence} is a measure of how one probability distribution \f{P} diverges from a second, expected probability distribution \f{Q}. The KL-divergence is defined as:
+\cf{D_{\text{KL}}(P \parallel Q) = H(P,Q) - H(P) = -\mathbb{E}_{x\sim P}\left[\log \frac{Q(x)}{P(x)}\right]}
+}
+The \ac{kl}-Divergence can be interpreted as the \b{information loss if we use distribution Q to approximate distribution P.}
+
+KL-Divergence is always non-negative, not symmetric and is zero if and only if \( P = Q \).
+
+\subsection{\ac{mle}}
+\ac{mle} is a method for estimating the parameters of a statistical model by maximizing the likelihood function, which represents the probability of observing the given data under various parameter values (in other words: the model "fitting" itself to match the observed data). The MLE is defined as:
+\[
+\theta_{\text{MLE}} = \arg\max_{\theta} p_{\text{model}}(\mathbb{X};\theta) = \arg\max_{\theta} \prod_{i=1}^{n} p(x_i \mid \theta)= \arg\max_{\theta} \sum_{i=1}^{n} \log p(x_i \mid \theta),
+\]
+where \f{\mathbb{X} = \{x_1, ..., x_n\}} is a set of \f{n} samples drawn from the unknown data-generating distribution \f{p_{\text{data}}}, and \( p_{\text{model}}(x_i \mid \theta) \) is the probability of observing the data point \( x_i \) given the parameters \( \theta \).
+
+
+\subsection{\acl{mlp}}
+The \ac{mlp} extends the simple Perceptron by adding (multiple) fully-connected hidden layers between the input and the output layer. The forward pass is computed the following way (assume the network has one hidden layer):
+\cf{\hat{y} = g^{(2)}(W^{{(2)}^T}g^{(1)}(W^{{(1)}^T}x+b^{(1)})+b^{(2)})}
+\b{Note:} The weight matrices in the first layer are of shape \f{(\text{dim\_x}\times \text{n\_neurons})^T}.
+\theorem{The Universal Function Approximation Theorem states that:
+\begin{enumerate}
+\item \b{Any boolean function} can be realized by an MLP with one hidden layer.
+\item \b{Any bounded continouos function} can be approximated with arbitrary precision by a MLP with one hidden layer.
+\end{enumerate}}
+\b{Note:} The theorem does not show that any function can be learned from data!
+
+\theorem{
+    A neural network with \f{n_0} inputs and \f{K} layers of \f{n} units each, with \ac{relu} activations can represent functions that have \f{\Omega((\frac{n}{n_0})^{(K-1)n_0}n^{n_0})} linear regions.}
+
+
+\subsection{Activation Functions}
+\begin{itemize}
+    \item \b{Linear:} \f{h_{\text{linear}}(z) = z}
+    \item \b{Hyperbolic Tangent:} \f{h_{\text{tanh}}(z)=\text{tanh}(z)=\frac{\exp(z)-\exp(-z)}{\exp(z)+\exp(-z)}\in[-1;1]}
+    \item \b{\ac{relu}:} \f{h_{\text{relu}}(z) = \max(0,z)}
+    \item \b{Parametric ReLU (PReLU):} \f{h_{\text{relu}}(z)=\begin{cases} 
+        z, & z>0 \\
+        az, & z\leq 0
+    \end{cases}}, where \f{a>0} is a learnable parameter.
+    \item \b{Exponential Linear Unit (ELU):} \f{h_{\text{elu}}(z)=\begin{cases} 
+        z, & z>0 \\
+        \alpha(\exp(z)-1), & z\leq 0
+    \end{cases}}, with \f{\alpha > 0}.
+    \item \b{Gaussian Error Linear Unit (GELU):} \f{h_{\text{gelu}}(z) = z\phi(z)}, where \f{\phi} is the CDF.
+    \item \b{Swish:} \f{h_{\text{swish}}(z)=z\sigma(\beta z)}, where \f{\beta \geq 0} is constant or a trainable parameter.
+    \item \b{Softmax:} \f{h_{\text{softmax}}(z) = \frac{\exp(z)}{\sum_j\exp(z_j)} = p(y_j=1) \in [0;1]}, for MCC output layer
+\end{itemize}

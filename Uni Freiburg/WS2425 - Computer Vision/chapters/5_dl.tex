@@ -1,0 +1,78 @@
+\section{Deep Learning}
+\b{IMPORTANT:} Generally this summary only contains information on Deep Learning which is NOT already contained in the summary for DL.\\
+
+\b{Artificial Neural Networks}
+\begin{itemize}
+    \item ANNs are a framework for learning a nonlinear predictive function
+    \item Input: a set of data-target pairs \f{D=\{(x_i,t_i)\}}
+    \item Learning is an optimization problem, e.g. squared loss for regression:
+    \cf{\fL(w;D) = \sum_{i}^{}\left\lVert \hat{y}_i-t_i\right\rVert^2 \to \min }
+\end{itemize}
+\b{SGD:}
+\begin{itemize}
+    \item Stochasticity due to small batches is important for regularization
+    \item SGD tends to zigzagging due to changing minibatches \f{\to} momentum
+    \item Gradient descent in general is a non-convex problem \f{\to} weight initialization influences solution
+\end{itemize}
+\vspace{0.5em}
+\b{Networks for Images}
+\begin{itemize}
+    \item FC networks are inefficient on image inputs, as image content is largely local and mostly stationary \f{\to} CNNs exploit both properties.
+\end{itemize}
+\vspace{0.5em}
+\b{Softmax and Cross-Entropy}
+\begin{itemize}
+    \item Softmax makes all components positive and normalizes its sum to 1.
+    \item MSE loss (regression loss) is not optimal if the target values \f{t_i} are one-hot vectors for class labels\\
+    \f{\to} Cross-Entropy loss (ground truth vs. estimated class distribution)
+\end{itemize}
+\vspace{0.5em}
+\b{Properties of CNNs}
+\begin{itemize}
+    \item Powerful feature representation of image content (increasing receptive field).
+    \item More efficient on multi-class problems than on small problems, as the network shares features when trained for multiple classes.
+    \item Large multi-class networks transfer well to similar classification tasks, good for finetuning or few-shot learning.
+    \item Deeper networks with smaller filters are more efficient.
+\end{itemize}
+\vspace{0.5em}
+\b{ResNets:}
+\begin{itemize}
+    \item Idea behind residual connections: incremental features (possible but hard for conventional ANNs)
+    \item Can be made very deep without negative effects (\f{>100} layers)
+    \item Can act as ensembles of smaller networks
+\end{itemize}
+\vspace{2em}
+\b{Attention \& Transformers}
+\begin{itemize}
+    \item Can handle inputs with varying number of tokens
+    \item Global, fully connected interaction between all tokens in first layer (has pros and cons)
+    \item Permutation invariance: tokens are not bound to a grid position \f{\to} positional encoding
+    \item Attention mask can be interpreted as input-dependent convolution
+\end{itemize}
+\vspace{0.5em}
+\b{Catastrophic Forgetting and Knowledge Distillation}
+\begin{itemize}
+    \item Incremental learning (incl. finetuning) on new data (new classes, new domains) leads to collapse of the learned representation
+    \item Common remedy: Additional knowledge distillation loss:
+    \cf{\mathcal{L}_\mathcal{X}=\mathcal{L}_\mathcal{X}^{CE}+\lambda*\mathcal{L}_\mathcal{X}^{KD}}
+    \f{\to} Forces the activations (often before the final softmax) of the new model on the new data to be close to the output of the old model
+\end{itemize}
+\vspace{0.5em}
+\b{Normalization:}
+\begin{itemize}
+    \item The normal training procedure does not put constraints on the size and compatibility of the unit activations \f{\to} Some units dominate, and it will take many iterations to correct this later in training.
+    \item BatchNorm: Statistics (mean, variance) for the normalization are computed from each mini-batchof size m. Activations are normalized by these statistics:
+    \cf{\hat{x}_i \leftarrow \frac{x_i-\mu_B}{\sqrt{\sigma_B^2+\epsilon}}}
+    \cf{y_i \leftarrow \gamma\hat{x}_i+\beta}
+    \item Additional learnable parametersensure that the model keeps its representation power.
+    \item Issue: Small minibatches (extreme case m=1) yield weak statistics.
+    \item Issue: BatchNorm increases sensitivity to distribution shift between training and test data.
+\end{itemize}
+\vspace{0.5em}
+\b{Contrastive Learning:}
+\begin{itemize}
+    \item Start: We have multiple pictures without any label
+    \item Idea: Take one picture, divide it into different crops/parts (embedding space), feed through network and maximize similarity (positive sample)
+    \item Take crops of \it{different} pictures, feed through net and \it{minimize} similarity
+\end{itemize}
+\newpage

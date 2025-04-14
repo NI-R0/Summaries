@@ -1,0 +1,153 @@
+\subsection{Vektorräume}
+\f{V} ist ein \f{K}-Vektorraum, wenn folgende Eigenschaften erfüllt sind:
+\begin{itemize}
+    \item \f{K} ist ein Körper
+    \item \f{(V,+)} ist eine abelsche Gruppe
+    \item \f{\cdot : K \times V \rightarrow V\quad} (Skalarmultiplikation)
+\end{itemize}
+Mit \f{u,v \in V \text{ und } \lambda, \mu \in K} gelten folgende Rechenregeln:
+\begin{itemize}
+    \item \f{1_K\cdot v = v}
+    \item \f{\lambda \cdot (\mu \cdot v) = (\lambda\cdot\mu)\cdot v}
+    \item \f{\lambda\cdot(u+v)=\lambda\cdot u + \lambda\cdot v}
+    \item \f{(\lambda + \mu)\cdot v = \lambda \cdot v + \mu \cdot v}
+\end{itemize}
+
+\subsection*{Untervektorraum}
+Sei \f{V} ein \f{K}-VR und \f{U\subseteq V} ein Untervektorraum von \f{V}. Dann ist \f{U} ein \f{K}-VR mit der selben Verknüpfung und Skalarmultiplikation wie \f{V}. \f{U} muss zusätzlich folgende Kriterien erfüllen:
+\begin{enumerate}
+    \item \f{0 \in U}
+    \item \f{\forall v,w \in U: v+w\in U}
+    \item \f{\forall v \in U, \forall\lambda \in K: \lambda v \in U}
+\end{enumerate}
+\subsubsection*{Kombination von UVR}
+Sei \f{V} ein \f{K}-Vektorraum und \f{U,W \subseteq  V}.
+\begin{itemize}
+    \item \f{U\cap W} ist ein \f{K}K-VR
+    \item \f{U \cup W} ist i.d.R. \textbf{kein} \f{K}-VR
+    \item \f{U+W := \text{LH}(U\cup W) = \left\{u+w|u\in U, w \in W\right\} } ist ein \f{K}-VR
+\end{itemize}
+
+
+%\subsection{}
+
+\subsection{Lineare Abbildungen}
+Vektorraumhomomorphismen werden auch als lineare Abbildungen bezeichnet. Seien \f{V,W} \f{K}-Vektorräume, dann ist \f{\Phi : V \rightarrow W \in \text{Hom}_K(V,W)} eine \f{K}-lineare Abbildung, wenn folgende Eigenschaften gelten:
+\begin{enumerate}
+    \item \f{\forall x,y\in V: \Phi(x+y)=\Phi(x)+\Phi(y)}
+    \item \f{\forall x\in V, \lambda \in K: \Phi(\lambda x)=\lambda\Phi(x)}
+\end{enumerate}
+Des weiteren gilt:
+\begin{itemize}
+    \item Hom\f{_K(V,W)} ist selbst ein Vektorraum
+    \item Kern\f{(\Phi) := \left\{v\in V | \Phi(v)=0\right\}}
+    \f{\Phi} injektiv \f{\Longrightarrow \text{Kern}(\Phi) = \left\{0\right\} }
+\end{itemize}
+\subsection{Lineare Hülle, Basis, Dimension, ...}
+\subsubsection*{Linearkombination}
+Sei \f{V} ein \f{K}-Vektorraum und \f{M} ein UVR von \f{V}. Seien \f{n\in\mathbb{N}, v_1,...,v_n \in M, \lambda_1,...,\lambda_n \in K}. Dann ist \f{\sum_{i=1}^{n}\lambda_i\cdot v_i \in V} eine Linearkombination.
+\subsubsection*{Lineare Hülle}
+Sei \f{V} ein \f{K}-Vektorraum und \f{M} ein UVR von \f{V}. Die lineare Hülle ist die Menge aller Linearkombinationen aus M. Die lineare Hülle ist definiert als:\\
+\f{\text{LH}(M):=\left\{\sum_{i=1}^{n}\lambda_i\cdot v_i | n \in\mathbb{N}_0, v_i\in M, \lambda_i \in K\right\} }\\
+
+\noindent{}LH\f{(M)} ist der kleinste Untervektorraum, der \f{M} enthält.\\
+\f{M} heißt Erzeugendensystem von LH\f{(M)}.\\
+\f{K^p = \text{LH}(\left\{v_1,...,v_p\right\}) \Leftrightarrow Rang((v_1|...|v_p))=p}
+\subsubsection*{Basis}
+Sei \f{V} ein \f{K}-Vektorraum. Ein UVR \f{U \subseteq  V} ist eine Basis von \f{V}, wenn folgende Eigenschaften gelten:
+\begin{enumerate}
+    \item \f{V = LH(U)}
+    \item Jedes \f{u\in U} ist linear unabhängig
+\end{enumerate}
+\subsubsection*{Lineare Unabhängigkeit}
+Sei \f{V} ein \f{K}-Vektorraum und \f{M = \left\{m_1,...,m_m\right\} \subseteq  V}. M ist linear unabhängig, wenn gilt:\\
+\f{\sum_{i=1}^{n}\lambda_im_i = 0 \Leftrightarrow \forall i : \lambda_i = 0\quad (\lambda_i \in K)}
+\subsubsection*{Dimension}
+Sei \f{V} ein \f{K}-Vektorraum, \f{U,W \subseteq V} und \f{B} eine Basis von \f{V}. Dann gilt für die Dimension:
+\begin{itemize}
+    \item dim\f{(V) = |B|}
+    \item dim\f{(U)\leq\text{dim}(V)}
+    \item dim\f{(U)=\text{dim}(V) \Leftrightarrow U = V}
+    \item Die Dimension ist abhängig vom Körper des Vektorraums.
+    \item dim\f{(U+W)=\text{dim}(U)+\text{dim}(W)-\text{dim}(U\cap W)}
+    \item \f{W} ist Komplement von \f{U \Leftrightarrow \text{dim}(U)+\text{dim}(W)=\text{dim}(V)}
+\end{itemize}
+\subsubsection*{Isomorphismen von Basen}
+Seien \f{V,W K}-Vektorräume und \f{\Phi \in} Hom\f{(V,W)}. Dann gilt:
+\begin{itemize}
+    \item \f{M\subseteq V} Erzeugendensystem von V, \f{\Phi} surjektiv \f{\Rightarrow \Phi(M)} Erzeugendensystem
+    \item \f{L\subseteq V} linear Unabhängigkeit, \f{\Phi} injektiv \f{\Rightarrow \Phi(L)} linear unabhängig
+    \item \f{B\subseteq V} Basis von \f{V, \Phi} bijektiv \f{\Rightarrow \Phi(B)} Basis von \f{W}
+\end{itemize}
+
+\subsection{Rechentechniken}
+\includegraphics*[width=\textwidth]{sections/Screenshot 2024-03-11 132518.png}
+
+
+
+\subsection{Faktorraum/Quotientenraum}
+Sei \f{V} ein \f{K}-Vektorraum, \f{U} ein UVR von \f{V} und \f{\sim} eine Äquivalenzrelation. Dann ist ein Faktorraum \f{V/U} definiert duch:
+\begin{itemize}
+    \item \f{V/U := V/\sim \quad} (Menge der Äquivalenzklassen von \f{\sim})
+    \item \f{V/U} ist ein \f{K}-VR mit \f{\left[v\right] +\left[w\right] :=\left[v+w\right] , \lambda \left[v\right]  := \left[\lambda v\right] }
+\end{itemize}
+\subsection{Rang eines Homomorphismus}
+Sei \f{\Phi\in} Hom\f{(V,W)}. Dann ist der Rang von \f{\Phi} definiert als:
+\begin{center}
+    rg\f{(\Phi) :=} dim(Bild(\f{\Phi}))
+\end{center} 
+Und es gilt:
+\begin{center}
+    dim\f{V=} rg(\f{\Phi })\f{+} dim(Kern(\f{\Phi}))\f{=}dim(Bild(\f{\Phi}))\f{+}dim(Kern(\f{\Phi}))
+\end{center}
+
+
+\subsection{Lineare Fortsetzung}
+Seien \f{V, W K}-Vektorräume und \f{B} eine Basis von \f{V}. Dann ist \f{\Phi\in\text{Hom}(V,W)} eindeutig definiert durch \f{\Phi|_B}.
+
+
+\subsection{Basiswechsel}
+\subsubsection*{Basisdarstellung}
+Sei \f{V} ein \f{K}-Vektorraum und \f{\mathsf{B} =(b_1,...,b_n)} eine geordnete Basis von \f{V}.
+\begin{itemize}
+    \item \f{\sum_{i}^{n}\lambda_ib_i=v\in V\quad} (Basiseinstellung eindeutig)
+    \item Isomorphismus \f{(\cdot)_B: V\rightarrow K^n, v\mapsto (\lambda_1,...,\lambda_n)\quad} (auch rückwärts)
+\end{itemize}
+\subsubsection*{Abbildungsmatrix}
+Es gilt:
+\begin{center}
+    \f{\forall \Phi\in\text{Hom}(K^n,K^m)\exists A\in K^{m\times n}: \quad \Phi(v)=A\cdot v\quad (v\in K^n)}
+\end{center}
+Erweiterung: Seien \f{V,W} \f{K}-Vektorräume mit \f{B=(b_1,...,b_n)} Basis von \f{V} und \f{C=(c_1,...,c_n)} Basis von \f{W}. Dann gilt:
+\begin{center}
+    \f{\forall\Phi\in\text{Hom}(V,W) \exists M_{CB}(\Phi)\in K^{m\times n}: (\Phi(v))_C = M_{CB}(\Phi)\cdot (v)_B\quad (v\in V)}
+\end{center}
+\subsubsection*{Basiswechsel}
+Sei \f{V} ein \f{K}-Vektorraum mit Basis \f{\mathsf{B}=(b_1,...,b_n) } und \f{\mathsf{C}=(c_1,...,c_n) }. Basiswechsel von B nach C (\f{(v)_B\leadsto (v)_C}):
+\begin{center}
+    \f{(v)_C = M_{CB}(id_V)\cdot (v)_B\quad (v\in V)}
+\end{center}
+Seien \f{V,W,T} \f{K}-Vektorräume mit je \f{\mathsf{B} ,\mathsf{C} ,\mathsf{D} } geordneten Basen. Seien \f{\Phi\in\text{Hom}(V,W)} und \f{\Psi \in\text{Hom}(W,T)}. Es gilt:
+\begin{center}
+    \f{M_{FB}(\Psi\circ \Phi) = M_{DF}(\Psi)\cdot M_{CB}(\Psi)}
+\end{center}
+Sei \f{\Phi} bijektiv, dann gilt:
+\begin{center}
+    \f{M_{BC}(\Phi^{-1})=M_{CB}(\Phi)^-1}
+\end{center}
+\subsubsection*{Bestimmen der Basiswechselmatrix}
+Sei \f{V=K^n} und \f{E} die Standardbasis. Dann gilt:
+\begin{center}
+    \f{M_{CB}(id)=M_{CE}(id)\cdot M_{EB}(id) = M_{EC}(id)^{-1}\cdot M_{EB}(id)\quad} mit \f{M_{EX}(id)=(x_1|...|x_n)}
+\end{center}
+
+
+\subsection{Affine Räume}
+\subsubsection*{Affiner Unterraum}
+Affine Unterräume sind verschobene Vektorräume. Sei \f{U} ein UVR und \f{p\in\mathbb{R}^n}:
+\begin{center}
+    \f{R = p+U := \left\{p+x|x\in U\right\} }
+\end{center}
+
+\subsubsection*{Affine Kombinationen}
+Seien \f{n\in\mathbb{N}, v_1,...,v_n\in\mathbb{R}^n, \lambda_1,...,\lambda_n\in\mathbb{R}} dann ist \f{\sum_{i=1}^{n}\lambda_iv_i\in V \text{ mit } \sum_{i=1}^{n}\lambda_i=1} eine Affinkombination.

@@ -1,0 +1,250 @@
+\documentclass[
+  english
+  ,12pt
+  ,pdftex
+]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}             
+\usepackage{bericht}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{soul}
+\usepackage{lipsum}
+\usepackage{cleveref}
+\usepackage[printonlyused]{acronym}
+\usepackage[justification=centerlast]{caption}
+\usepackage{tocbibind}
+\usepackage{titlesec}
+\usepackage{tocloft}   
+\usepackage{hyperref}   
+\usepackage{float} 
+\usepackage[bottom]{footmisc}
+\usepackage[skip=1.0em plus0.2em]{parskip}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{tabularx}
+\usepackage{pgf-pie}  
+\usepackage{makecell}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{external}
+
+\definecolor{tb_color_1}{RGB}{245,124,0}%orange
+\definecolor{tb_color_2}{RGB}{0,167,247}%grey
+
+\definecolor{tb_color_50pc}{RGB}{147,52,230}%purple
+\definecolor{tb_color_5pc}{RGB}{124,179,66}%green
+\definecolor{tb_color_10pc}{RGB}{18,181,203}%lightblue
+\definecolor{tb_color_25pc}{RGB}{229,37,146}%pink
+\definecolor{tb_color_1pc}{RGB}{225,42,42}%red
+\definecolor{tb_color_100pc}{RGB}{208,165,0}%yellow
+
+\pgfplotscreateplotcyclelist{tb}{
+semithick,tb_color_1\\%
+semithick,tb_color_2\\%
+semithick,tb_color_1pc\\%
+semithick,tb_color_5pc\\%
+semithick,tb_color_10pc\\%
+semithick,tb_color_25pc\\%
+semithick,tb_color_50pc\\%
+semithick,tb_color_100pc\\%
+}
+
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+\tikzstyle{data} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\renewcommand\cftbeforetoctitleskip{-2cm}        % -> To fit TOC on one page
+
+\input{includes/languages.tex}
+
+
+%Konfigurationen Jonas
+%Times New Roman
+\usepackage{times}
+\setcounter{tocdepth}{2}
+\graphicspath{{./images/}}
+
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\sethlcolor{orange}
+
+\newcommand{\Autor}{Niklas Rodenbüsch}
+\newcommand{\MatrikelNummer}{6130555}
+\newcommand{\Kursbezeichnung}{TINF21B4}
+
+\newcommand{\FirmenName}{SICK AG}
+\newcommand{\FirmenStadt}{Waldkirch}
+% Falls es kein Firmenlogo gibt:
+\newcommand{\FirmenLogoDeckblatt}{\includegraphics[width=3cm]{SICK_Logo}}
+
+\newcommand{\BetreuerDHBW}{Florian Stöckl, M.Sc.}
+\newcommand{\BetreuerFirma}{Dr.-Ing. Dominic Mai}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Was}{Bachelorarbeit}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Titel}{Label-Efficient Knowledge Distillation of Foundation Models}
+\newcommand{\AbgabeDatum}{02. September 2024}
+
+\newcommand{\Dauer}{12 Wochen}
+
+\newcommand{\Abschluss}{Bachelor of Science}
+
+\newcommand{\Studiengang}{Informatik / Angewandte Informatik}
+
+\def\figureautorefname{\acs{abb}}
+\renewcommand{\lstlistingname}{Quellcode}
+\renewcommand{\lstlistlistingname}{Liste der Quellcodes}
+\newcommand*{\quelle}{%
+\footnotesize Source:
+}
+\hypersetup{%%
+  pdfauthor={\Autor},
+  pdftitle={\Titel},
+  pdfsubject={\Was}
+}
+
+%\addtolength{\skip\footins}{1em plus 5pt}
+
+%//TODO: Daten von Quellen überprüfen
+%//TODO: Layout anpassen, dass keine Einzeiler am Seitenanfang oder -ende stehen
+%//TODO: Groß- und Kleinschreibung von Acros vereinheitlichen
+%//TODO: CH2 - Erwähnen, wie ConvNeXt trainiert wird
+%//TODO: CH2 - Erwähnen, warum was erklärt wird
+%//TODO: CH1 - Erwähnen, dass unser Multilabel-Problem relevant für die Logistik-Branche ist und SICK aus den und den Gründen ein geeigneter Entwicklungskontext dafür ist
+
+\begin{document}
+
+\newcommand{\qd}[1]{{\glqq #1\grqq{}}}
+\newcommand{\qe}[1]{"#1"}
+\newcommand{\cf}[1]{\cite[cf.][]{#1}}
+\newcommand{\cs}[2]{\cite[][#1]{#2}}
+\newcommand{\cfs}[2]{\cite[cf.][#1]{#2}}
+\newcommand{\ce}[1]{\[#1\]}
+\newcommand{\e}[1]{${#1}$}
+\renewcommand{\b}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\rightmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{-2cm}
+        \FirmenLogoDeckblatt\hfill\includegraphics[width=4cm]{dhbw-logo-ka}\\[2cm]
+        {\Huge \Titel}\\[1cm]
+        {\Huge\scshape \Was}\\[1cm]
+        {\large für die Prüfung zum}\\[0.5cm]
+        {\Large \Abschluss}\\[0.5cm]
+        {\large des Studienganges \Studiengang}\\[0.5cm]
+        {\large an der}\\[0.5cm]
+        {\large Dualen Hochschule Baden-Württemberg Karlsruhe}\\[0.5cm]
+        {\large von}\\[0.5cm]
+        {\large\bfseries \Autor}\\[1cm]
+        {\large Abgabedatum \AbgabeDatum}
+        \vfill
+    \end{center}
+    \begin{tabular}{l@{\hspace{2cm}}l}
+        Bearbeitungszeitraum          & \Dauer           \\
+        Matrikelnummer                & \MatrikelNummer  \\
+        Kurs                          & \Kursbezeichnung \\
+        Ausbildungsfirma              & \FirmenName      \\
+                                      & \FirmenStadt     \\
+        Betreuer der Ausbildungsfirma & \BetreuerFirma   \\
+        Gutachter der Studienakademie & \BetreuerDHBW    \\
+    \end{tabular}
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{onehalfspace}
+
+    \newpage
+    \input{includes/erklaerung.tex}
+    \vfill
+    \input{includes/sperrvermerk.tex}
+
+    \newpage
+    \input{includes/abstract.tex}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \newpage
+    \pagenumbering{Roman}
+    \tableofcontents
+
+    \newpage
+    \chapter*{List of Abbreviations}
+    \addcontentsline{toc}{chapter}{List of Abbreviations}
+    \input{includes/acronyms.tex}
+    \newpage
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \listoffigures
+    \newpage
+
+    \newcounter{savepage}
+    \setcounter{savepage}{\value{page}}
+    \pagenumbering{arabic}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %Behauptungen in Background referenzieren (Olli)
+    \include{chapters/1_introduction}
+    \include{chapters/2_background}
+    \include{chapters/3_concept}
+    \include{chapters/4_implementation}
+    \include{chapters/5_evaluation}
+    \include{chapters/6_conclusion}
+
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \newpage
+    \pagenumbering{Roman}
+    \setcounter{page}{\value{savepage}}
+
+    \renewcommand{\headrulewidth}{0pt}
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+
+
+
+    %\lstlistoflistings
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \newpage
+    \def\refname{Bibliography}        % -- Einträge in citations.bib
+    \addcontentsline{toc}{chapter}{Bibliography}
+    \printbibliography
+
+
+    \newpage
+    % Ab hier beginnt der Anhang
+    \appendix
+    \addcontentsline{toc}{chapter}{Appendix}
+    \include{chapters/9_appendix}
+    %\include{chapters/9_appendix.tex}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{onehalfspace}
+\end{document}

@@ -1,0 +1,89 @@
+\begin{itemize}
+    \item Funktion \f{f} definiert als: \f{\quad f: \underbrace{X}_\textrm{Definitionsbereich} \to \underbrace{Y}_\textrm{Bildbereich}}
+    \item Eigenschaften von Funktionen:
+    \begin{itemize}
+        \item Injektivität: \f{f(x_1)=f(x_2)\Rightarrow x_1=x_2}
+        \item Surjektivität: \f{\forall y\in Y: \exists x\in X: f(x) = y}
+        \item Bijektivität: \f{f \textrm{ ist bijektiv} \Leftrightarrow f \textrm{ ist surjektiv und injektiv}}
+        \item Umkehrfunktion: \f{f \textrm{ ist bijektiv} \Rightarrow \exists f^{-1}:f^{-1}(y)=x\quad \forall x\in X, \forall y \in Y}
+        \item Beschränktheit: \f{f} heißt beschränkt, falls \f{\exists c>0} so dass \f{\forall x \in X: |f(x)|<c}
+    \end{itemize}
+    \item \textbf{Zwischenwertsatz:} Sei \f{f:\left[a,b\right]\to\mathbb{R}} eine stetige und reelle Funktion. Es gilt:\\
+    \f{f(a)\leq\gamma \leq f(b) \Rightarrow \exists c \in \left[a,b\right]:f(c)=\gamma }
+    % \item Die Exponentialfunktion (\f{e^x}) wächst schneller als Polynome \f{(z^n, \textrm{ mit } n\neq z)}. Es gilt: 
+\end{itemize}
+
+
+\subsection{Stetigkeit}
+\begin{itemize}
+    \item Definition durch \f{\varepsilon\delta -}Kriterium:\\
+    \f{f} heißt stetig in \f{x_0} falls \f{\forall\varepsilon>0.\quad\exists\delta>0, \textrm{ sodass } \forall x\in X,} gilt:\\ \f{|x-x_0|<\delta \Rightarrow |f(x)-f(x_0)|<\varepsilon}.\\
+    Weiter heißt \f{f} stetig, wenn \f{f} stetig in \f{x_0} \f{\forall x_0\in X} ist.\\
+    \f{\delta} ist in Abhängigkeit von \f{\varepsilon} und \f{x_0} zu wählen.
+    \item Definition durch Grenzwert:\\
+    \f{f} heißt stetig in \f{x_0}, wenn \f{\lim_{x \to x_0}f(x) \textrm{ existiert und } \lim_{x \to x_0}f(x)= f(x_0)}.
+    \item Seien \f{f,g} stetige Funktionen:
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item \f{f \circ g} ist stetig.
+            \item \f{f\dotplus g} ist stetig.
+            \item \f{|f|, \overline{f}, \mathfrak{R}(f), \mathfrak{J}(f)} sind stetig.
+            \item \f{\frac{f}{g}} ist stetig \f{\forall x} mit \f{g(x) \neq 0}.
+            \item Polynome sind stetig.
+            \item \f{\sqrt[n]{x}} ist stetig auf \f{\mathbb{R}^+}.
+        \end{itemize}
+    \end{multicols}
+    \item Libschitz-Stetigkeit:\\
+    \f{f} heißt Libschitz-stetig falls \f{\exists L > 0} so dass \f{\forall x,x_o \in X} gilt:\\
+    \f{|f(x)-f(x_0)| \leq L \cdot |x - x_0|}
+    \item Mächtigkeit: \f{f} ist Libschitz-stetig \f{\Rightarrow f} ist gleichmäßig stetig \f{\Rightarrow f} ist stetig
+\end{itemize}
+
+\subsection{Funktionenfolgen und -reihen}
+\begin{itemize}
+    \item Punktweise Konvergenz:\\
+    \f{(f_n)} konvergiert punktweise gegen \f{f}, wenn \f{\forall x \in X.} \f{\forall \varepsilon >0.} \f{\exists n_0 \in \mathbb{N}} so dass \f{\forall n \geq n_0} gilt: \f{\quad |f_n(x) - f(x)|<\varepsilon}.\\
+    \f{n_0} ist in Abhängigkeit von \f{\varepsilon} und \f{x} zu wählen.
+    \item Gleichmäßige Konvergenz:\\
+    \f{(f_n)} konvergiert gleichmäßig gegen \f{f}, wenn \f{\forall \varepsilon >0.} \f{\exists n_0 \in \mathbb{N}} so dass \f{\forall n \geq n_0} \f{\forall x \in X} gilt: \f{\quad |f_n(x) -f(x)|<\varepsilon}.\\
+    \f{n_0} ist in Abhängigkeit von \f{\varepsilon} zu wählen.
+    \item Konvergiert \f{(f_n)} gleichmäßig gegen \f{f} und \f{f_n} ist stetig \f{\forall n \Longrightarrow f} ist stetig.
+    \item Funktionenfolge auf Konvergenz überprüfen:\\
+    Sei \f{f_n(x)} gegeben. Zu zeigen: Punktweise und gleichmäßige Konvergenz von \f{f_n(x)}.
+    \begin{enumerate}
+        \item Punktweise: \f{f_n} konvergiert punktweise, wenn die Grenzfunktion\\
+        \f{\lim_{n\to\infty}f_n(x)=f(x)} existiert.
+        \item Gleichmäßig: Zeige \f{|f_n(x)-f(x)|<\varepsilon}
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Nützliche Grenzwerte}
+\begin{enumerate}
+    \item \f{\lim_{z\to\infty}\frac{z^n}{e^z}=0}
+    \item \f{\lim_{z\to0}\frac{e^z-1}{z}=1}
+    \item \f{\lim_{x\to\infty}\frac{\log(x)}{\sqrt[n]{x}}=0\quad(\log} konvergiert wesentlich langsamer als andere Funktionen)
+\end{enumerate}
+
+\subsection{Trigonometrische Funktionen}
+\begin{multicols}{2}
+    \begin{itemize}
+        \item \f{\sin(x)=\frac{e^{ix}-e^{ix}}{2i}=\sum_{n=0}^{\infty}(-1)^n\frac{x^{2n+1}}{(2n+1)!}}
+        \item \f{\cos(x)=\frac{e^{ix}+e^{ix}}{2}=\sum_{n=0}^{\infty}(-1)^n\frac{x^{2n}}{(2n)!}}
+        \item \f{\tan(x)=\frac{\sin(x)}{\cos(x)}}
+        \item \f{\sinh(x)=\frac{e^x-e^{-x}}{2}=\sum_{n=0}^{\infty}\frac{x^{2n+1}}{(2n+1)!}}
+        \item \f{\cosh(x)=\frac{e^x+e^{-x}}{2}=\sum_{n=0}^{\infty}\frac{x^{2n}}{(2n)!}}
+        \item \f{\tanh(x)=\frac{\sinh(x)}{\cosh(x)}}
+        \item \f{\sin^2(x)+\cos^2(x)=1}
+        \item \f{\sin(2x)=2\cos(x)\sin(x)}
+        \item \f{\cos^2(x)=\frac{1}{2}(1+\cos(2x))}
+        \item \f{\sin^2(x)=\frac{1}{2}(1-\cos(2x))}
+        \item[\vspace{\fill}]
+    \end{itemize}
+\end{multicols}
+\begin{itemize}
+    \item \f{\cos(\frac{\pi}{2}-x)=\sin(x) \quad | \quad \sin(\frac{\pi}{2}-x)=\cos(x)}
+    \item \f{\cos(x+y)=\cos(x)\cos(y)-\sin(x)\sin(y)}
+    \item \f{\sin(x+y)=\cos(x)\sin(y)-\sin(x)\cos(y)}
+    \item \f{\cos(2x)=\cos^2(x)-\sin^2(x)=2\cos^2(x)-1=1-2\sin^2(x)}
+\end{itemize}
+    

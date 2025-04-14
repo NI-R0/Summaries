@@ -1,0 +1,102 @@
+Es sei \f{M} eine Menge und \f{a,b \in M}. Eine Verknüpfung ist eine Abbildung \f{*: M\times M \rightarrow M} mit folgenden möglichen Eigenschaften:
+\begin{itemize}
+    \item Assoziativität: \f{(x*y)*z=x*(y*z)}
+    \item Kommutativität: \f{x*y=y*x}
+\end{itemize}
+
+
+
+\subsection{Gruppen}
+\subsubsection*{Halbgruppen}
+Sei \f{S} eine Menge und \f{*} eine Verknüpfung. Eine Halbgruppe \f{S,*} erfüllen folgende Eigenschaften:
+\begin{enumerate}
+    \item \f{*:S\times S \rightarrow S \quad (\forall a,b \in S: a*b \in S)\quad} (\textbf{Abgeschlossenheit})
+    \item \f{*} ist \textbf{assoziativ}
+\end{enumerate}
+\subsubsection*{Monoid}
+Eine Halbgruppe ist insbesondere ein Monoid, wenn zusätzlich gilt:
+\begin{enumerate}
+    \item[3.] \f{\exists e \in S:\forall x\in S: x*e = e*x = x\quad} (\textbf{Existenz eines neutralen Elements})
+\end{enumerate}
+\subsubsection*{Gruppen}
+Ein Monoid ist insbesondere eine Gruppe, wenn zusätzlich gilt:
+\begin{enumerate}
+    \item[4.] \f{\forall x \in S: \exists y =: x^{-1}\in S: x*y=y*x=e\quad} (\textbf{Existenz des inversen Elements}) 
+\end{enumerate}
+\subsubsection*{Abelsche Gruppe}
+Sei \f{(G,*)} eine Gruppe. Damit \f{(G,*)} eine abelsche Gruppe ist, muss zusätzlich gelten:
+\begin{enumerate}
+    \item[5.] * ist \textbf{kommutativ} 
+\end{enumerate}
+\subsubsection*{Symmetrische Gruppe}
+\begin{itemize}
+    \item Symmetrische Gruppe \f{\mathcal{S}(X):=(X^X, \circ )^\times = (\left\{f:X\rightarrow X |f\text{ bijektiv}\right\} , \circ)}
+    \item Für \f{X = \left\{1,...,n\right\} : \mathcal{S}(n):=\mathcal{S}(X)\quad(n\in\mathbb{N})}
+    \item Permutationen \f{\sigma \in\mathcal{S}(n): \sigma = \begin{pmatrix}1&2&...&n\\\sigma(1)&\sigma(2)&...&\sigma(n)\end{pmatrix}}
+\end{itemize}
+\newpage
+\subsubsection*{Untergruppen}
+Sei \f{(G,*)} eine Gruppe. Eine Gruppe \f{(H,*)} heißt \textbf{Untergruppe} von \f{(G,*)} wenn folgende Eigenschaften gelten:
+\begin{enumerate}
+    \item \f{e_G \in H}
+    \item \f{\forall g,h \in H: g*h \in H}
+    \item \f{\forall g \in H: g^{-1} \in H}
+\end{enumerate}
+\subsubsection*{Homomorphismen}
+Homomorphismen sind strukturerhaltende Abbildungen. Seien \f{(G,*),(H,\bullet)} Gruppen. Dann ist \f{f:G\rightarrow H \in\text{ Hom}(G,H)} ein Gruppenhomomorphismus, wenn gilt:\\
+\f{\forall x,y\in G: f(x*y)=f(x)\bullet f(y)}\\
+
+\noindent{}Sei \f{h\in\text{Hom}(G,H)}, dann gelten folgende Eigenschaften:
+\begin{itemize}
+    \item \f{h(e_G)=e_H}
+    \item \f{h(g^{-1}=h(g)^{-1})}
+    \item \f{U \text{ ist UGR von } G \Rightarrow h(U) \text{ ist UGR von } H}
+    \item \f{h} injektiv \f{\Leftrightarrow} Kern \f{h := h^{-1}(\left\{e_H\right\} )=\left\{e_G\right\} }\\
+\end{itemize}
+
+\noindent{}Sei \f{h\in \text{Hom}(G,H)}. Dann ist Kern\f{(h)} definiert als:\\
+\f{\text{Kern }h:=h^{-1}(\left\{e_H\right\}) = \left\{g\in G: h(g)=e_H\right\}}
+
+\subsection{Ringe}
+Ein Ring \f{(R,+,\cdot)} erfüllt die folgenden Eigenschaften:
+\begin{enumerate}
+	\item \f{(R,+)} ist eine abelsche Gruppe (mit neutralem Element \f{0_R})
+	\item \f{(R,\cdot)} ist Monoid (mit neutralem Element \f{1_R})
+	\item Für alle \f{x,y,z \in R} gelten die Distributivgesetze
+	\item \f{R} kommutativ \f{:\Leftrightarrow \cdot} kommutativ
+	\item Nullteilerfrei, falls: \f{\forall a,b\in R: (a\cdot b = 0_R)\Rightarrow(a=0_R \vee b=0_R)}
+\end{enumerate}
+\subsubsection*{Ringhomomorphismus}
+Seien \f{(R, +_R, \cdot_R), (S, +_S, \cdot_S)} Ringe. Ein Ringhomomorphismus \f{\Phi : R\rightarrow S} erfüllt folgende Eigenschaften (\f{\forall x,y \in R}):
+\begin{itemize}
+    \item \f{\Phi (x+_Ry)=\Phi(x) +_S \Phi(y)}
+    \item \f{\Phi(x\cdot_Ry)=\Phi(x)\cdot_S\Phi(y)}
+    \item \f{\Phi(1_R)=1_S}
+    \item Kern \f{\Phi = \Phi^{-1}(\left\{0_S\right\})}
+\end{itemize}
+
+\subsection{Körper}
+Ein Körper \f{(K,+,\cdot)} erfüllt die folgenden Eigenschaften:
+\begin{enumerate}
+    \item \f{(K,+)} ist eine abelsche Gruppe
+    \item \f{(K\backslash 0_K), \cdot} ist eine abelsche Gruppe
+    \item Für alle \f{x,y,z \in K} gilt das Distributivgesetze\\
+\end{enumerate} 
+
+\noindent{}\textbf{Restklassenkörper:} \f{\mathbb{F}_p := \mathbb{Z} /p\mathbb{Z}}, \f{p \in \mathbb{N}} prim
+\subsubsection*{Körperhomomorphismus}
+Seien \f{(K,+,\cdot)} und \f{(L,+,\cdot)} Körper. \f{\Phi:K\rightarrow L} ist ein Körperhomomorphismus, wenn:
+\begin{itemize}
+    \item \f{\Phi (x+y)=\Phi(x)+\Phi(y)} und \f{\Phi(x\cdot y)=\Phi(x)\cdot\Phi(y)\quad(\forall x,y\in K)}
+    \item \f{\Phi(1_K)=1_L}
+\end{itemize}
+
+\subsection{Polynomring}
+Sei \f{R} ein kommutativer Ring. Dann ist \f{p = a_nX^n + a_{n-1}X^{n-1}+...+a_1X+a_0 \in R\left[X\right] } mit \f{a_i \in R} und folgenden Eigenschaften:
+\begin{itemize}
+    \item Grad\f{(p)=n\quad} (\f{n=0 \Rightarrow \text{Grad}(p)=-\infty}) 
+    \item \f{R\left[X\right] } ist ein Ring (bzw. \f{R}-Algebra falls \f{R} ein Körper ist)
+    \item \textbf{Einsetzabbildung:} \f{f \in R\left[X\right] \mapsto f:R\rightarrow R\quad}\\
+    (Ersetzen von \f{X} durch ein Element aus \f{R}) 
+\end{itemize}
+\newpage

@@ -1,0 +1,78 @@
+\subsection{Algebren}
+Sei \f{K} ein Körper. \f{(A,+,\bullet,\cdot)} ist eine Algebra, wenn sie folgende Eigenschaften erfüllt:
+\begin{enumerate}
+    \item \f{(A,+,\cdot) \text{ ist ein } K}-Vektorraum
+    \item \f{(A,+,\bullet)} ist ein Ring
+    \item \f{(\lambda \cdot a)\bullet b = a \bullet(\lambda\cdot b)=\lambda\cdot(a\bullet b)\quad (\forall\in K, a,b\in A)}
+\end{enumerate}
+\subsection{Determinante von Matrizen}
+Seien \f{M,N \in K^{n\times n}}. Dann gilt:
+\begin{itemize}
+    \item det\f{(M^T)=\text{ det}(M)}
+    \item \f{M\in\text{GL}_n(K) (M\text{ invertierbar)} \Leftrightarrow \text{det}(M) \neq 0}
+    \item det\f{(M\cdot N) =} det\f{M\cdot} det\f{N}
+    \item det\f{(\lambda M) = \lambda^n \cdot \text{det}(M)}
+    \item det\f{A^{-1}=\frac{1}{\text{det}(A)}}
+    \item det\f{\begin{pmatrix}a_1&...&*\\0&\ddots &*\\0&0&a_n\end{pmatrix} = a_1\cdot ... \cdot a_n}
+\end{itemize}
+\subsubsection*{Determinante berechnen}
+\begin{enumerate}
+    \item[0.] det\f{\begin{pmatrix}a&b\\c&d\end{pmatrix} = ad-bc}
+    \item Solange wie möglich mit Gauß vereinfachen (Ziel: Dreiecksmatrix oder Zeile/Spalte mit vielen Nullen)
+    \item Wenn nicht weiter möglich, nach passender Zeile/Spalte entwickeln
+\end{enumerate}
+\subsubsection*{Adjunkte}
+Sei \f{M=\begin{pmatrix}a&b&c\\d&e&f\\g&h&i\end{pmatrix}} eine quadratische Matrix. Die Adjunkte adj(\f{M}) von \f{M} bestimmt man nach dem folgenden Schema:
+\begin{center}
+    \f{adj(M)=\begin{pmatrix}\text{det}\begin{pmatrix}e&f\\h&i\end{pmatrix}&-\text{det}\begin{pmatrix}d&f\\g&i\end{pmatrix}&\text{det}\begin{pmatrix}d&e\\g&h\end{pmatrix}\\-\text{det}\begin{pmatrix}b&c\\h&i\end{pmatrix}&\text{det}\begin{pmatrix}a&c\\g&i\end{pmatrix}&-\text{det}\begin{pmatrix}a&b\\g&h\end{pmatrix}\\\text{det}\begin{pmatrix}b&c\\e&f\end{pmatrix}&-\text{det}\begin{pmatrix}a&c\\d&f\end{pmatrix}&\text{det}\begin{pmatrix}a&b\\d&e\end{pmatrix}\end{pmatrix}^T}
+\end{center}
+
+\subsubsection*{Cramersche Regel}
+Die Cramersche Regel kann zur Berechnung von inversen Matrizen verwendet werden.
+\cf{A^{-1}=\frac{\text{adj}(A)}{\text{det}(A)}}
+
+\subsection{Endomorphismen}
+Seien \f{V} ein \f{K}-Vektorraum, \f{B} und \f{C} eine Basis von \f{V} und \f{\Phi\in\text{Hom}(V,V)}. Dann ist die Determinante des Endomorphismus:
+\begin{center}
+    det\f{(\Phi):=\text{det }D_{BB}(\Phi) = \text{det }D_{CC}(\Phi)}
+\end{center}
+Sei zusätzlich U ein Untervektorraum von V. Dann gilt:
+\begin{center}
+    \f{U} ist \f{\Phi}-invariant \f{\Leftrightarrow \Phi(U)\subseteq U}
+\end{center}
+
+
+
+
+
+\subsection{Eigenwerte, Eigenvektoren und Eigenräume}
+Sei \f{\Phi\in\text{ Hom}(V,V)}. Dann ist:
+\begin{itemize}
+    \item \f{v\in V\backslash\left\{0\right\}} Eigenvektor von \f{\Phi\quad\Leftrightarrow\quad \Phi(v)=\lambda v\quad(\lambda\in K)}
+    \item \f{\lambda\in K} heißt Eigenwert von \f{\Phi\quad\Leftrightarrow\quad\exists} Eigenvektor \f{v} mit \f{\Phi(v)=\lambda v}
+    \item Eigenraum Eig\f{(\Phi,\lambda)} ist die Menge aller Eigenvektoren zum Eigenwert \f{\lambda} (und \f{0})\\
+    Eig\f{(\Phi, \lambda)} = Kern(\f{\Phi-\lambda\cdot\text{Id}_V})
+    \item Spektrum Spec(\f{\Phi}) ist die Menge aller Eigenwerte
+    \item Eigenvektoren zu unterschiedlichen Eigenwerten sind linear unabhängig
+\end{itemize}
+
+\subsection{Charakteristisches Polynom}
+Sei \f{\Phi\in} Hom\f{(V,V)} und \f{B} eine Basis von \f{V}. Das charakteristische Polynom wird zum einfachen Bestimmen von Eigenwerten verwendet.
+\begin{center}\f{CP_\Phi(X):=} det\f{(XI_n-D_{BB}(\Phi))}\\\end{center}
+Unabhängig von der gewählten Basis \f{B} gilt:
+\begin{center}\f{CP_\Phi(\lambda)=0 \Leftrightarrow \lambda} Eigenwert von \f{\Phi}\end{center}
+
+\subsection{Diagonalisierbarkeit}
+Sei \f{\Phi\in} Hom\f{(V,V)} diagonalisierbar. Dann gilt:
+\begin{itemize}
+    \item \f{\exists} Basis \f{B} sodass \f{D_{BB}(\Phi)} in Diagonalform (falls dim\f{V<\infty})
+    \item \f{V} hat eine Basis aus Eigenvektoren von \f{\Phi} 
+    \item \f{V} ist Summe der Eigenräume
+    \item Charakteristisches Polynom zerfällt in Linearfaktoren und geometrische und algebraische Vielfachheiten stimmen überein.
+\end{itemize}
+\subsubsection*{Vielfachheiten}
+Sei \f{\Phi\in} Hom\f{(V,V), \lambda\in} Spec\f{(\Phi)}. Dann sind Vielfachheiten wie folgt definiert:
+\begin{itemize}
+    \item \textbf{Geometrisch:} \f{\mu_g(\Phi,\lambda) :=} dim(Eig\f{(\Phi,\lambda)})
+    \item \textbf{Algebraisch:} \f{\mu_a(\Phi,\lambda) :=} Häufigkeit der Nullstelle \f{\lambda} in \f{CP_\Phi(X)}
+\end{itemize}

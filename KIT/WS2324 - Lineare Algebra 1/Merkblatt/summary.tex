@@ -1,0 +1,300 @@
+\documentclass[ngerman,11pt,a4paper
+,pdftex]{article}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{blindtext}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{cleveref}
+\usepackage[printonlyused]{acronym}
+\usepackage[center]{caption}
+\usepackage{tocbibind}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{latexsym}              
+\usepackage[mathletters]{ucs}   
+\usepackage[a4paper,hmargin=1cm,vmargin=1cm,landscape=true]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{multicol}
+\usepackage[most]{tcolorbox}
+\renewcommand\cftbeforetoctitleskip{-2cm}        % -> To fit TOC on one page
+
+\title{Merkblatt Lineare Algebra 1 \\[1ex] \large Karlsruher Institut für Technologie \\[1ex] Wintersemester 2023/2024}
+\author{Niklas Rodenbüsch}
+\date{}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{$#1$}
+
+\newtheoremstyle{nodot}
+  {\topsep}   % Space above
+  {\topsep}   % Space below
+  {}          % Body font
+  {}          % Indent amount
+  {\bfseries} % Theorem head font
+  {}          % Punctuation after theorem head
+  { }         % Space after theorem head
+  {}          % Theorem head spec (can be left empty, meaning `normal`)
+
+% Define theorem envirnment
+\theoremstyle{nodot}
+\newtheorem*{definition}{Definition:}
+
+\theoremstyle{nodot}
+\newtheorem*{trick}{Trick:}
+
+\begin{document}
+
+
+    % \pagestyle{fancy}
+    % \fancyhf{}
+    % \fancyhead[L]{\nouppercase{\leftmark}}
+    % \fancyfoot[C]{\thepage}
+    % \renewcommand{\headrulewidth}{0.2pt}
+
+    \pagenumbering{gobble}
+    % \maketitle
+    % \newpage
+
+    % \begin{onehalfspace}
+        % \tableofcontents
+        % \newpage
+
+        \begin{multicols*}{3}
+          \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt,bottom=10pt, top=10pt]
+            \subsection*{Gruppen \f{(G,\ast )}}
+            \subsubsection*{Halbgruppe}
+            \begin{enumerate}
+              \item Abgeschlossenheit bzgl. \f{\ast}
+              \item Assoziativität
+            \end{enumerate}
+            \subsubsection*{Monoid}
+            \begin{enumerate}
+              \item[3.] Neutrales Element
+            \end{enumerate}
+            \subsubsection*{Gruppe}
+            \begin{enumerate}
+              \item[4.] Inverses Element
+            \end{enumerate}
+            \subsubsection*{Abelsche Gruppe}
+            \begin{enumerate}
+              \item Kommutativität
+            \end{enumerate}
+
+            \subsection*{Untergruppen \f{(H,\circ) \text{ von } G}}
+            \begin{enumerate}
+              \item \f{e_G\in H}
+              \item Abgeschlossenheit bzgl. \f{\circ}
+              \item Inverses Element
+            \end{enumerate}
+          \end{tcolorbox}
+          
+          \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+            \subsection*{Ringe \f{(R,+, \cdot)}}
+            \begin{enumerate}
+              \item \f{(R,+)} abelsche Gruppe
+              \item \f{(R,\cdot)} Monoid
+              \item Distributivgesetze
+              \item \f{\cdot} kann kommutativ sein
+            \end{enumerate}
+          \end{tcolorbox}
+
+          \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+            \subsection*{Körper \f{(K,+, \cdot)}}
+            \begin{enumerate}
+              \item \f{(K,+)} abelsche Gruppe
+              \item \f{(K\backslash 0_K,\cdot)} abelsche Gruppe
+              \item Distributivgesetze
+            \end{enumerate}
+          \end{tcolorbox}
+
+          \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+            \subsection*{K-Vektorraum \f{V}}
+            \begin{enumerate}
+              \item \f{(K)} ist Körper
+              \item \f{(V,+)} abelsche Gruppe
+              \item Abgeschlossen bzgl. skalarer Multiplikation\\
+              \f{\cdot : K\times V \rightarrow V}
+            \end{enumerate}
+            
+            \subsection*{Untervektorraum \f{U \text{ von } V}}
+            \begin{enumerate}
+              \item \f{0_V \in U}
+              \item Abgeschlossen bzgl. Addition
+              \item Abgeschlossen bzgl. skalarer Multiplikation
+            \end{enumerate}
+
+            \subsection*{Affine Unterräume \f{R}}
+            \begin{itemize}
+              \item \f{R = \left\{p+x | x\in U\right\} \quad (p\in\mathbb{R}^n)}
+            \end{itemize}
+          \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+          \subsection*{Homomorphismen \f{\Phi}}
+          \begin{itemize}
+            \item \f{G, H \text{ Strukturen mit Verknüpfungen } \dotplus}
+            \item \f{\Phi:G\rightarrow H}
+          \item \f{\forall x,y\in G: \Phi(x\dotplus _G y) = \Phi(x)\dotplus_H\Phi(y)}
+          \end{itemize}
+        \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt,breakable,enhanced]
+          \subsection*{Algebra \f{(A,+,\circ,\cdot)}}
+          \begin{itemize}
+            \item \f{(A,+,\cdot)} K-Vektorraum
+            \item \f{(A,+,\circ)} Ring
+            \item \f{(\lambda\cdot a)\circ b = a\circ (\lambda \cdot b) = \lambda \cdot (a\circ b)}
+          \end{itemize}
+        \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white]
+          \subsection*{Matrizen \f{A}}
+          \begin{itemize}
+            \item \f{A\in\mathbb{R}^{m\times n}\rightarrow} m Zeilen
+            \item \f{(AB)^T=B^TA^T,\quad (A+B)^T=A^T+B^T}
+          \end{itemize}
+
+          \subsubsection*{Determinante}
+          \begin{itemize}
+            \item det\f{(\lambda A)=\lambda^m\cdot \text{ det}(A)}
+            \item 2\f{\times}2: \f{ab-cd}
+            \item 3\f{\times}3: Regel von Sarrus
+          \end{itemize}
+          \begin{enumerate}
+            \item Mit Gauß vereinfachen (Dreiecksmatrix/Zeile mit vielen Nullen)
+            \item Nach Zeile/Spalte entwickeln
+          \end{enumerate}
+
+          \subsubsection*{Invertierbare Matrizen}
+          \begin{itemize}
+            \item det\f{(A)\neq0}
+            \item ker\f{(A)=\left\{0\right\}} 
+            \item rg\f{(A)=m}
+            \item \textbf{Vorgehen: } \f{(A|I)\leadsto (I|X)}
+            \item \textbf{Cramersche Regel: }\f{A^{-1}=\frac{\text{adj}(A)}{\text{det}(A)}}
+            \item \f{A = \begin{pmatrix}a&b\\c&d\end{pmatrix} \rightarrow A^{-1}=\frac{1}{\text{det}(A)}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}}
+          \end{itemize}
+        \end{tcolorbox}
+        
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+          \subsubsection*{Bild einer Matrix}
+          \begin{itemize}
+            \item Die linear unabhängigen Spalten
+          \end{itemize}
+          \subsubsection*{Spur einer Matrix}
+          \begin{itemize}
+            \item Summe der Diagonalelemente
+          \end{itemize}
+          \subsubsection*{Rang einer Matrix}
+          \begin{itemize}
+            \item Anzahl nicht-Null-Zeilen in ZSF
+          \end{itemize}
+          \subsubsection*{Kern einer Matrix}
+          \begin{itemize}
+            \item ker\f{(A)=\left\{x\in K^n|Ax=0\right\} }
+          \end{itemize}
+          \subsubsection*{Dimensionsformel}
+          \begin{itemize}
+            \item rang\f{(A)+}dim(ker\f{(A)})\f{=n}
+          \end{itemize}
+          \subsubsection*{Ähnlichkeit von Matrizen}
+          \begin{itemize}
+            \item Determinante gleich, Spur gleich UND\\
+            \f{\exists S} mit \f{B=SAS^{-1}}
+          \end{itemize}
+          \subsubsection*{Äquivalenz von Matrizen}
+          \begin{itemize}
+            \item \f{rg(A)=rg(B)}
+          \end{itemize}
+        \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+          \subsection*{Lineare Abbildungen \f{\Phi}}
+          \begin{itemize}
+          \item \f{V, W} Vektorräume, \f{\Phi:V \rightarrow W}
+          \item \f{\forall x,y\in V: \Phi(x+y)=\Phi(x)+\Phi(y)}
+          \item \f{\forall x\in V: \Phi(\lambda x)=\lambda \Phi(x)}
+          \item \f{\Phi} ist Vektorraum
+          \item ker\f{(\Phi) = \left\{v\in V |\Phi(v)=0\right\} }
+          \end{itemize}
+        \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+          \subsection*{Linearkombination}
+          Sei V ein K-VR und U ein UVR von V. Seien \f{n\in \mathbb{N}, v_1,...,v_n\in U, \lambda_1,...,\lambda_n\in K.} Dann ist \f{\sum_{i=1}^{n}\lambda_iv_i} eine Linearkombination.\\[10pt]
+
+          \subsection*{Lineare Unabhängigkeit}
+          Sei V ein K-VR und M \f{= \left\{m_1,...,m_n\right\}\subseteq V}. M ist linear unabhängig, wenn gilt:\\
+          \f{\sum_{i=1}^{n}\lambda_im_i=0\Leftrightarrow \lambda_i=0\quad (\lambda_i\in K)}\\[10pt]
+
+          \subsection*{Lineare Hülle}
+          Sei V ein K-VR und M ein UVR von V. LH(M) ist die Menge aller Linearkombinationen aus M. LH(M) ist der kleinste UVR, der M enthält.
+          M heißt Erzeugendensystem von LH(M).\\[10pt]
+          \subsection*{Basis}
+          Sei V ein K-VR und U ein UVR von V. U ist eine Basis von V, wenn gilt:
+          \begin{itemize}
+            \item \f{V = \text{LH}(U)}
+            \item Jedes \f{u\in U} ist linear unabhängig
+          \end{itemize}
+          \subsection*{Dimension/Rang von \f{\Phi\in \text{Hom}(V,W)}}
+          \begin{itemize}
+            \item rg\f{(\Phi) = \text{dim(img(}\Phi))}
+            \item dim\f{(V)=rg(\Phi)+dim(ker(\Phi))}
+          \end{itemize}
+          \subsection*{Lineare Fortsetzung}
+          Seien V und W K-Vektorräume, B eine Basis von V und \f{I = \left\{1,...,n\right\}}. Dann gibt es genau eine lineare Abbildung \f{\Phi: V\rightarrow W} mit \f{\Phi(b_i)=w_i} für alle \f{i\in I}. 
+        \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+          \subsection*{Abbildungsmatrix}
+          \begin{itemize}
+            \item Lineare Abbildung \f{f:\mathbb{R}^n\rightarrow\mathbb{R}^m}
+            \item AM spaltenweise: \f{A=(f(e_1)...f(e_n))}\\
+            \f{\Rightarrow f(v)=A\cdot v\quad (\forall v \in V)}
+          \end{itemize}
+          \subsection*{Basiswechsel}
+          Sei V ein K-VR mit geordneter Basen B und C. Basiswechsel von B nach C \f{((v)_B\leadsto(v)_C)}:
+          \f{(v)_C=M_{CB}(id_V)\cdot(v)_B}
+          \subsubsection*{Bestimmung der Basiswechselmatrix}
+          \f{M_{CB}(id)=M_{CE}(id)\cdot M_{EB}(id)=M_{EC}(id)^{-1}\cdot M_{EB}(id)} mit \f{M_{EX}(id)=(x_1|...|x_n)}
+        \end{tcolorbox}
+
+        \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]
+          \subsection*{Eigenwerte einer Matrix A}
+          det\f{(A-\lambda I_n)=0}\\[5pt]
+          \subsection*{Charakteristisches Polynom}
+          CP(A)\f{=\text{det}(A-\lambda I)}\\[5pt]
+          \subsection*{Eigenvektoren}
+          x ist ein EV zum Eigenwert \f{\lambda_i}, wenn er folgendes LGS löst:
+          \f{(A-\lambda_iI)x=0}\\[5pt]
+          \subsection*{Eigenräume zu EW \f{\lambda}}
+          Eig(\f{A, \lambda})\f{=\text{ker}(A-\lambda I)}\\[5pt]
+          \subsection*{Diagonalisierbarkeit}
+          Häufigkeit \f{\lambda = \text{dim(Eig(}A,\lambda))}
+        \end{tcolorbox}
+
+        % \begin{tcolorbox}[colback=white,bottom=10pt, top=10pt]{
+        %   \begin{itemize}
+        %     \item Basiswechsel/Abbildungsmatrizen
+        %     \item Eigenwertproblem
+        %     \item (Kern, Basis, etc eines Hom)
+        %   \end{itemize}}
+        % \end{tcolorbox}
+
+        \end{multicols*}
+    % \end{onehalfspace}
+
+    
+
+\end{document}

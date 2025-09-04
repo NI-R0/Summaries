@@ -220,7 +220,9 @@ Multiple layers learn feature hierarchies
 
 \subsection{Probability Rules}
 $P(A \cup B) = P(A) + P(B) - P(A \cap B)$\\
-$P(A|B) = \frac{P(A \cap B)}{P(B)}$ if $P(B) > 0$
+$P(A|B) = \frac{P(A \cap B)}{P(B)}$ if $P(B) > 0$\\
+If mutually exclusive: $P(A \cap B) = 0$\\
+If independent: $P(A|B) = P(A)$
 
 \subsection{Logic Equivalences}
 $\neg(A \wedge B) \equiv (\neg A \vee \neg B)$ (De Morgan)\\
@@ -249,13 +251,6 @@ $U^{t+1}(s) = R(s) + \gamma \max_a \sum_{s'} P(s'|s,a) U^t(s')$
 1. Policy evaluation, given policy $\pi_t$ calc. utilities $U_t=U^{\pi_t}$\\
 2. Policy improvement $$\pi_{t+1}(s)=\textrm{argmax}_a\sum_{s'}P(s'|s,a)U_t(s')$$
 
-
-\subsection{Probability Calculations}
-$P(A \cup B) = P(A) + P(B) - P(A \cap B)$\\
-$P(A|B) = \frac{P(A \cap B)}{P(B)}$\\
-If mutually exclusive: $P(A \cap B) = 0$\\
-If independent: $P(A|B) = P(A)$
-
 \subsection{Information Gain Calculation}
 $Gain(A) = Entropy(S) - \sum_{v} \frac{|S_v|}{|S|} Entropy(S_v)$
 
@@ -264,7 +259,7 @@ where $S_v$ = subset with attribute $A = v$
 \textbf{Entropy:} $H(S) = -\sum_i p_i \log_2 p_i$
 
 \subsection{Alpha-Beta Pruning Rules}
-Initialize root with $\alpha=-\inf$, $\beta=\inf$\\
+Initialize root with $\alpha=-\infty $, $\beta=\infty$\\
 Prune if $\beta \leq \alpha$ \\
 Update: $\alpha = \max(\alpha, value)$ at MAX\\
 Update: $\beta = \min(\beta, value)$ at MIN
@@ -273,20 +268,15 @@ Update: $\beta = \min(\beta, value)$ at MIN
 Arc $X \rightarrow Y$ consistent if:
 $\forall x \in D_X, \exists y \in D_Y$ such that $(x,y)$ satisfies constraint
 
-\subsection{Minimax with Chance}
-Expected value at chance nodes:
-$V = \sum P(outcome_i) \times V(child_i)$
-
-\subsection{A* Completeness}
-Finite state space, non-negative edge costs
-
 \subsection{Misc}
 If two events A and B are unconditionally independent, they may not be conditionally independent given another event C.\\
 
 If two DTs are equally accurate, the one with fewer nodes is preferrable since it is less prone to overfitting.\\
 
-ML: Manual feature engineering, simpler models, perform well on structured data and simpler problems, requires less computational power\\
+\textbf{ML:} Manual feature engineering, simpler models, perform well on structured data and simpler problems, requires less computational power\\
 
-DL: Automatically learns features from data, can handle large complex datasets by learning hierarchical features and using deep architectures, requires a lot more computational power
+\textbf{DL:} Automatically learns features from data, can handle large complex datasets by learning hierarchical features and using deep architectures, requires a lot more computational power\\
+
+\textbf{NOTE:} Predicate Logic (PL1) missing
 \end{multicols*}
 \end{document}

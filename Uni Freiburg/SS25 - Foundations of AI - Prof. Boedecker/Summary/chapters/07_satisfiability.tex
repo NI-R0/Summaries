@@ -1,0 +1,34 @@
+\section{Satisfiability and Model Construction}
+The Boolean Satisfiability Problem (SAT) is a foundational problem in computer science. Given a propositional formula in CNF, the goal is to find a satisfying assignment of truth values (a model) or prove that none exists. Modern SAT solvers provide a highly efficient way to solve many practical NP-hard problems, including hardware/software verification and CSPs.\\
+SATs can be formulated as CSPs, where the CSP variables are the symbols of the alphabet, the domain of values is \f{\left\{T,F\right\} }, and the constraints are given by clauses.
+
+\subsection{The DPLL Algorithm}
+The \b{Davis-Putnam-Logemann-Loveland (DPLL)} algorithm is a complete and correct backtracking search procedure for solving SAT. It improves upon simple backtracking by using powerful inference rules to prune the search space.
+\vspace{0.5em}
+\definition{
+     Given a set of clauses \f{\Delta} defined over a set of variables \f{\Sigma}, return "satisfiable" if \f{\Delta} is satisfiable, otherwise return "unsatisfiable".
+     \begin{enumerate}
+          \item If \f{\Delta = \emptyset} return "satisfiable"
+          \item If \f{\Box \in \Delta} return "unsatisfiable" (\f{\Box} being the empty clause)
+          \item \b{Unit-propagation rule:} If \f{\Delta} contains a unit-clause \f{C}, that is an unassigned literal, assign a truth-value to the variable in \f{C} that satisfies \f{C}, simplify \f{\Delta} to \f{\Delta'} and return DPLL(\f{\Delta'}).
+          \item \b{Splitting rule:} When no further progress can be made by unit propagation, select an unassigned variable \f{v} from \f{\Sigma} and recursively try assigning it true and then false. After assigning each truth value, simplify \f{\Delta} to \f{\Delta'} and call DPLL(\f{\Delta'}).
+     \end{enumerate}
+}
+
+\subsection{Conflict-Driven Clause Learning (CDCL)}
+Modern SAT solvers are based on an enhancement of DPLL called \b{Conflict-Driven Clause Learning (CDCL)}.  While DPLL is effective, it "forgets" the reason for a conflict when it backtracks. CDCL improves upon this by learning from its mistakes.  One of its core features is \b{Conflict Analysis and Clause Learning:} When a conflict occurs, the solver analyzes the chain of implications that led to it and generates a new \b{conflict clause}.  This new clause is added to the knowledge base and helps prune the search by preventing the same conflict from recurring.
+
+\definition{
+     The CDCL algorithm works as follows:
+     \begin{enumerate}
+          \item \b{Unit-propagation rule:} If \f{\Delta} contains a unit clause \f{C} for \f{L}, extend the trail with \f{L^C}.
+          \item \b{OR:} If there is a conflict, call ANALYZE(conflict):
+          \begin{enumerate}
+               \item if the learned clause is empty, return "unsatisfiable"
+               \item otherwise, backjump: Learn the clause and unit-propagate to the earliest possible split, undoing all splits done later
+          \end{enumerate}
+          \item \b{Splitting rule:} Select from \f{\Sigma} an unassigned variable \f{v} and assign it a truth value. Extend the trail with \f{L^\dagger }.
+          \item If there is no unassigned literal, return "satisfiable(trail)"
+          \item Go to step 1
+     \end{enumerate}
+}

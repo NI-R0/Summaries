@@ -1,0 +1,31 @@
+\section{Making Decisions Under Uncertainty}
+Agents in the real world must often act with incomplete or uncertain information. Logical rules can be brittle, as it's impossible to list all preconditions for an action (the qualification problem) or all possible causes for an effect. Probability theory provides a formal framework for representing and reasoning with an agent's degree of belief in the face of uncertainty. When combined with utility theory, it forms the basis of \b{decision theory}, which allows an agent to choose actions that maximize its expected utility.
+
+\subsection{Foundations of Probability Theory}
+Probability is governed by a set of axioms, from which all other properties are derived.
+\begin{itemize}
+    \item An \b{unconditional (or prior) probability} \f{P(A)} represents the degree of belief in a proposition \f{A} in the absence of other information.
+    \item A \b{conditional (or posterior) probability} \f{P(A|B)} represents the belief in \f{A} given that evidence \f{B} is known.
+    \item The \b{Product Rule} states: \f{P(A \wedge B) = P(A|B)P(B) = P(B|A)P(A)}.
+    \item \b{Independence:} \f{a} and \f{b} are independent \it{iff} \f{P(a|b) = P(a)} (\f{\Rightarrow P(a\wedge b) = P(a)P(b)})
+    \item \b{Bayes' Rule} is a cornerstone of probabilistic reasoning, allowing us to update beliefs based on new evidence. It relates causal and diagnostic knowledge:
+    \cf{P(\text{cause}|\text{effect}) = \frac{P(\text{effect}|\text{cause})P(\text{cause})}{P(\text{effect})}}
+\end{itemize}
+
+\subsection{Probabilistic Inference}
+The \b{joint probability distribution} specifies a probability for every possible state of the world (i.e., every complete assignment of values to all random variables, like in a probability table). In a probability table the sum of all fields is 1 (disjunction of events). The probability for any random variable can be computed from the joint distribution through \b{marginalization} (summing out variables over rows or columns). Conditional probabilities can be obtained using marginal probabilities.
+
+To make probabilistic inference feasible, we rely on \b{conditional independence}. Two variables \f{A} and \f{B} are conditionally independent given \f{C} if \f{P(A|B,C) = P(A|C)}. This means that once we know the outcome of \f{C}, learning about \f{B} provides no additional information about \f{A}.
+
+\subsection{Bayesian Networks}
+A \b{Bayesian Network} is a powerful tool for representing and reasoning with uncertain knowledge. It provides a compact representation of the joint probability distribution by making explicit the conditional independence relationships in a domain.
+\begin{itemize}
+    \item \b{Structure:} A network is a \b{Directed Acyclic Graph (DAG)} where nodes represent random variables and directed edges represent direct causal influences.
+    \item \b{Parameters:} Each node has an associated \b{Conditional Probability Table (CPT)} that quantifies the probability of that node's value given the values of its parent nodes.
+    \item \b{Semantics:} A Bayesian network encodes the assumption that each node is conditionally independent of its non-descendants, given its parents. This allows the full joint probability to be factored into a product of local conditional probabilities:
+    \cf{P(x_1, \dots, x_n) = \prod_{i=1}^n P(x_i | \text{parents}(x_i))\quad,}
+    where \f{X_1, ..., X_n} are the topologically ordered nodes and \f{x_1, ..., x_n} are the values of the variables.
+    \item \b{Inference:} The primary task is to compute the posterior probability of a query variable given some observed evidence \f{e}. The network gives a complete representation of the full joint distribution. A query can be answered by computing sums of products of conditional probabilities (summing over the hidden variables). Exact inference is generally NP-hard (approximation via MCMC). Worst-case time complexity is \f{O(2^n)} for \f{n} boolean variables. For singly connected graphs and polytrees, time and space complexity is linear in the number of nodes.
+\end{itemize}
+\vspace{0.5cm}
+\b{Left out:} ENUMERATION-ASK, Bayesian updating

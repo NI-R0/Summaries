@@ -1,0 +1,46 @@
+\section{Constraint Satisfaction Problems (CSPs)}
+ A Constraint Satisfaction Problem (CSP) is a specialized type of search problem where states are defined by assignments of values to a set of variables, and the goal is to satisfy a set of constraints on these variables.
+
+ \definition{A \b{Constraint Satisfaction Problem} is defined by three components :
+\begin{itemize}
+   \item A set of variables \f{\{x_1, x_2,..., x_n\}}.
+   \item A set of domains (values) for each variable \f{\{dom_1, dom_2,..., dom_n\}} \f{\rightarrow d^n} possible assignments 
+   \item A set of constraints that specify allowable combinations of values for subsets of variables.
+\end{itemize}
+ A solution to a CSP is a complete assignment of values to all variables such that all constraints are satisfied. For binary constraints, the problem can be visualized as a \b{constraint graph}, where nodes are variables and edges represent constraints between them.
+}
+
+\subsection{Backtracking Search}
+ CSPs are often solved using \b{backtracking search}, which is a form of depth-first search. The algorithm incrementally assigns values to variables one at a time, and "backtracks" when a variable has no legal values left to assign.
+
+\subsection{Heuristics \& Pruning Techniques}
+Goal: Try to keep the search tree as small as possible and to exploit the CSP problem structure.
+\begin{itemize}
+  \item \b{Variable Ordering Heuristics:}
+  \begin{itemize}
+     \item \b{Most-Constrain\it{ed}-Variable:} Choose the variable with the fewest remaining legal values. Helps to detect failures early and directly reduces branching factor.
+     \item \b{Most-Constrain\it{ing}-Variable:} As a tie-breaker among variables with the same number of remaining legal values, select the variable that is involved in the most constraints on other unassigned variables. This helps to prune the search tree in future steps.
+  \end{itemize}
+  \item \b{Value Ordering Heuristics:}
+  \begin{itemize}
+     \item \b{Least-Constraining-Value:} For a given variable, prefer the value that rules out the fewest choices for the neighboring variables. This leaves more options available, increasing the chance of finding a solution on the current path.
+  \end{itemize}
+  \item \b{Inference and Constraint Propagation:}
+  \begin{itemize}
+     \item \b{Forward Checking:} After assigning a value to a variable, check its neighbors and delete any values from their domains that are now inconsistent. If any variable's domain becomes empty, the search can backtrack immediately.
+    \item \b{Arc Consistency:} A stronger form of inference. An arc from variable \f{X} to \f{Y} is consistent \it{iff}, for every \f{x\in X}, there is a corresponding value \f{y \in Y} that satisfies the constraint. The \b{AC-3 algorithm} (\f{O(d^3n^2)}) enforces arc consistency throughout the graph. It can be used as a preprocessing step or during search to prune the search space.\\
+    \b{Note:} Detecting all inconsistencies is NP-hard!
+  \end{itemize}
+\end{itemize}
+
+\subsection{Exploiting Problem Structure}
+ The structure of the constraint graph can be used to find solutions more efficiently.
+\begin{itemize}
+   \item \b{Disconnected Components:} If the constraint graph has multiple disconnected components, each can be solved as an independent subproblem.
+   \item \b{Tree-Structured CSPs:} If the constraint graph is a tree (i.e., has no loops), the CSP can be solved in polynomial time (\f{O(nd^2)}). This is achieved by ordering the nodes topologically, enforcing arc consistency, and then assigning values from the root down without any need for backtracking.
+  \item \b{Almost Tree-Structured CSPs:} For problems that are nearly trees, one can use:
+  \begin{itemize}
+     \item \b{Cutset Conditioning:} A small set of variables (a "cycle cutset") is chosen to break all loops in the graph. The algorithm tries all consistent assignments for the cutset variables; for each assignment, the remaining problem is a tree and can be solved efficiently.
+     \item \b{Tree Decomposition:} The problem is decomposed into a set of connected subproblems, which are organized into a tree. The subproblems are solved, and the solutions are then combined. The efficiency of this method depends on the problem's \it{tree width} \f{w}.
+  \end{itemize}
+\end{itemize}

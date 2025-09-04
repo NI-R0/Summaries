@@ -1,0 +1,29 @@
+\section{Machine Learning}
+An agent is said to learn if it improves its performance on a task with experience. Machine learning provides the tools for agents to adapt and improve automatically, rather than being explicitly programmed for every possible scenario. A learning agent is typically composed of a performance element (which acts), a learning element (which improves), a critic (which provides feedback), and a problem generator (which suggests exploratory actions).
+
+\subsection{Types of Learning}
+Machine learning is often categorized by the type of feedback the agent receives.
+\begin{itemize}
+    \item \b{Supervised Learning:} The agent learns a function from a training set of labeled input-output pairs \f{\{(x_1, y_1), \dots, (x_N, y_N)\}}. The goal is to find a hypothesis \f{h} that can generalize from this data to accurately predict the output for unseen inputs. \\
+    A key principle in supervised learning is \b{Ockham's razor}, which advocates for choosing the simplest hypothesis that is consistent with the data.
+    \item \b{Reinforcement Learning:} The agent learns from rewards or punishments (reinforcement signals). It is not told which action to take but must discover a policy that maximizes its cumulative reward over time through trial and error.
+    \item \b{Unsupervised Learning:} The agent learns patterns directly from unlabeled data, without any explicit feedback.
+\end{itemize}
+
+\subsection{Decision Trees}
+A decision tree is a simple yet powerful model used for classification and regression. It represents a function that takes a set of input attributes and returns a decision.
+\begin{itemize}
+    \item \b{Structure:} The tree consists of internal nodes that test an attribute, branches corresponding to the attribute's values, and leaf nodes that specify the final output or classification.
+    \item \b{Learning Algorithm:} Finding the smallest possible decision tree is an intractable problem. Instead, a greedy, divide-and-conquer algorithm is used to build the tree:
+    \begin{enumerate}
+        \item If all examples in the current subset have the same classification, create a leaf node.
+        \item Otherwise, select the "best" attribute to split the examples into smaller subsets.
+        \item Recurse on each subset.
+    \end{enumerate}
+    \item \b{Attribute Selection:} To choose the "best" attribute for a split, the algorithm calculates the information gain for each attribute. Information gain measures the reduction in uncertainty, or \b{entropy}, after the split. The attribute with the highest information gain is chosen. Entropy is defined as:
+    \cf{I(P(y_1), \dots, P(y_n)) = \sum_{i=1}^n -P(y_i) \log_2 P(y_i)}
+\end{itemize}
+
+\subsection{Assessing Performance}
+To evaluate a learning algorithm, it is crucial to separate the data into a \b{training set} and a \b{test set}. The training set is used to learn the hypothesis (e.g., build the decision tree), while the test set, which the model has never seen, is used to evaluate its performance and generalization ability.\\
+A \b{learning curve} can be plotted to show how the model's performance on the test set improves as the size of the training set increases.

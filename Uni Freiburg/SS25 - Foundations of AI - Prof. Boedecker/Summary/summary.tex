@@ -1,0 +1,118 @@
+\documentclass[a4paper,11pt]{article}
+
+% Package imports
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{bm}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+
+\usepackage{needspace} % ensures rule+heading stay together
+
+\newcommand{\rsectionpre}{%
+  % Only if not at the top of a page
+  \ifdim\pagetotal>0pt
+    % If there isn't room for the rule + heading, break first
+    \Needspace*{3\baselineskip}%
+    % If we didn't break, draw the rule
+    \ifdim\pagetotal>0pt
+      \noindent\rule{\linewidth}{0.4pt}\par
+      \vspace{2em}%
+      \nobreak % avoid a break between rule and heading
+    \fi
+  \fi
+}
+
+\newcommand{\rsection}{\section}
+
+% Tell titlesec how to format \ruledsection
+\titleformat{\rsection}[block]
+  {\rsectionpre\normalfont\Large\bfseries} % format (rule first)
+  {\thesection}{1em}{}
+
+% Optional: starred version \ruledsection* (unnumbered)
+\titleformat*{\rsection}{\rsectionpre\normalfont\Large\bfseries}
+
+% Page layout
+\geometry{left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\graphicspath{ {./images/} }
+
+% Header definition
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Foundations of AI Summary - SS25}
+\rhead{\thepage}
+
+% Theorem and definition styles with rounded borders and numbering
+\newtcolorbox{definitionbox}{colback=white, colframe=black, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{theorembox}{colback=white, colframe=blue, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+
+% Custom commands for numbered definitions and theorems
+\newcounter{definitioncounter}
+\newcounter{theoremcounter}
+
+\setlength{\parindent}{0pt}
+\setlength{\skip\footins}{0.5cm} % Adjust this to change the space above the footnotes
+\raggedbottom
+
+\newcommand{\definition}[1]{%
+    \refstepcounter{definitioncounter}%
+    \begin{definitionbox}
+    \textbf{Definition \thedefinitioncounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{definitionbox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\theorem}[1]{%
+    \refstepcounter{theoremcounter}%
+    \begin{theorembox}
+    \textbf{Theorem \thetheoremcounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{theorembox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{${#1}$}
+\renewcommand{\b}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+\newcommand{\pL}{\f{\mathcal{L}}}
+\newcommand{\fL}{\mathcal{L}}
+
+\begin{document}
+
+\input{acronyms.tex}
+
+% Title section
+\begin{center}
+    {\huge Foundations of AI - SS25 \par}
+    \vspace{0.5cm}
+    {\large Niklas Rodenbüsch \par}
+    \vspace{0.5cm}
+    {\large \today \par}
+\end{center}
+\vspace{0.5cm}
+
+
+\input{chapters/01_rational_agents.tex}
+\input{chapters/02_solving_problems.tex}
+\input{chapters/03_csp.tex}
+\input{chapters/04_informed_search.tex}
+\input{chapters/05_board_games.tex}
+\input{chapters/06_propositional_logic.tex}
+\input{chapters/07_satisfiability.tex}
+\input{chapters/08_predicate_logic.tex}
+\input{chapters/09_planning.tex}
+\input{chapters/10_uncertainty.tex}
+\input{chapters/11_acting.tex}
+\input{chapters/12_ml.tex}
+\input{chapters/13_dl.tex}
+
+
+\end{document}

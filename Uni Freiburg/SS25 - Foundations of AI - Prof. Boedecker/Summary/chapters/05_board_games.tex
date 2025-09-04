@@ -1,0 +1,28 @@
+\section{Board Games}
+Board games represent a classic area of AI research, framing the competition between two opponents as a search problem. While the states in a game are fully accessible, they are also contingency problems because a player cannot control the opponent's moves. The primary challenge is the massive size of the game's state space.
+
+\definition{A game can be defined as a 4-tuple of \b{initial state}, \b{operators} (legal moves), a \b{terminal test} and a \b{utility function} (outcome of the game).}
+
+\subsection{Minimax Search}
+For two-player, zero-sum games (with players typically called \b{MAX} and \b{MIN}), the \b{minimax algorithm} can determine the optimal move. It assumes that both players play optimally. The algorithm explores the entire game tree to find a move that maximizes the utility for MAX, while assuming MIN will always try to minimize it:\\
+The algorithm generates the entire game tree using DFS. A \b{utility function} assigns a value to terminal states of the game (win, loss, or draw). The algorithm propagates these values up the tree: MAX nodes take the maximum value of their children, and MIN nodes take the minimum. MAX then selects the move at the root that leads to the child with the highest value.\\
+
+Since generating the full game tree is often infeasible, the search is typically cut off at a certain depth. The leaf nodes are then scored using an \b{evaluation function} that estimates the desirability of the position. It's best to stop the search only at "quiescent" positions to avoid the \b{horizon effect}, where a critical event is pushed just beyond the search depth limit.
+
+\subsection{Alpha-Beta Pruning}
+\b{Alpha-Beta pruning} is an optimization of the minimax algorithm that provides the same result while pruning large parts of the search tree. It eliminates branches that cannot possibly influence the final decision. It maintains two values during the search:
+\begin{itemize}
+    \item \b{Alpha (\f{\alpha}):} The best (highest) value found so far for MAX on the path to the root.
+    \item \b{Beta (\f{\beta}):} The best (lowest) value found so far for MIN on the path to the root.
+    \item Prune branches below MIN node where \f{\beta \le \alpha} of its MAX-predecessor. Prune branches below MAX node where \f{\alpha \ge \beta} of its MIN-predecessor.
+\end{itemize}
+The efficiency of alpha-beta pruning is highly dependent on move ordering. In the best case, it can reduce the effective branching factor from \f{b} to \f{\sqrt{b}}, allowing the search to go twice as deep in the same amount of time.
+
+\subsection{Games with an Element of Chance}
+Games like Backgammon involve randomness. To handle this, the standard game tree is augmented with \b{chance nodes}.
+\begin{itemize}
+    \item These nodes are inserted between the regular MAX and MIN nodes and represent random events, like a dice roll.
+    \item Instead of a min or max operation, the value of a chance node is the \b{expected value} of its children, calculated by summing the values of all possible outcomes weighted by their probabilities.
+    \item This significantly increases the branching factor and complexity of the search.
+\end{itemize}
+\newpage

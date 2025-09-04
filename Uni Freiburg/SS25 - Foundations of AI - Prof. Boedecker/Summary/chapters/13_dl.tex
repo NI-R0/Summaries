@@ -1,0 +1,23 @@
+\section{Deep Learning}
+Deep learning is a subfield of machine learning that has achieved state-of-the-art results across a wide range of tasks, including computer vision, speech recognition, natural language processing, and playing complex games like Go.
+
+\subsection{Representation Learning}
+Traditional machine learning pipelines often require extensive manual \b{feature engineering} to transform raw data (like images or text) into a suitable representation from which a model can learn.
+\begin{itemize}
+    \item \b{Representation Learning} refers to a set of methods that automatically discover the necessary features or representations from raw data.
+    \item \b{Deep Learning} is a form of representation learning that uses models with multiple layers to learn a \b{hierarchy of features}. Each layer transforms the input from the previous layer into a more abstract and complex representation.
+\end{itemize}
+
+\subsection{Multilayer Perceptrons (MLPs)}
+\begin{itemize}
+    \item \b{Structure:} An MLP consists of an input layer, one or more \b{hidden layers}, and an output layer. Each layer contains interconnected nodes called neurons.
+    \item \b{Computation:} The output of each neuron is calculated by taking a weighted sum of its inputs, adding a bias, and then passing the result through a non-linear \b{activation function}. Common activation functions include the logistic sigmoid, tanh and ReLU.
+    \item \b{Training:} The network's parameters (weights and biases) are learned by minimizing a loss function that measures the discrepancy between the network's predictions and the true labels. This is typically done using \b{Stochastic Gradient Descent (SGD)}. The gradients required for this optimization are calculated efficiently using the \b{backpropagation} algorithm.
+\end{itemize}
+
+\subsection{Advanced Architectures}
+\begin{itemize}
+    \item \b{Convolutional Neural Networks (CNNs):} CNNs are specialized for processing grid-like data, such as images. They use a mathematical operation called \b{convolution}, where a small filter (or kernel) is slid across the input. This allows the network to efficiently learn a hierarchy of local patterns (e.g., edges, textures, shapes) while sharing parameters, making them highly effective for computer vision tasks.
+    \item \b{Recurrent Neural Networks (RNNs):} RNNs are designed to handle sequential data, like text or time series. They have loops in their structure that create an internal state or "memory," allowing them to process sequences of arbitrary length. However, they can be difficult to train on long sequences due to issues like vanishing or exploding gradients.
+    \item \b{Transformers:} A more modern architecture that has become dominant in natural language processing. Instead of processing sequences step-by-step like RNNs, Transformers use an \b{attention mechanism} to weigh the importance of all input elements simultaneously. This allows them to capture long-range dependencies in data much more effectively.
+\end{itemize}

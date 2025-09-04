@@ -1,0 +1,33 @@
+\section{Predicate Logic (PL1)}
+While propositional logic is useful, it cannot represent the internal structure of statements or relationships between objects. For example, from "All men are mortal" and "Socrates is a man," it cannot conclude that "Socrates is mortal." First-Order Predicate Logic (PL1) is a more expressive language that overcomes these limitations.
+
+\subsection{Syntax}
+PL1 introduces several new syntactic elements:
+\begin{itemize}
+    \item Quantifiers (\f{\forall}, \f{\exists}), equality (\f{=}), brackets, variables (\f{x, x_1, ..., x', x'', ..., y, z})
+    \item \b{Function symbols} (e.g. weight(), color()), lowercase. 0-ary functions are constants.
+    \item \b{Predicate symbols} (e.g. Red(), Block()), uppercase. 0-ary predicates are prop. logic atoms.
+    \item \b{Terms:} Expressions that represent objects. A term can be a constant, a variable, or a function applied to other terms (e.g., \f{a, x, f(x)}). Terms without variables are called \b{ground terms}.
+    \item \b{Atomic formulae:} Represent statements about objects. If \f{t_1, ..., t_n} are terms and \f{P} is an \f{n}-ary predicate, then \f{P(t_1, ..., t_n)} is an atomic formula, so would be \f{t_1=t_2}.
+    \item \b{Formulae:} If \f{\phi} and \f{\psi} are formluae and \f{x} ar variable, then every operator application (e.g. \f{\neg\phi}, \f{\phi\wedge\psi}, \f{\exists x\psi}) are formulae. Quantifiers are as strongly binding as \f{\neg}.
+\end{itemize}
+Formulae with no free variables are called closed formulae or sentences. With closed formulae, variable assignments can be ignored.
+
+\subsection{Semantics:}
+The meaning of a PL1 formula is given by an \b{interpretation}, which consists of:
+\begin{itemize}
+    \item A non-empty \b{domain} \f{D} of objects.
+    \item A mapping that assigns objects in \f{D} to constant symbols, functions over \f{D} to function symbols, and relations over \f{D} to predicate symbols.
+\end{itemize}
+The truth of a formula is evaluated relative to an interpretation and a variable assignment.
+
+\subsection{Reduction to Propositional Logic}
+Logical entailment in full PL1 is undecidable, meaning no algorithm exists that can decide for all formulae whether one is entailed by a knowledge base. However, for the special case of a \b{finite domain}, PL1 can be reduced to propositional logic through a process called \b{propositionalization}. This is achieved by first assuming a \b{Domain Closure Axiom}, which states that the only objects in the domain are those named by the constants. Quantifiers are then eliminated through \b{instantiation}:
+\begin{itemize}
+    \item A universally quantified formula is replaced by a conjunction of the formula with the variable instantiated for every constant in the domain.
+    \cf{\forall x \varphi \quad \longrightarrow \quad \varphi[x/c_1] \wedge \varphi[x/c_2] \wedge \dots}
+    \item An existentially quantified formula is replaced by a disjunction.
+    \cf{\exists x \varphi \quad \longrightarrow \quad \varphi[x/c_1] \vee \varphi[x/c_2] \vee \dots}
+\end{itemize}
+\b{Notation:} If \f{\varphi} is a formula, then \f{\varphi[x/a]} is the formula with all free occurences of \f{x} replaced by \f{a}.\\[0.5em]
+This process results in a (potentially very large) propositional theory that is equivalent to the original PL1 theory and can be solved using standard SAT solvers.

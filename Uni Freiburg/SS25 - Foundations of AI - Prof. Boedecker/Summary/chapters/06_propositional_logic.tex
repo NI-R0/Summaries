@@ -1,0 +1,55 @@
+\section{Propositional Logic}
+Rational agents often need to represent knowledge about their world to make logical deductions. Propositional logic is a formal language for representing and reasoning with this knowledge.
+
+\subsection{Knowledge-Based Agents}
+A knowledge-based agent uses a \b{knowledge base (KB)}, which is a set of sentences expressed in a formal language. The agent can interact with the KB via:
+\begin{itemize}
+    \item \b{TELL(KB,\f{\alpha})\f{=}KB'} the KB new information it perceives from the environment.
+    \item \b{ASK(KB,\f{\alpha})\f{=}yes} the KB what action to take, which is answered by inferring new knowledge from the KB.
+\end{itemize}
+It is crucial to distinguish between the \b{syntax} of the language (the structure of its sentences) and its \b{semantics} (the meaning or truth of those sentences).
+
+\subsection{Syntax and Semantics of Propositional Logic}
+\begin{itemize}
+    \item \b{Syntax:} A \b{literal} is an atomic proposition or its negation. A \b{clause} is a disjunction of literals.
+    \item \b{Semantics:} The truth of a formula is determined by an \b{interpretation} (or truth assignment), which assigns a truth value (True or False) to each atomic proposition. An interpretation that makes a formula true is called a \b{model} of that formula.
+\end{itemize}
+A formula can be \b{satisfiable} (has at least one model), \b{unsatisfiable} (has no models), \b{falsifiable} (a model exists that does not satisfy the formula) or \b{valid} (a tautology, true under all interpretations).
+
+\subsection{Logical Entailment and Inference}
+\begin{itemize}
+    \item \b{Logical Entailment} (\f{\textrm{KB} \models \alpha}): A sentence \f{\alpha} is logically entailed by a knowledge base KB if \f{\alpha} is true in all models of KB. This means that \f{M(\textrm{KB}) \subseteq M(\alpha)}, where \f{M(\phi)} is the set of all models for a formula \f{\phi}.
+    \item \b{Inference} (\f{\textrm{KB} \vdash_i \alpha}): Inference is the process of deriving new sentences from existing ones using syntactic rules. A good inference procedure should be:
+    \begin{itemize}
+        \item \b{Sound:} It only derives sentences that are logically entailed.
+        \item \b{Complete:} It can derive all sentences that are logically entailed.
+    \end{itemize}
+\end{itemize}
+
+\subsection{CNF and DNF}
+For every formula, there exists at least one equivalent formula in CNF and one in DNF. A formula in DNF is satisfiable \it{iff} one disjunct is satisfiable.
+\cf{
+    \textrm{CNF}: \bigwedge^{n}_{i=1}\left(\bigvee^{m_i}_{j=1} l_{i,j} \right) \quad;\quad \textrm{DNF} : \bigvee^{n}_{i=1}\left(\bigwedge^{m_i}_{j=1} l_{i,j} \right)
+}
+A formula can be turned into CNF by following the steps:
+\begin{enumerate}
+    \item Eliminate \f{\Rightarrow} and \f{\Leftrightarrow} like so: \f{\alpha \Rightarrow \beta \rightarrow (\neg\alpha \vee \beta)}
+    \item Move \f{\neg} inwards: \f{\neg (\alpha \wedge \beta) \rightarrow (\neg\alpha\vee\neg\beta)} (De Morgan's laws)
+    \item Distribute \f{\vee} over \f{\wedge} like so: \f{((\alpha\wedge\beta)\vee\gamma)\rightarrow (\alpha\vee\beta)\wedge (\beta\vee\gamma)}
+    \item Simplify: \f{\alpha\vee\alpha\rightarrow\alpha} etc.
+\end{enumerate}
+
+\subsection{Resolution}
+Resolution is a sound and refutation-complete inference rule for deriving new formulae from a KB, that does not depend on testing every interpretation (logical implication).
+\begin{itemize}
+    \item \b{Goal:} To prove \f{\textrm{KB} \models \alpha}, the resolution algorithm proves that the set of sentences \f{\textrm{KB} \cup \{\neg\alpha\}} is unsatisfiable. This relies on the contradiction theorem.
+    \item \b{Requirement:} All sentences must be converted to CNF, which is a conjunction of clauses (disjunctions of literals). Equivalently, we can turn the KB sentences into a set of clauses: 
+    \cf{
+        \left\{(P\vee Q)\wedge (R\vee \neg P)\wedge S\right\} \rightarrow \left\{\left\{P, Q\right\},\left\{R, \neg P\right\}, \left\{S\right\} \right\}  
+    }
+    \item \b{The Resolution Rule:} From two clauses containing a complementary literal (e.g., \f{l} and \f{\neg l}), a new clause called the \b{resolvent} is derived. The resolvent contains all literals from the original two clauses except for the complementary pair.
+    \cf{\frac{C_1 \cup \{l\}, \quad C_2 \cup \{\neg l\}}{C_1 \cup C_2}}
+    \item \b{Proof:} The algorithm repeatedly applies the resolution rule. If the \b{empty clause} (\f{\Box}) is derived, it signifies a contradiction, proving that the original set of clauses was unsatisfiable and thus that \f{KB \models \alpha}.
+\end{itemize}
+\vspace{0.5em}
+\b{Left out:} Special symbols, Interpretation, Implication theorems, Action selection

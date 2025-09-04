@@ -1,0 +1,27 @@
+\section{Rational Agents}
+\begin{itemize}
+     \item \b{Agent}: Perceives environment through sensors and acts upon it through actuators. Consists of an \it{agent program} running on an \it{architecture}.
+     \item \b{Ideal rational agent}: does the "right thing" in terms of a \it{performance measure}.
+     \item \b{Rationality} is distinct from \b{omniscience}. An omniscient agent knows the actual effects of its actions, whereas a rational agent acts to maximize its \it{expected} performance based on its percepts and knowledge .
+\end{itemize}
+\definition{For each possible percept sequence, a \b{rational agent} should select an action that is expected to maximize its performance measure, given the evidence provided by the percept sequence and whatever built-in knowledge the agent has.}
+
+\subsection{Classes of Agents}
+\begin{itemize}
+     \item \b{Table-Driven:} Use a lookup table indexed by the entire percept sequence to select an action.
+     \item \b{Simple Reflex:} React based only on the current percept, using a set of condition-action rules.
+     \item \b{Model-based Reflex:} Maintain an internal \it{state} about the world and the effects of its own actions.
+     \item \b{Goal-based:} Use explicit \it{goals} to decide on actions, considering how a potential action will bring them closer to their goal.
+     \item \b{Utility-based:} When there are multiple possible next actions, a \it{utility function} is used to map a state to a real number.
+     \item \b{Learning:} Can improve their performance over time by modifying their behavior. They consist of four main components:
+    \begin{itemize}
+         \item \b{Performance element:} Selects external actions.
+         \item \b{Critic:} Provides feedback on how well the agent is doing based on a performance standard.
+         \item \b{Learning element:} Makes improvements to the agent's performance capabilities.
+         \item \b{Problem generator:} Suggests actions that can lead to new and informative experiences.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Types of Environments}
+The nature of the environment determines the required complexity of the agent. Some environments are more demanding than others.\\[0.5em]
+\b{Most challenging}: Partially observable, nondeterministic, strategic, dynamic, continuous and multi-agent.

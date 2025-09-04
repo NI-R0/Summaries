@@ -1,0 +1,33 @@
+\section{Action Planning}
+Planning is the process of finding a sequence of actions to achieve a goal. In AI, this involves declaratively specifying a problem (using logic) — describing the initial state, the available actions, and the goal — and using a domain-independent planner to automatically find a solution.
+
+\subsection{Planning Formalisms}
+To describe planning problems in a domain-independent way, formal languages are used.
+\subsubsection{STRIPS (STanford Research Institute Problem Solver):}
+\begin{itemize}
+    \item \b{States} \f{\mathcal{S}} are represented as sets of true propositions (ground atoms), assuming a \b{Closed World Assumption} (any atom not listed is false).
+    \item \b{Actions} (or operators) \f{\mathbf{O} } are defined by:
+    \begin{itemize}
+        \item \b{Preconditions:} A set of propositions that must be true for the action to be executable.
+        \item \b{Effects:} A set of propositions that describe how the state changes. This is split into an \b{add list} (atoms that become true) and a \b{delete list} (atoms that become false).
+    \end{itemize}
+    \item A \b{plan} \f{\Delta} is a sequence of actions that transforms the initial state \f{\mathbf{I} } into a state that satisfies the goal conditions \f{\mathbf{G}}. A \b{planning task} is a 4-tuple \f{\left\langle \mathcal{S}, \mathbf{O}, \mathbf{I}. \mathbf{G}\right\rangle }.
+\end{itemize}
+
+\subsubsection{PDDL (Planning Domain Description Language):}
+The de facto standard language for planning problems. It extends STRIPS with more expressive features like typing, conditional effects, and numerical resources.
+
+\subsection{Basic Planning Algorithms}
+Planning can be framed as a search problem on a state-transition graph. Here, nodes are defined by value assignments to states and labeled edges are the actions that change the appropriate nodes.
+\begin{itemize}
+    \item \b{Progression Planning (Forward Search):} This approach searches forward from the initial state towards a goal state. At each step, it considers all applicable actions and generates successor states. This is intuitive and easy to implement.
+    \item \b{Regression Planning (Backward Search):} This approach searches backward from the goal description towards the initial state. It starts with the goal and determines what conditions must have been true before an action was taken to achieve it. This can be more efficient as it only considers actions relevant to the goal.
+\end{itemize}
+
+% \subsection{Complexity and Modern Approaches}
+% Action planning is computationally difficult.
+% \begin{itemize}
+%     \item \b{Complexity:} For propositional STRIPS, finding a plan is \b{PSPACE-complete}. If the plan length is bounded by a polynomial, the problem is \b{NP-complete}. With unrestricted function symbols, planning is \b{undecidable}.
+%     \item \b{Planning as Satisfiability:} One powerful modern approach is to translate a planning problem into a Boolean Satisfiability (SAT) problem. The problem is encoded such that any satisfying assignment to the Boolean formula corresponds to a valid plan. This is typically done for a fixed plan length, which is iteratively increased.
+%     \item \b{Heuristic Forward Search:} Currently one of the most dominant approaches. It performs a forward search guided by a strong, automatically derived heuristic. A common technique is to use a \b{relaxed problem} to generate the heuristic. For example, the "delete relaxation" ignores all negative effects of actions. The cost of solving this simpler problem provides a powerful (and admissible) heuristic for guiding the search in the original problem.
+% \end{itemize}

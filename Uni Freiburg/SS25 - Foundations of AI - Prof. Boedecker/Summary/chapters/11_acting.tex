@@ -1,0 +1,40 @@
+\section{Acting Under Uncertainty}
+When an agent operates in a stochastic environment, it must consider the uncertainty of action outcomes. Decision theory, which combines utility theory and probability theory, provides a framework for making rational choices by selecting actions that maximize the agent's expected utility.
+
+\subsection{Utility Theory and the MEU Principle}
+\begin{itemize}
+    \item A \b{utility function} \f{U(S)} assigns a numerical value to each state \f{S}, representing its desirability to the agent.
+    \item The axioms of utility theory (e.g., Orderability, Transitivity, Continuity) provide a foundation for rational preferences. If an agent's preferences conform to these axioms, a utility function that represents those preferences is guaranteed to exist.
+    \item The \b{Principle of Maximum Expected Utility (MEU)} states that a rational agent should choose the action that maximizes its expected utility. The expected utility of an action \f{A} given evidence \f{E} is calculated as:
+    \cf{EU(A|E) = \sum_{i} P(\text{Result}(A)=i | \text{Do}(A), E) U(i)}
+    Problem: The probability part of MEU requires a complete causal model of the world (e.g. requiring constant belief network updating, NP-hard), while the utility part of MEU requires search or planning.
+\end{itemize}
+
+\subsection{Sequential Decision Problems and MDPs}
+Many problems require an agent to make a sequence of decisions over time. A \b{Markov Decision Process (MDP)} is a formal model for sequential decision-making in a fully observable, stochastic environment. An MDP is defined by:
+\begin{itemize}
+    \item A set of states \f{S}.
+    \item A set of actions \f{A}.
+    \item A \b{transition model} \f{P(s'|s,a)}, giving the probability of reaching state \f{s'} from state \f{s} after taking action \f{a}.
+    \item A \b{reward function} \f{R(s)}, specifying the immediate reward received in state \f{s}.
+\end{itemize}
+A \b{policy}, \f{\pi(s)}, is a mapping from states to actions. The goal is to find the \b{optimal policy}, \f{\pi^*}, which maximizes the long-term expected reward. For finite horizon problems, \f{\pi*} depends on current state and remaining steps to go (nonstationary). For inifite horizon problems, it only depends on the current state (stationary).
+
+\subsection{The Bellman Equation and Algorithms for MDPs}
+The long-term utility of a state, \f{U(s)}, is the expected sum of future discounted rewards, using a discount factor \f{\gamma \in [0, 1)}. The relationship between the utility of a state and its successors is defined by the \b{Bellman Equation}:
+\cf{U(s) = R(s) + \gamma \max_a \sum_{s'} P(s'|s, a) U(s')}
+This equation is the foundation for algorithms that solve MDPs. The agent simply chooses the action that maximizes the expected utility of the subsequent state:
+\cf{
+    \pi(s) = \arg\max_a\sum_{s'}P(s'|s,a)U(s')
+}
+\begin{itemize}
+    \item \b{Value Iteration:} An iterative algorithm that calculates the optimal utility for each state. It starts with arbitrary utilities and repeatedly applies the Bellman update until the values converge. Bellman update:
+    \cf{
+        U'(s) \leftarrow R(s) + \gamma \max_a \sum_{s'} P(s'|s, a) U(s')
+    }
+    \item \b{Policy Iteration:} An alternative algorithm that often converges faster. It alternates between two steps until the policy becomes stable: (1) \b{Policy Evaluation}, where given a policy \f{\pi_t} it calculates the utilities for the current policy \f{U_t=U^{\pi_t}}, and (2) \b{Policy Improvement}, where it uses these utilities to create a better policy according to:
+    \cf{\pi_{t+1}(s)=\arg\max_a\sum_{s'}P(s'|s,a)U_t(s')}
+\end{itemize}
+\vspace{0.5cm}
+\b{Left out:} Concrete utility theory axioms
+\newpage

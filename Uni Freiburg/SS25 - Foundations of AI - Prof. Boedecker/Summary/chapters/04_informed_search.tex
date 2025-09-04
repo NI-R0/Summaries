@@ -1,0 +1,32 @@
+\section{Informed Search Methods}
+Informed (or heuristic) search strategies use problem-specific knowledge to find solutions more efficiently than uninformed methods. This knowledge is supplied by a \b{heuristic function} \f{h(n)}, which estimates the cost of the cheapest path from a node \f{n} to a goal.
+
+\subsection{Best-First Search}
+Best-first search is a general search algorithm that selects the next node to expand based on an \b{evaluation function} \f{f(n)}. It uses a priority queue to always expand the node with the "best" (lowest) \f{f}-value. Different informed search strategies are instances of best-first search with different evaluation functions.
+
+\subsubsection{Greedy Best-First Search}
+Greedy search uses only the heuristic function for evaluation: \f{f(n) = h(n)}. It tries to expand the node that it estimates to be closest to the goal. While this approach is often fast, it is not optimal and is generally incomplete.
+
+\subsubsection{A* Search}
+A* search combines the benefits of Uniform-Cost Search and Greedy Search. Its evaluation function balances the cost to reach the current node with the estimated cost to get to the goal: 
+\cf{f(n) = g(n) + h(n)}
+where \f{g(n)} is the known cost of the path from the initial state to node \f{n}, and \f{h(n)} is the heuristic estimate of the cost from \f{n} to the goal.\\
+A* is guaranteed to be \b{complete and optimal} if its heuristic function \f{h(n)} is \b{admissible}, meaning it never overestimates the true cost to reach the goal (\f{h(n) \le h^*(n)}). A stronger condition, \b{consistency}, is required for the graph-search version of A* to be optimal without re-opening already visited nodes (consistency implies admissibility). Graph-A* can still be applied if \f{h(n)} is not consistent, but optimality is lost. Drawback: Exponential space complexity, as it must store all generated nodes.\\
+
+\b{Iterative Deepening A* (IDA*)} is a variant that uses the f-cost as a cutoff instead of depth, combining the optimality of A* with the low memory requirements of iterative deepening.
+
+\subsection{Local Search Methods}
+For problems where the path to the solution is irrelevant (e.g., 8-queens), local search algorithms can be very effective. These methods operate on a single current state, moving to neighboring states to optimize an objective function. They require very little memory.
+\begin{itemize}
+    \item \b{Hill-Climbing:} A simple local search that always moves to the best neighboring state. It can get stuck in \b{local maxima}, on \b{plateaus} (flat areas where no neighbor is better), and on \b{ridges}. Can be mitigated by starting over or by injecting noise (random walk).
+    \item \b{Simulated Annealing:} An improvement on hill-climbing that can escape local maxima. It allows for "bad" (downhill) moves with a probability (noise) that decreases over time. This probability is controlled by a "temperature" parameter \f{T}, which is gradually lowered according to a schedule.
+\end{itemize}
+
+\subsection{Genetic Algorithms}
+Genetic Algorithms (GAs) are a class of local search methods inspired by natural evolution. They maintain a \b{population} of candidate solutions (individuals), which are evolved over generations. The core components are:
+\begin{itemize}
+    \item \b{Fitness Function:} An objective function that evaluates the quality of each individual in the population.
+    \item \b{Selection:} Fitter individuals are more likely to be selected to produce offspring.
+    \item \b{Crossover:} Creates new individuals by combining genetic material (e.g., parts of bit-strings) from two parents.
+    \item \b{Mutation:} Randomly alters parts of an individual, introducing new traits and preventing premature convergence.
+\end{itemize}

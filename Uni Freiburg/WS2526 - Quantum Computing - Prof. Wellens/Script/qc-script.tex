@@ -1,0 +1,134 @@
+\documentclass[a4paper,11pt]{article}
+
+% Package imports
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{chngcntr}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{bm}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usepackage{needspace}
+
+% Page layout
+\geometry{left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\graphicspath{ {./images/} }
+
+% List definition
+\setlist[itemize]{leftmargin=7.5mm}
+\setlist[enumerate]{leftmargin=7.5mm}
+% \setlist[itemize,2]{label=$\circ$}
+
+% Header definition
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quantencomputer Skript (Dr. Thomas Wellens)}
+\rhead{\thepage}
+
+
+% Custom commands for numbered definitions
+\newcounter{definitioncounter}
+\counterwithin{definitioncounter}{section}
+\newtcolorbox{definitionbox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=black,
+  coltitle=black,
+  boxrule=.5pt,
+  arc=5pt,
+  fonttitle=\bfseries,
+%   title filled=true,
+  title={Definition \thedefinitioncounter\hspace{.8em}(#2)},
+%   title=My Title,
+  attach boxed title to top left={yshift=-0.7\baselineskip-0.4pt,xshift=3mm},
+  boxed title style={
+    colback=white,
+    colframe=white,
+    left=6pt,
+    right=6pt,
+    % before upper=\strut
+  },
+%   boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm, colback=white,before upper=\strut}
+  top=15pt,
+  bottom=10pt,
+  left=6pt,
+  right=6pt,
+  #1
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\skip\footins}{0.5cm} % Adjust this to change the space above the footnotes
+\raggedbottom
+
+
+% CUSTOM MACROS
+\newcommand{\definition}[2]{
+    \vspace{.05cm}
+    \refstepcounter{definitioncounter}
+    \begin{definitionbox}{#1}
+    #2
+    \end{definitionbox}
+}
+
+\newcommand{\ig}[2]{ % includegraphics
+  \includegraphics[width=#1\textwidth]{#2}
+}
+\newcommand{\cig}[2]{  % includegraphics (centered)
+  \begin{center}
+    \includegraphics[width=#1\textwidth]{#2}
+  \end{center}
+}
+
+\newcommand{\cf}[1]{\[#1\]} % centered formula
+\newcommand{\f}[1]{${#1}$} % inline formula
+\renewcommand{\b}[1]{\textbf{#1}} % bold text
+\renewcommand{\it}[1]{\textit{#1}} % italic text
+
+% QC symbol macros for use in text
+\newcommand{\ket}[1]{\f{|#1\rangle}} % ket
+\newcommand{\bra}[1]{\f{\langle#1|}} % bra
+
+% QC symbol macros for use !inside! of formulas
+\newcommand{\cket}[1]{|#1\rangle} % ket
+\newcommand{\cbra}[1]{\langle#1|} % bra
+\newcommand{\skal}[2]{\left\langle#1|#2\right\rangle} % scalar product: <a|b> 
+\newcommand{\matr}[1]{\begin{pmatrix}#1\end{pmatrix}} % matrix shortcut
+\newcommand{\tr}[1]{\text{Tr}(#1)} % trace
+
+\begin{document}
+
+% Title section
+\begin{center}
+    {\huge Quantencomputer Skript - WS25/26\par}
+    \vspace{0.5cm}
+    {\large Niklas Rodenbüsch \par}
+    \vspace{0.5cm}
+    {\large \today \par}
+\end{center}
+\vspace{0.5cm}
+
+
+
+\onehalfspacing
+\captionsetup{justification=centering}
+
+\input{inputs/vl1.tex}
+\input{inputs/vl2.tex}
+\input{inputs/vl3.tex}
+\input{inputs/vl4.tex}
+\input{inputs/vl5.tex}
+\input{inputs/vl6.tex}
+
+\end{document}

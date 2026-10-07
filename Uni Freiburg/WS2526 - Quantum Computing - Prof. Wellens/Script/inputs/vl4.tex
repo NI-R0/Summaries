@@ -1,0 +1,135 @@
+\section{Funktionsweise eines gatterbasierten Quantencomputers}
+Es gibt 4 allgemeine Konzepte für Quantencomputer (QC):
+\begin{itemize}
+    \item Gatterbasiere Quantencomputer (z.B. IBM)
+    \item Adiabatischer Quantencomputer (z.B. DWave)
+    \item Quantensimulatoren
+    \item Einweg-Quantencomputer
+\end{itemize}
+Der gatterbasierte QC ist ein besonders flexibles Konzept, und man kann mit ihm im Prinzip alle Rechnungen durchführen, die auch mit den anderen Konzepten möglich sind.
+
+\subsection{Klassischer Computer (Schaltkreismodell)}
+Eine Rechnung auf einem klassischen Computer lässt sich auf einige elementare logische Operationen zurückführen, welche den Zustand (0 oder 1) von einem oder zwei Bits manipulieren:
+
+\cig{.7}{gates1}
+\cig{.7}{gates2}
+
+Jede Funktion \f{\left\{0,1\right\}^n\rightarrow\left\{0,1\right\}^m} (\f{n, m}: Anzahl der Bits für input bzw. output) kann hiermit berechnet werden. Beweis: siehe Vorlesungsfolien (Seite 30f).
+
+
+\subsection{Universalität von NAND and COPY}
+NAND and COPY reichen aus, um alle anderen Gatter zu erzeugen, insbesondere NOT, AND und XOR (die im obigen Beweis der Konstruktion einer beliebigen Booleschen Funktion verwendet wurden).
+
+\cig{.7}{gates3}
+
+\subsection{Komplexität von Berechnungen}
+Wie lange braucht ein Algorithmus, um die Lösung eines Problems zu finden? Die benötigte Zeit \f{T} ist synonym zur Anzahl der logischen Gatter.
+\begin{itemize}
+    \item \b{Klasse P}: Zeit wächst polynomial mit der Länge \f{n} des Inputs (\f{n} = Anzahl der Bits, um den Input darzustellen). Beispiele: Addition zweier Zahlen (\f{T\propto n}), Multiplikation (\f{T\propto n^2}).\\
+    Solche Probleme gelten als "einfach" bzw. "schnell lösbar", im Gegensatz zu Problemen, bei denen \f{T} exponentiell mit \f{n} wächst und welche daher für großes \f{n} praktsich unlösbar sind.
+    \item \b{Klasse NP}: Probleme, deren Lösung möglicherweise schwer zu finden ist, bei denen sich aber schnell (d.h. in polynomieller Zeit) prüfen lässt, ob eine gegebene vorgeschlagene Lösung richtig ist. Beispiel: Faktorisierung ganzer Zahlen (für große Zahlen \f{N} schwer zu finden, aber für gegebene Faktoren \f{p} und \f{q} kann man leicht prüfen, ob \f{N=pq}).
+    \item \b{Klasse NP-vollständig}: Teilmenge von NP mit der folgenden besonderen Eigenschaft: falls ein NP-vollständiges Problem in Zeit \f{T} gelöst werden kann, kann jedes andere NP-Problem in Zeit \f{T'=\textrm{Polynom}(T)} gelöst werden.\\Beispiel: Travelling-Salesman-Problem (kürzeste Route zwischen \f{N} Städten).
+\end{itemize}
+
+Eines der wichtigsten ungelösten Probleme der Informatik ist die Frage ob P=NP? Wahrscheinlich ist dies nicht der Fall (sonst wäre z.B. das Faktorisierungsproblem schnell lösbar), aber bis jetzt gibt es dafür keinen Beweis!\\
+Mit einem Quantencomputer kann das Faktorisierungsproblem in Polynomialzeit gelöst werden. Man vermutet jedoch (aber bisher ohne Beweis), dass NP-vollständige Probleme auch von Quantencomputern \b{nicht} in Polynomialzeit gelöst werden können.
+
+\subsection{Gatterbasierte Quantencomputer}
+Allgemeine Funktionsweise: Die Rechnung erfolgt in 3 Schritten.
+\begin{enumerate}
+    \item Präparation des Anfangszustands (alle Qubits im Zustand \ket{0}):
+    \cf{\cket{\psi_0} = \cket{0}\otimes\cket{0}\otimes\dots\otimes\cket{0}=\cket{0}^{\otimes n}=\cket{00\dots 0}}
+    \item Anwendung einer unitären Operation \f{U} erzeugt den Endzustand: \f{\cket{\psi} = U\cket{\psi_0}}\\
+    \f{U} muss unitär sein, damit \ket{\psi} normiert ist!
+    \cf{\skal{\psi}{\psi} = \langle\psi_0|\underbrace{U^\dagger U}_\mathbb{I}|\psi_0\rangle = \skal{\psi_0}{\psi_0} = 1}
+    \item Messung des Endzustands in Standardbasis (\ket{0}, \ket{1}) für jedes Qubit:\\
+    \f{\rightarrow} Ergebnis \f{i=i_1i_2...i_n\ (i=0,1,2,...,2^n\ ;\ i_1,...,i_n=0,1)} mit WSK \f{p_i=|\skal{i}{\psi}|^2} 
+\end{enumerate}
+\cig{.4}{qc}
+
+Ähnlich wie beim klassischen Computer kann man auch beim Quantencomputer die Rechenoperation \f{U} in eine kleine Menge elementarer logischer Operationen (1- und 2-Qubit-Gatter) zerlegt werden.\\
+Bei der Messung stellt sich das grundsätzliche Problem, dass das Messergebnis i.a. zufällig ist. Verschiedene Quantenalgorithmen gehen hiermit auf unterschiedliche Weise um:
+\begin{itemize}
+    \item Manchmal kann der Algorithmus so konstruiert werden, dass das gewünschte Ergebnis mit 100\% Wahrscheinlichkeit auftritt.
+    \item In anderen Fällen wird der Alorithmus so lange wiederholt, bis das gewünschte Ergebnis gemessen wird. Voraussetzungen, damit dies funktioniert:
+    \begin{itemize}
+        \item für eine gegebene Lösung \f{i_1i_2...i_n} kann man leicht prüfen, ob diese richtig ist (z.B. bei Problemen der Klasse NP).
+        \item die WSK, eine richtige Lösung zu messen, muss groß genug sein.
+    \end{itemize}
+    \item In wiederum anderen Fällen besteht das Ergebnis des Quantenalgorithmus aus einem Mittelwert über viele Messungen.
+\end{itemize}
+
+
+\subsection{1-Qubit-Gatter}
+Wir besprechen nun die Bausteine, aus denen wir "Quantenschaltkreise" (d.h. unitäre Operationen \f{U}) konstruieren können. Als erstes zählen wir einige Gatter auf, die nur auf einzelne Qubits wirken:
+\begin{itemize}
+    \item \b{X-Gatter:} Entspricht dem klassischen NOT-Gatter. Auf der Blochkugel bewirkt X eine Rotation von 180° um die X-Achse. 
+    \cf{X = \matr{0&1\\1&0} = \cket{0}\cbra{1}+\cket{1}\cbra{0}}
+    \item \b{Y-Gatter:} Rotation 180° um die Y-Achse
+    \cf{Y = \matr{0&-i\\i&0}}
+    \item \b{Z-Gatter:} Rotation 180° um die Z-Achse
+    \cf{Y = \matr{1&0\\0&-1}}
+    \item \b{Hadamard-Gatter:} Rotation 180° um den Vektor \f{(1\ 0\ 1)^T}. 
+    \cf{
+        H = \frac{1}{\sqrt{2}}\matr{1&1\\1&-1} = \cket{+}\cbra{0}+\cket{-}\cbra{1}}
+    \cf{
+        H\cket{0} = \frac{1}{\sqrt{2}}\left(\cket{0}+\cket{1}\right) = \cket{+}\quad,\quad H\cket{1} = \frac{1}{\sqrt{2}}\left(\cket{0}-\cket{1}\right) = \cket{-}
+    }
+    \cf{H^2=\mathbb{I}\quad,\quad HXH=Z\quad,\quad HZH=X}
+    Viele Quantenalgorithmen beginnen damit, auf jedes Qubit ein Hadamard-Gatter anzuwenden. Dies erzeugt eine gleichmäßige Superposition aller \f{2^n} Basiszustände.
+    \begin{flalign*}
+        H^{\otimes n}\cket{0}^{\otimes n} & = (H\cket{0})^{\otimes n}  = \left(\frac{1}{\sqrt{2}}(\cket{0}+\cket{1})\right)^{\otimes n} \\
+        & = \frac{1}{\sqrt{2^n}}(\cket{00...00}+\cket{00...01}+...+\cket{11...11}) = \frac{1}{\sqrt{2^n}}\sum_{j=0}^{2^n-1}\cket{j}
+    \end{flalign*}
+    \item \b{Phasengatter:} Parametrisiertes Gatter (d.h. abhängig von Parameter \f{\varphi}). Rotation von Winkel \f{\varphi} um Z-Achse (\f{\varphi = \pi} entspricht 180°)
+    \cf{
+        R_\varphi = \matr{1&0\\0&e^{i\varphi}}\quad,\quad R_\pi = Z
+    }
+    \item \b{S/T-Gatter:} Rotationsgatter mit jeweils \f{\varphi = \frac{\pi}{2}} und \f{\varphi = \frac{\pi}{4}}.
+    \cf{
+        S = R_{\frac{\pi}{2}} = \matr{1&0\\0&i}\quad,\quad S^2=Z
+    }
+    \cf{
+        T = R_{\frac{\pi}{4}} = \matr{1&0\\0&\frac{1+i}{\sqrt{2}}}\quad,\quad T^2=S
+    }
+    \item \b{Pauli-Rotationsgatter:}
+    \begin{flalign*}
+        R_X(\varphi) = e^{-i\frac{\varphi}{2}X}\quad\rightarrow\quad\textrm{Rotation Winkel }\varphi\textrm{ um X-Achse}\\
+        R_Y(\varphi) = e^{-i\frac{\varphi}{2}Y}\quad\rightarrow\quad\textrm{Rotation Winkel }\varphi\textrm{ um Y-Achse}\\
+        R_Z(\varphi) = e^{-i\frac{\varphi}{2}Z}\quad\rightarrow\quad\textrm{Rotation Winkel }\varphi\textrm{ um Z-Achse}
+    \end{flalign*}
+\end{itemize}
+In den Übungen zeigen wir \f{R_Z(\varphi) = e^{-i\frac{\varphi}{2}}R_\varphi}, d.h. die Gatter \f{R_Z(\varphi)} und \f{R_Y} sind bis auf eine globale Phase zueinander äquivalent! Da eine solche globale Phase letztlich irrelevant ist, sind die beiden Gatter physikalisch miteinander identisch und entsprechen derselben Rotation auf der Blochkugel. Außerdem zeigen wir in den Übungen:
+\begin{flalign*}
+    XYX = -Y\quad\quad &,\quad\quad XZX = -Z\\
+    XR_Y(\varphi)X = R_Y(-\varphi)\quad\quad &,\quad\quad XR_Z(\varphi)X = R_Z(-\varphi)
+\end{flalign*}
+
+\subsubsection{Allgemeines 1-Qubit-Gatter}
+Jedes 1-Qubit-Gatter kann (bis auf eine globale Phase) wie folgt mit Hilfe von 3 Parametern (\f{\vartheta, \varphi, \lambda}) geschrieben werden:
+\cf{
+    U_3(\vartheta, \varphi, \lambda) = \matr{
+        \cos(\frac{\vartheta}{2})&-e^{i\lambda}\sin(\frac{\vartheta}{2})\\
+        e^{i\varphi}\sin(\frac{\vartheta}{2})&e^{i\lambda + i \varphi}\cos(\frac{\vartheta}{2})
+    }
+}
+In den Übungen zeigen wir:
+\cf{
+    U_3(\vartheta, \varphi, \lambda) = \underbrace{e^{i\frac{\varphi + \lambda}{2}}}_{\textrm{globale Phase}}\overbrace{R_Z(\varphi)R_Y(\vartheta)R_Z(\lambda)}^{\textrm{Rotation um z- und y-Achse}}
+}
+Daraus ergibt sich folgendes Korollar, welches im nächsten Kapitel nützlich sein wird: Jedes 1-Qubit-Gatter \f{U} kann wie folgt dargestellt werden (Beweis: siehe Übungen):
+\cf{
+    U = e^{i\alpha}AXBXC
+}
+Hierbei sei \f{\alpha\in\mathbb{R}} ein Phasenfaktor und \f{A, B} und \f{C} jeweils 1-Qubit-Gatter mit \f{ABC=\mathbb{I}}.
+
+
+
+
+
+
+
+
+
+
+

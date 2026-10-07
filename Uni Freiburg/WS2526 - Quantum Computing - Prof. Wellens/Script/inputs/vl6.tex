@@ -1,0 +1,353 @@
+\section{Quantenalgorithmen}
+In diesem Kapitel stellen wir einige Algorithmen vor, die für Anwendungen interessant sein können, d.h. bei denen der Quantencomputer einen Vorteil gegenüber dem klassischen Computer verspricht.
+
+\subsection{Grover-Suchalgorithmus}
+Dieser Algorithmus beschleunigt die Suche nach einem bestimmten Element in einer unstrukturierten Menge von Elementen. Beispiele:
+\begin{itemize}
+    \item Suche nach einer bestimmten Telefonnummer in einem nach Namen sortierten Telefonbuch
+    \item Suche nach der kürzesten Verbindung zwischen \f{K} Städten
+\end{itemize}
+
+\subsubsection{Allgemeine Formulierung}
+Für eine gegebene Funktion \f{f: \left\{0,1\right\}^n\rightarrow\left\{0,1\right\}}, suche \f{x} (\f{2^n} mögliche Inputs für \f{x}), so dass \f{f(x)=1}.\\[0.5em]
+Anwendung (z.B.) auf das Traveling-Salesman-Problem: Jeder Input bezeichnet eine mögliche Route (Anzahl \f{(K-1)!\leq N = 2^n}), dann ist \f{f(x)} definiert durch:
+\cf{
+    f(x) = \begin{cases}
+        0\quad\textrm{falls Länge der Route} > L\\
+        1\quad\textrm{falls Länge der Route} \leq L
+    \end{cases}
+}
+Die kürzeste Route kann dann gefunden werden, indem man verschiedene Werte von \f{L} probiert.
+
+\subsubsection{Orakel}
+Ähnlich wie beim Deutsch-Algorithmus wird zur Funktion \f{f} ein Quantenschaltkreis \f{O} ("Orakel") konstruiert:
+\cf{
+    \cket{x}\cket{q}\ \xmapsto{O}\ \cket{x}\cket{q\oplus f(x)}\quad\quad\begin{aligned}
+        &x = 0,1,2,...,2^n-1\ \quad(n\textrm{ Qubits})\\
+        &q = 0,1\ \quad(1\textrm{ Qubit})
+    \end{aligned}
+}
+Hierzu nehmen wir an, dass zur Berechnung von \f{f} ein effizienter klassischer Schaltkreis existiert (z.B. ist bei Traveling-Salesman die Berechnung der Länge einer gegebenen Route leicht möglich). Dieser kann dann auf einem entsprechenden Quantenschaltkreis von ungefähr gleicher Komplexität abgebildet werden. 
+Das Orakel-Qubit \ket{q} wird im Zustand \f{\cket{q}=\frac{1}{\sqrt{2}}(\cket{0}-\cket{1})} initialisiert. Dann gilt:
+\cf{
+    \cket{x}(\frac{\cket{0}-\cket{1}}{\sqrt{2}})\ \xmapsto{O}\ \begin{cases}
+        \cket{x}(\frac{\cket{0}-\cket{1}}{\sqrt{2}})\quad\textrm{falls }f(x)=0 \\
+        \cket{x}(\frac{\cket{1}-\cket{0}}{\sqrt{2}})\quad\textrm{falls }f(x)=1
+    \end{cases}
+}
+\cf{
+    \Rightarrow\ \cket{x}(\frac{\cket{0}-\cket{1}}{\sqrt{2}})\ \xmapsto{O}\ (-1)^{f(x)}\cket{x}(\frac{\cket{0}-\cket{1}}{\sqrt{2}})
+}
+Das Orakel-Qubit bleibt im selben Zustand und wird im folgenden außer Acht gelassen. Somit gilt:
+\cf{
+    \cket{x}\ \xmapsto{O}\ (-1)^{f(x)}\cket{x}
+}
+
+\subsubsection{Grover-Iteration}
+Wir nehmen nun an, dass die Anzahl \f{M} der gesuchten Lösung (Elemente \f{x}, für die gilt \f{f(x)=1}) bekannt ist (falls nicht, gibt es einen anderen Quantenalgorithmus "Quantum Counting", der \f{M} berechnen kann). Der Suchalgorithmus funktioniert dann wie folgt:
+\begin{enumerate}
+    \item Anwendung von \f{H} auf jedes Qubit erzeugt gleichförmige Überlagerung aller Basiszustände:
+    \cf{
+        H^{\otimes n}\cket{0} = \cket{\psi_0} = \frac{1}{\sqrt{N}}\sum_{j=0}^{N-1}\cket{j}\qquad\quad(N=2^n)
+    }
+    \item Ca. \f{\sqrt{\frac{N}{M}}}-fache Anwendung der Grover-Unterroutine \f{G} (siehe unten)
+    \item Messung aller Qubit ergibt Kandidaten \f{x} für gesuchte Lösung
+\end{enumerate}
+\cig{.7}{grover}
+
+\subsubsection{Grover-Unterroutine}
+Diese enthält das Orakel und ein \f{(n-1)}-fach kontrolliertes Phasengatter von folgender Art, welches mit \f{\O (n)} elementaren Gattern erzeugt werden kann:
+\cf{
+    \cket{x}\ \rightarrow\ \begin{cases}
+        \cket{x}\quad\textrm{falls }x=0\ \textrm{(alle Qubits in }\cket{0})\\
+        -\cket{x}\quad\textrm{ansonsten}
+    \end{cases}
+}
+\cig{.6}{grover2}
+
+\subsubsection{Geometrische Visualisierung}
+Die Funktionsweise des Grover-Algorithmus können wir am einfachsten anhand von Rotationen in einem zweidimensionalen Unterraum verstehen. Zu diesem Zweck definieren wir folgende zwei Zustände:
+
+\cf{
+    \cket{\alpha}=\frac{1}{\sqrt{N-M}}\sum_{\substack{\left\{x : f(x)=0\right\} \\\mathclap{\overset{\uparrow}{\text{Summe über alle "falschen" } x}}}}\cket{x}\qquad,\qquad
+    \cket{\beta}=\frac{1}{\sqrt{M}}\sum_{\substack{\left\{x : f(x)=1\right\} \\\mathclap{\overset{\uparrow}{\text{Summe über gesuchte } x\text{ (Anzahl M)}}}}}\cket{x}
+}
+
+Der Anfangszustand \f{\cket{\psi_0}=H^{\otimes n}\cket{0}} ist eine Linearkombination dieser beiden Zustände:
+\cf{
+    \cket{\psi_0}=\frac{1}{\sqrt{N}}\sum_{x=0}^{N-1}\cket{x}=\underbrace{\sqrt{\frac{N-M}{N}}}_{=a_0}\cket{\alpha} + \underbrace{\sqrt{\frac{M}{N}}}_{=b_0}\cket{\beta}
+}
+Wegen \f{O\cket{x}=(-1)^{f(x)}\cket{x}} gilt mit \f{a,b\in\mathbb{R}} beliebig:
+\f{
+    O(a\cket{\alpha}+b\cket{\beta}) = a\cket{\alpha}-b\cket{\beta}
+}\\
+\f{\Rightarrow\ \text{Orakel spiegelt an }\cket{\alpha}\text{-Achse}}
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[width=.7\linewidth]{grover3}
+    \end{subfigure}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[width=.8\linewidth]{grover4}
+    \end{subfigure}
+\end{figure}
+
+Den Diffusionsoperator \f{D} können wir wie folgt schreiben:
+\cf{
+    D = H^{\otimes n}\underbrace{(2\cket{0}\cbra{0}-\mathbb{I})}_{{\mathclap{\begin{aligned}
+            \cket{0}\mapsto\cket{0} \quad&\text{da }(2\cket{0}\cbra{0}-\mathbb{I})\cket{0}=2\cket{0}-\cket{0}=\cket{0}\\
+            \cket{x}\mapsto -\cket{x} \quad&\text{für }x>0\ (\Rightarrow \skal{0}{x}=0)
+        \end{aligned} 
+    }}}H^{\otimes n} = 2\cket{\psi_0}\cbra{\psi_0}-\mathbb{I}
+}
+Wegen \f{\cket{\psi_0}=a_0\cket{\alpha}+b_0\cket{\beta}} führt auch die Anwendung von \f{D} nicht aus dem von \ket{\alpha} und \ket{\beta} aufgespannten Unterraum hinaus!\\
+Es gilt \f{D\cket{\psi_0}=2\cket{\psi_0}-\cket{\psi_0}=\cket{\psi_0}} und \f{D\cket{\chi_0}=-\cket{\chi_0}} für \f{\skal{\chi_0}{\psi_0}=0} (also \ket{\chi_0} senkrecht zu \ket{\psi_0}). Somit bewirkt \f{D} eine Spiegelung an \f{\psi_0}. Die Grover-Iteration \f{G^m=(DO)^m} spiegelt also abwechselnd and \ket{\alpha} bzw. \ket{\psi_0}!
+
+\cig{.5}{grover5}
+
+Jedes Anwendung von \f{G} führt zu einer Rotation um den Winkel \f{2\vartheta_0}. Daraus folgt:
+\begin{gather*}
+    \vartheta_m = \vartheta_0 + 2m\vartheta_0 = (1+2m)\vartheta_0\\
+    \cket{\psi_m} = G^m\cket{\psi_0}=\sin(\vartheta_m)\cket{\beta}+\cos(\vartheta_m)\cket{\alpha}
+\end{gather*}
+Die WSK, nach \f{m} Iterationen eine gesuchte Lösung \f{f(x)=1} zu messen, ist gegeben durch:
+\cf{
+    p = \sum_{\{x:f(x)=1\}}|\skal{x}{\psi_m}|^2=\sum_{\{x:f(x)=1\}}|\sin(\vartheta_m)\frac{1}{\sqrt{m}}|^2=\sin^2(\vartheta_m)
+}
+Wir brauchen also \f{\vartheta_m=\frac{\pi}{2}}, um den Zustand in Richtung \ket{\beta} zu rotieren und \f{p\approx 1} zu erhalten. Die Anzahl der nötigen Iterationen lässt sich bestimmen durch:
+\cf{
+    (1+2m)\vartheta_0\approx\frac{\pi}{2}\quad\Rightarrow\quad m\approx\left(\frac{\pi}{2\vartheta_0}-1\right)\frac{1}{2}=\frac{\pi}{4\vartheta_0}-\frac{1}{2}\quad\text{with }\vartheta_0=\sin^{-1}(\sqrt{\frac{M}{N}})
+}
+Falls \f{N>>M}, dann ist \f{\sqrt{\frac{M}{N}}<<1\Rightarrow\vartheta_0\approx\sqrt{\frac{M}{N}}} (weil \f{\sin(x) \approx x} für \f{x<<1}), und somit:
+\cf{
+    m\approx\frac{\pi}{4}\sqrt{\frac{N}{M}}
+}
+Klassisch braucht man ungefähr \f{\frac{N}{M}} Versuche, um eine richtige Lösung zu finden, falls das Suchproblem "unstrukturiert" ist, d.h. es keine bessere Strategie als brute-force gibt. Somit bringt Grover eine Beschleunigung von \f{\frac{N}{M}\rightarrow\sqrt{\frac{N}{M}}} (nicht exponentiell schneller, aber evtl. doch relevant).
+
+
+\subsection{Die Quantenfouriertransformation und ihre Anwendungen}
+Wir besprechen zwei wichtige Algorithmen, die gegenüber den besten bekannten klassischen Algorithmen eine exponentielle Beschleunigung versprechen:
+\begin{itemize}
+    \item Faktorisierung ganzer Zahlen durch den Shor-Algorithmus
+    \item Lösung linearer Gleichungssysteme durch den HHL-Algorithmus
+\end{itemize}
+Essentielle Bestandteile beider Algorithmen sind die Quantenfouriertransformation (QFT) und die Quantenphasenschätzung (QPE).
+
+\definition{Klassische diskrete Fouriertransformation (DFT)}{
+    Die DFT für \f{x_0, x_1, ..., x_{n-1}\in\mathbb{R}\ \xrightarrow{DFT}\ y_0, y_1, ..., y_{n-1}} ist definiert durch:
+    \cf{
+        y_k = \frac{1}{\sqrt{N}}\sum_{j=0}^{N-1}x_je^{2\pi ij\frac{k}{N}}
+    }
+}
+Die Fouriertransformation hat zahlreiche Anwendungen z.B. in digitaler Signalverarbeitung wobei \f{x_i} ein zeitdiskretes Signal und \f{y_i} ein diskretes Frequenzspektrum wäre.\\
+
+Falls das Eingangssignal periodisch ist (mit Periode \f{T}, und \f{N} ein Vielfaches von \f{T}), so kommen in der DFT nur die Frequenzen \f{\frac{N}{T}} und deren ganzzahlige Vielfache vor.
+\cig{.8}{dft}
+
+\subsubsection{Quantenfouriertransformation (QFT)}
+Für die Standardbasisvektoren \f{\cket{j}=\cket{j_1j_2...j_n}} (\f{n} Qubits, \f{N=2^n}) (wobei \f{j=\sum_{k=1}^{n}2^{n-k}j_k} ,\\\f{j_k\in\{0,1\}}) definieren wir:
+\cf{
+    \text{QFT}\cket{j}=\frac{1}{\sqrt{N}}\sum_{k=0}^{N-1}e^{2\pi ij\frac{k}{N}}\cket{k}
+}
+Wendet man QFT auf eine Superposition \f{\sum_{j=0}^{N-1}x_j\cket{j}} an, erhält man also:
+\cf{
+    \text{QFT}\left(\sum_{j=0}^{N-1}x_j\cket{j}\right)=\sum_{k=0}^{N-1}\frac{1}{\sqrt{N}}\underbrace{\sum_{j=0}^{N-1}x_je^{2\pi ij\frac{k}{N}}}_{=y_k}\cket{k}=\sum_{k=0}^{N-1}y_k\cket{k}
+}
+\b{Bemerkung:} Die klassische DFT wird manchmal auch mit einem Minuszeichnen im Exponenten definiert (was dann der inversen Transformation entspricht). Dieses erhält man, indem man die Koeffizienten \f{x_j} und \f{y_j} komplex konjugiert:
+\cf{
+    y_k^*=\frac{1}{\sqrt{N}}\sum_{j=0}^{N-1}x_j^*e^{-2\pi ij\frac{k}{N}}
+}
+Der der QFT entsprechende Quantenschaltkreis ist wie folgt gegeben (Herleitung weggelassen) (Achtung: Reihenfolge der Qubits umgedreht):
+\cig{.8}{qft}
+Auf jedes Qubit \f{l\ (=1,2,...,n)} wenden wir also folgende Operationen an: Ein Hadamard-Gatter, dann eine Reihe von kontrollierten diskreten Phasengattern \f{R_2, R_3, ..., R_{n+1-l}} jeweils mit Qubit l+1, l+2, ..., n als Kontroll-Qubit. Die diskreten Phasengatter sind definiert durch:
+\cf{
+    R_k = \matr{1&0\\0&e^{2\pi \frac{i}{2k}}}
+}
+Am Schluss muss noch die Reihenfolge der Qubits umgedreht werden, um die QFT zu erhalten (Überprüfung S.75 weggelassen).\\[1em]
+Die Zahl der Gatter in QFT ist \f{n(n+1)/2}. Klassisch brauchen wir \f{\approx 2^n} (exponentiell mehr) Gatter zur Berechnung der Fast-Fourier-Transform (FFT). Wir können jedoch nicht ohne weiteres QFT benutzen, um beliebige Anwendungen, welche klassische FT benötigen, zu beschleunigen.\\
+Dies liegt daran, dass die Präparation des Anfangszustands (\f{\sum_{j=0}^{N-1}x_j\cket{j}\ ,\ N=2^n}) und die Messung der Amplituden \f{y_0,...,y_{N-1}} im Endzustand jeweils exponentiell viele Operationen erfordern. Trotzdem kann die QFT in einigen Fällen (bei denen der Anfangszustand leicht präpariert werden kann und zum Schluss nur wenige Amplituden gemessen werden müssen) nützlich sein, wie wir im folgenden sehen werden. 
+
+
+
+\subsection{Quantenphasenschätzung (QPE)}
+\b{Aufgabe:} Bestimme den Eigenwert \f{e^{2\pi i\varphi_u}} eines geg. imitären Operators \f{U} zum Eigenvektor \ket{u}. Hierzu brauchen wir:
+\begin{itemize}
+    \item Effiziente Schaltkreise ("Orakel"), um den Zustand \ket{u} zu präparieren und um kontrollierte \f{U^{2^j}}-Operationen durchzuführen.
+    \item Ein zusätzliches Register von \f{t} Qubits, wobei \f{n} die Genauigkeit des Ergebnisses in Bits ist:
+    \cf{
+        t = n + \log(2+\frac{1}{2\epsilon})\qquad(\text{Erfolgs-WSK: }\geq 1-\epsilon)
+    }
+\end{itemize}
+Der erste Schritt des QPE-Protokolls funktioniert wie folgt:
+\cig{.8}{qpe}
+Die kontrollierten \f{U^{2^j}}-Operationen (\f{j=0,...,t-1}) lassen den Zustand \ket{u} unverändert\\
+(\f{U^{2^j}\cket{u}=e^{2\pi i2^j\varphi_u}\cket{u}}) und führen zu einem Phasenfaktor \f{e^{2\pi i2^j\varphi_u}}, falls das entsprechende Kontroll-Qubit im Zustand \ket{1} ist.\\
+Falls die Phase \f{\varphi_u} mit \f{t} Qubits exakt ausgedrückt werden kann, d.h. falls \f{\varphi_u=\frac{j}{2^t}} mit ganzer Zahl \f{j=0,1,...,2^t}, dann stimmt der Zustand auf der rechten Seite mit QFT\ket{j} überein.\\
+Wir führen also die inverse QFT (= QFT\f{^\dagger}) durch, und schreiben den QPE-Schaltkreis in kompakter Form wie folgt:
+\cig{.8}{qpe2}
+\vspace{1cm}
+Falls \f{\varphi_u\neq\frac{j}{2t}}, dann liefert der obige Schaltkreis mit WSK \f{>1-\epsilon} eine \f{n}-Bit-Näherung von \f{\varphi_u}:
+\cf{
+    \cket{0}\cket{u}\xrightarrow{\text{QPE}}\cket{\tilde{\varphi_u}}\cket{u}
+}
+D.h. die Messung \f{\tilde{\varphi_u}} liefert (mit WSK \f{>1-\epsilon}) ein Messergebnis \f{j}, dessen erste \f{n} Bits mit den ersten \f{n} Bits von \f{2^t\varphi_u} übereinstimmen.\\
+Falls der Zustand \ket{u} nicht genau präpariert werden kann und sich das 2. Register stattdessen anfangs in einer Überlagerung \f{\cket{\psi}=\sum_{u}c_u\cket{u}} verschiedener Eigenzustände befindet, so liefert QPE mit WSK \f{|c_u|^2} eine \f{n}-Bit Näherung von \f{\varphi_u}:
+\cf{
+    \cket{0}\cket{\psi}\xrightarrow{QPE}\sum_uc_u\cket{\tilde{\varphi_u}}\cket{u}
+}
+
+
+\subsection{Shor-Algorithmus}
+\subsubsection{Faktorisierungsproblem}
+\b{Aufgabe:} Gegeben sei eine natürliche Zahl \f{N}, welche keine Primzahl ist. Finde ganze Zahlen \f{p} und \f{q}, so dass \f{N=pq}.\\[0.5em]
+Der beste bekannte klassische Algorithmus ("Zahlkörpersieb") benötigt \f{e^{1.7L^{1/3}(\ln L)^{2/3}}} (exponentielle) Operationen, um eine Zahl \f{N} mit \f{L} Bits (\f{L=\log_2 N}) zu faktorisieren. Shors Algorithmus benötigt lediglich \f{O(L^3)} Operationen. Dies hat schwere Konsequenzen für die Sicherheit des RSA public key Kryptografieverfahrens.
+
+\subsubsection{Umformulierung: Ordnung modulo N}
+Um mit dem Quantencomputer gelöst werden zu können, wird das Faktorisierungsproblem mit Hilfe von Zahlentheorie in ein äquivalentes Problem wie folgt umgeformt:
+\begin{itemize}
+    \item wähle zufällig eine ganze Zahl x zwischen 1 und \f{N-1}
+    \item betrachte die Funktion: \f{f(r)=x^r\mod N}
+\end{itemize}
+\cig{.8}{shor}
+Es fällt auf: \f{f(r)} ist periodisch mit Periode 4, wobei \f{f(4)=1}. Allgemein gilt: Falls \f{x} und \f{N} keinen gemeinsamen Teiler haben (ggT\f{(x,N)=1}), dann gibt es eine ganze Zahl \f{r<N}, so dass \f{f(r)=x^r\mod N = 1}.\\
+Die kleinste Zahl mit dieser Eigenschaft heißt "Ordnung von \f{x} modulo \f{N}", und die Funktion \f{f} ist dann periodisch mit Periode \f{r}.\\
+
+Nehmen wir nun an: \f{r} ist gerade und \f{x^{r/2}\mod N\neq N-1} (*). Dann gilt:
+\cig{.7}{shor2}
+Die beiden Zahlen \f{x^{r/2}-1} und \f{x^{r/2}+1} müssen also jeweils einen Faktor von \f{N} enthalten, und somit müssen ggT\f{(x^{r/2}-1,N)} und ggT\f{(x^{r/2}+1,N)} liefern jeweils einen Faktor von \f{N}.\\
+Außerdem kann man zeigen, dass bei zufällig gewähltem \f{x} die Bedingung (*) mit WSK \f{\geq1/2} erfüllt ist, falls \f{N} keine gerade Zahl ist und \f{N\neq a^b} für ganze Zahlen \f{a} und \f{b}.\\
+
+\b{Zusammenfassung:} \f{N} kann wie folgt faktorisiert werden:
+\begin{enumerate}
+    \item Falls \f{N} gerade ist oder \f{N=a^b}, gib 2 oder \f{a} als Faktor von \f{N} aus.
+    \item Wähle zufällig \f{x} zwischen 1 und \f{N-1}. Falls ggT\f{(x,N)>1} gib diese Zahl als Faktor aus.
+    \item Bestimme die Ordnung \f{r} von \f{x\mod N} mit dem unten beschriebenen Quantenalgorithmus.
+    \item Falls \f{r} gerade ist und \f{x^{r/2}\mod N\neq N-1}, gib ggT\f{(x^{r/2}-1, N)} oder ggT\f{(x^{r/2}+1,N)} als Faktor von \f{N} aus. Falls nicht, gehe zurück zu (2).
+\end{enumerate}
+% Bis auf den 3. Schritt, können alle Schritte effizient auf einem klassischen Computer durchgeführt werden.\\
+% \subsubsection{Funktionsweise}
+
+\b{Beispiel:} \f{N=15\Rightarrow L=4} (da \f{2^4=16>15})\\
+Die gesuchte Ordnung \f{r} kann Werte zwischen 1 und 15 annehmen. Aus unserem Messergebnis \f{j} erhalten wir \f{\varphi=j/2t} als Schätzung für \f{s/r}. Gesucht ist nun der Bruch \f{s/r} mit \f{r\leq15}, der am nächsten an unserer Schätzung \f{\varphi} liegt. Der kleinste Unterschied zwischen zwei Brüchen \f{s_1/r_1\neq s_2/r_2} beträgt:
+\cig{.3}{shor3}
+Die Genauigkeit der Schätzung \f{\varphi} muss also mindestens \f{\Delta/2=1/420} betragen, wozu \f{n\geq\log_2(420)=8.7}, also \f{n\geq 9\ (=2L+1)} Bits benötigt werden. Wählen wir also \f{t=9} Bits in Register 1 und erhalten als Messergebnis z.B. \f{j=147\ \Rightarrow\ \varphi = 147/2^9 = 147/512}. Entwickelt man \f{\varphi} als Kettenbruch:
+\cig{.5}{shor4}
+Lässt man Gleider des Kettenbruchs weg, erhält man Annäherungen an \f{\varphi} mit kleinerem Nenner:
+\cf{
+    \frac{1}{3}\approx0.333\quad,\quad \frac{1}{3+\frac{1}{2}}=\frac{2}{7}\approx0.285714\quad,\quad \frac{1}{3+\frac{1}{2+\frac{1}{14}}}=\frac{29}{101}\approx 0.287129
+}
+Die beste Näherung mit \f{r\leq 15} ist also \f{\frac{s}{r}=\frac{2}{7}=\frac{4}{14}\ \Rightarrow\ r=7} oder \f{r=14}.\\
+
+Der Shor-Algorithus kann aus folgenden Gründen fehlschlagen:
+\begin{itemize}
+    \item \f{\varphi=\tilde{s}/r} ist eine schlechte Näherung an \f{s/r}. Dies geschieht mit Wahrscheinlichkeit \f{\leq\epsilon}, welche für genügend großes \f{t=2L+1+\log(2+\frac{1}{2\epsilon})} vernachlässigt werden kann.
+    \item \f{s} und \f{r} haben einen gemeinsamen Faktor (z.B. \f{\frac{2}{7}=\frac{4}{14}}). Der Algorithmus muss dann wiederholt werden. Nielsen/Chuang zeigen, dass wenige Wiederholungen ausreichen, um mit hoher WSK die richtige Lösung zu erhalten.
+\end{itemize}
+
+\b{Benötigte Ressourcen:} Um eine Zahl \f{N} mit \f{L} Bits zu faktorisieren:
+\begin{itemize}
+    \item Zahl der Qubits: \f{L+t = 3L+3} (für \f{\epsilon<1/4})
+    \item Zahl der Quantengatter: \f{O(L^3)}. Die meisten Gatter werden zur Berechnung der Funktion \f{x^k\mod N} benötigt.
+\end{itemize}
+
+Für kryptographisch relevante Schlüsselgrößen (\f{L}=1024,2048,...) wird Shors Algorithmus nicht ohne Quantenfehlerkorrektur funktionieren, welche wiederum eine große Anzahl zusätzlicher Qubits erfordert. Laut einer aktuellen Schätzung werden ca. 20 Millionen fehlerbehaftete Qubits (Fehlerrate \f{10^{-3}}) benötigt, um eine 2048-Bit Zahl in 8 Stunden zu faktorisieren. 
+
+
+\subsection{HHL-Algorithmus}
+\b{Aufgabe:} Lösung eines linearen Gleichungssystems, d.h. zu gegebener Matrix \f{A\in\mathbb{C}^{N\times N}} und Vektor \f{\vec{b}\in\mathbb{C}^N}, finde \f{\vec{x}\in\mathbb{C}^N}, so dass \f{A\vec{x}=\vec{b}}.
+\begin{itemize}
+    \item Dies entspricht der Invertierung der Matrix \f{A: \vec{x}=A^{-1}\vec{b}}
+    \item Falls \f{A} selbstadjungiert ist (\f{A=A^\dagger}), erhalten wir mit Hilfe der Spektralzerlegung:
+    \cf{
+        A = \sum_{i=1}^{N}\lambda_i\cket{v_i}\cbra{v_i}\Rightarrow A^{-1}=\sum_{i=1}^{N}\lambda_i^{-1}\cket{v_i}\cket{v_i}
+    }
+\end{itemize}
+\subsubsection{Laufzeit auf einem klassischen Computer}
+Mit dem Verfahren der konjugierten Gradienten, erreichen klassiche Computer:
+\cf{
+    O(Ns\kappa\log(\frac{1}{\epsilon}))
+}
+Wobei \f{s} die "sparseness" von \f{A} (höchstens \f{s} Matrixeinträge ungleich Null pro Spalte oder Zeile) bezeichnet, \f{\kappa=\frac{G_{max}}{G_{min}}} die Kondition der Matrix \f{A} (\f{G_i} sind Singulärwerte von \f{A}), und \f{\epsilon} die Genauigkeit der Lösung.
+
+\subsubsection{Quantenalgorithmus (HHL)}
+\begin{itemize}
+    \item Laufzeit: \f{O(\log(N)s^2\kappa^2/\epsilon)} (exponentielle Beschleunigung in \f{N})
+    \item 1. Annahme: \f{A=A^\dagger} (ansonsten, löse \f{\matr{0&A\\A^\dagger&0}\matr{0\\\vec{x}}=\matr{\vec{b}\\0}})
+    \item 2. Annahme: Es gibt effiziente "Orakel", um den Vektor \f{\vec{b}} in den Quantenschaltkreis einzuspeisen, um den Operator \f{e^{iAt}} zu erzeugen ("Hamiltonian simulation"), sowie eine Funktion der Lösung \f{\vec{x}} zu berechnen.
+    \item 3. Annahme: Im Gegensatz zum klassischen Algorithmus liefert HHL nicht die vollständige Lösung \f{\vec{x}}, sondern eine Funktion davon, z.B.
+    \cf{
+        \vec{x}^\dagger M\vec{x}\in\mathbb{R}\quad(\text{mit gegebener Matrix }M=M^\dagger)
+    }
+    (d.h. die Lösung besteht nur aus 1 Zahl, nicht aus allen \f{N} Einträgen von \f{\vec{x}}).
+\end{itemize}
+
+\subsubsection{Skizze des Quantenschaltkreises}
+Für den Quantenschaltkreis brauchen wir 3 Register:
+\begin{itemize}
+    \item \f{n_b} Qubits (\f{2^{n_b}\geq N}), welche anfangs \f{\vec{b}} und am Schluss \f{\vec{x}} enthalten.
+    \item \f{n_l} Qubits, um die Eigenwerte von \f{A} zu speichern
+    \item 1 Hilfsqubit (um die Eigenwerte zu invertieren)
+\end{itemize}
+\cig{.8}{hhl}
+\subsubsection{Funktionsweise}
+\begin{enumerate}
+    \item Lade \f{\vec{b}}: \f{\cket{0}_{n_b}\longmapsto\cket{b}_{n_b}=\sum_{i=0}^{N-1}b_i\cket{i}\quad}with\f{\quad\cket{\vec{b}}=(b_0\ b_1\ ...\ b_{N-1})^{T}, |\vec{b}|=1}
+    \item Quantenphasenschätzung für Operator
+    \cf{
+        U = e^{iAt}=\sum_{j=0}^{N-1}e^{i\lambda jt}\cket{u_j}\cbra{u_j}\quad,\quad\cket{u_j}: \text{ Eigenvektoren}
+    }
+    Der Anfangszustand ist \f{\cket{b}=\sum_{j=0}^{N-1}\cket{u_j}\skal{u_j}{b}}, woraus der Quantenzustand nach QPE folgt:
+    \cf{
+        \sum_{j=0}^{N-1}d_j\underbrace{\cket{\tilde{\varphi_j}}_{n_l}}_{\substack{\mathclap{\overset{\uparrow}{\text{Schätzung von } \varphi_j=\frac{t\lambda_j}{2\pi}}}}}\cket{u_j}_{n_b}\quad\text{with}\quad d_j:=\skal{u_j}{b}
+    }
+    \item Führe auf Hilfsqubit eine durch \f{\tilde{\varphi}_j} kontrollierte Rotation durch:
+    \cf{
+        \Rightarrow \sum_{j=0}^{N-1}d_j\cket{\tilde{\varphi}_j}_{n_l}\cket{u_j}_{n_b}\left(  \sqrt{1-\frac{c^2}{\varphi_j^2}}\cket{0} + \frac{c}{\varphi_j}\cket{1} \right)\quad\text{with}\quad c\leq|\varphi|_{\text{min}}=\frac{t}{2\pi}|\lambda|_{\min}
+    } 
+    Hierzu wird auf dem Hilfsqubit eine Rotation \f{R_y(\vartheta)} durchgeführt:
+    \cf{
+        R_y(\vartheta)=e^{-i\vartheta/2Y}\quad,\quad R_y(\vartheta)\cket{0} = \cos(\frac{\vartheta}{2})\cket{0}+\sin(\frac{\vartheta}{2})\cket{1}
+    }
+    wobei der Drehwinkel durch das \f{n_l}-Register kontrolliert wird: \f{\vartheta = 2\arcsin(\frac{c}{\varphi_j})}. Dies erfordert Quantenschaltkreise zur Berechnung von \f{1/\varphi_j} und \f{\arcsin}.
+    \item Anwenden inverser QPE, um das \f{n_l}-Register zurück auf \ket{0} zu setzen:
+    \cf{
+        \Rightarrow\ \sum_{j=0}^{N-1}d_j\cket{0}_{n_l}\cket{u_j}_{n_b}\left(  \sqrt{1-\frac{c^2}{\varphi_j^2}}\cket{0} + \frac{c}{\varphi_j}\cket{1} \right)
+    }
+    \item Messung des Hilfsqubits. Falls "1" gemessen wird, enthält das \f{n_b}-Register die gewünschte Lösung (bis auf einen Normierungsfaktor):
+    \cf{
+        \Rightarrow \sum_{j=0}^{N-1}\frac{c}{\varphi_j}\cket{u_j}\skal{u_j}{b} = \frac{2\pi c}{t}\underbrace{A^{-1}\cket{b}}_{=\cket{x}}
+    }
+    Die Norm dieses Zustands entspricht der Wahrscheinlichkeit \f{p_1}, das Hilfsqubit in "1" zu messen. Die Messung von \f{p_1} liefert die Norm von \f{x}:
+    \cf{
+        p_1 = \frac{4\pi^2c^2}{t^2}\skal{x}{x}
+    }
+    \item Messe schließlich die Observable \f{M}, um den gewünschten Erwartungswert \f{\skal{x|M}{x}} zu erhalten.
+\end{enumerate}
+
+\subsubsection{Wahl der Parameter t und c}
+Hierfür benötigen wir Grenzen für den kleinsten und größten Eigenwert von \f{A} (\f{|\lambda|_{\min}\leq|\lambda_j|\leq|\lambda|_{\max}}). Wir wählen \f{t=\frac{2\pi}{|\lambda|_{\max}}}, damit die Phasen \f{\varphi_j = \frac{t\lambda_j}{2\pi}} möglichst den ganzen Bereich zwischen 0 und 1 ausnutzen können.\\
+\f{c} sollte so groß wie möglich gewählt werden (um \f{p_1} zu maximieren), jedoch muss gelten:
+\cf{
+    |\frac{c}{\varphi_j}|\leq 1\ \Rightarrow\ |c|\leq|\varphi|_{\min} = \frac{t}{2\pi}|\lambda|_{\min}\approx\frac{|\lambda|_{\min}}{|\lambda|_{\max}} = \frac{1}{\kappa}
+}
+
+\subsubsection{Wann ist HHL nützlich?}
+Wir benötigen:
+\begin{itemize}
+    \item einen effizient (\f{\propto \log(N)}) zu implementierenden unitären Operator \f{B}, um den Zustand \ket{b} zu erzeugen: \f{B\cket{0}=\cket{b}}
+    \item eine effiziente Methode um \f{e^{iAt}} zu erzeugen. Diese gibt es, falls \f{A} sparse ist und falls es einen effizienten Algorithmus zur Berechnung der Matrixelemente von \f{A} gibt.
+    \item Schätzungen für den keinsten und größten Eigenwert von \f{A} (\f{\rightarrow\kappa=\frac{|\lambda|_{\max}}{\lambda|_{\min}}}), wobei \f{\kappa} wiederum nicht zu schnell als Funktion von \f{N} wachsen sollte, um die exponentielle Beschleunigung zu erhalten.
+    \item eine effiziente Methode zur Messung von \f{M}:
+    \begin{itemize}
+        \item z.B. Projektion auf Unterraum \f{M=\sum_{i\in S}\cket{i}\cbra{i}} um \f{\sum_{i\in S}|x_i|^2} zu messen (benötigt lediglich Messung bzgl. Standardbasis \f{\left\{\cket{i}\right\}}).
+        \item oder Überlapp mit gegebenem (einfachen) Vektor \f{\vec{R}}, um \f{|\vec{x}\cdot\vec{R}|^2} zu erhalten.
+    \end{itemize}
+\end{itemize}
+Diese Bedingungen sind z.B. in folgenden Szenarien erfüllt:
+\begin{itemize}
+    \item Lösung der Maxwell-Gleichungen mit der Methode der finiten Elemente, um den elektromagnetischen Streuquerschnitt eines beliebigen targets zu berechnen.
+    \item Aber: Schaltkreise für relevante Größen \f{N} sind ziemlich groß und benötigen daher Quantenfehlerkorrektur.
+\end{itemize}
+

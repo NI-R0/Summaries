@@ -1,0 +1,103 @@
+\section{Adversarial Examples (AdvEx)}
+
+Up to this point, we exclusively focused on leveraging AI to improve IT security. From now on, we'll switch to making ML algorithms more secure themselves.
+
+
+
+
+\subsection{Attacks Against Machine Learning}
+\definition{The Threat Landscape}{Historically, learning algorithms have focused on solving particular tasks (average-case error) without an inherent notion of security (worst-case error). Machine learning is generally insecure and vulnerable to various attacks.}
+
+\begin{itemize}
+\item \b{Evasion Attacks}: Manipulating input data during application/inference to mislead the prediction function.
+\item \b{Model Stealing}: These attacks aim at reconstructing the learning model (e.g. via surrogate models).
+\item \b{Neural Backdoors}: Model manipulation attacks that occur during the training phase to influence the learning process.
+\end{itemize}
+
+
+
+
+
+\subsection{Adversarial Examples (Evasion Attacks)}
+\definition{Adversarial Examples}{Inputs are intentionally perturbed to cause a misclassification at inference time. The goal is to find a minimal perturbation \f{\delta} such that the model \f{F_{\theta}} predicts a different class than the ground truth \f{y}:
+\cf{
+    \Vert\delta\Vert_p\leq\epsilon\text{ \b{or} }\arg\min_{\delta}\Vert\delta\Vert_p\quad\text{s.t.}\quad F_\theta(x+\delta)=c\neq y\quad\longrightarrow\quad\fL(f_\theta(x+\delta),c)\text{ should be small}
+}}
+\subsubsection*{Attack Variants:}
+\begin{itemize}
+\item \b{Targeted vs. Untargeted}: A targeted attack aims to force a specific output class \f{c} (\f{F_{\theta}(x+\delta)=c}), while an untargeted attack simply aims for any incorrect class \f{c\neq y}.
+\item \b{Norm-Based}: The perturbation size is typically constrained using \f{l_p} norms (e.g., \f{l_1}, \f{l_2}, \f{l_{\infty}}).
+\cf{\Vert\delta\Vert_p := \left(\sum_{i}|\delta_i|^p\right)^\frac{1}{p}}
+\item \b{Regularization-Based}: Add a regularization term \f{\lambda\cdot\Omega(\delta)}
+\item \b{Optimal Linear Perturbations}: For linear two-class classification, the optimal perturbation to maximize the error under an \f{l_2} norm bound is \f{\frac{\epsilon w}{||w||_2}}, and under an \f{l_{\infty}} norm bound it is \f{-\epsilon\cdot sign(w)}.
+\end{itemize}
+
+
+
+\subsection{Problem Space vs. Feature Space}
+\definition{The Inverse Feature-Mapping Problem}{In domains like image classification, the problem space equals the feature space (e.g., manipulating pixels directly). In domains like malware classification, the problem space and feature space differ, meaning it is difficult to map a perturbed feature vector back to a functional, real-world object (like a compiled APK or PDF).}
+\vspace{1em}
+To execute problem-space attacks, several constraints must be satisfied:
+\begin{itemize}
+\item \b{Available Transformations}: The specific ways a problem-space object can actually be altered (e.g., adding or removing code).
+\item \b{Preserved Semantics}: Ensuring the malicious functionality remains completely intact and reachable (the app cannot simply crash).
+\item \b{Plausibility}: Preserving qualitative properties required for the attack to appear realistic.
+\item \b{Robustness to Pre-processing}: Ensuring the attack survives defensive analysis, such as removing dead or unreachable code.
+\end{itemize}
+
+
+
+
+\subsection{Attack Algorithms}
+For a linear model in a two-class classification setting, an intuitive single-step attack strategy would follow the direction of the weight vector \f{w} (orientation of the decision boundary) and taking the shortest path that still crosses the decision boundary such that the defined constraints are still fulfilled.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{.3\textwidth}
+        \centering\ig{.9}{linear}
+        \caption{Linear Attack}
+    \end{subfigure}
+    \begin{subfigure}{.3\textwidth}
+        \centering\ig{.9}{fgsm}
+        \caption{FGSM Attack}
+    \end{subfigure}
+    \begin{subfigure}{.3\textwidth}
+        \centering\ig{.9}{pgd}
+        \caption{PGD Attack}
+    \end{subfigure}
+\end{figure}
+
+
+\subsubsection{Fast Gradient Sign Method (FGSM)}
+A single-step attack that utilizes the gradient of the loss function with respect to the input to determine the direction of the perturbation, maximizing the error within an \f{l_{\infty}} norm bound \f{\epsilon}.
+\cf{\delta=\epsilon\cdot sign(\nabla_{x}L(f_{\theta}(x),y))}
+
+\subsubsection{Projected Gradient Descent (PGD)}
+An iterative, multi-step extension of FGSM. Because a single step may be insufficient for non-linear models, PGD takes multiple smaller steps of size \f{\alpha < \epsilon} and utilizes random initializations, clipping the result back into the valid \f{\epsilon}-bound after each step.
+$$\hat{x}^{i+1} = clip_{x,\epsilon}[\hat{x}^i + \alpha \cdot sign(\nabla_{\hat{x}^i} L(f_{\theta}(\hat{x}^i), y))]$$
+
+\subsubsection{Regularization-Based (e.g. C\&W)}
+Attacks that formulate the generation as an optimization problem. They balance the objective of minimizing the perturbation size \f{||\delta||_p} with maximizing the attack success \f{\kappa} (causing misclassification) using a trade-off parameter \f{\lambda}.
+\cf{
+    \arg\min_\delta\Vert\delta\Vert_p + \lambda\cdot\max\{f_\theta(x+\delta)_y - {\underbrace{\max\left\{f_\theta(x+\delta)_i\right\}_{i\neq y}}_{\text{all other classes}}}, -\kappa\}
+}
+
+
+
+
+
+\subsection{Defenses Against Adversarial Examples}
+Defending is inherently difficult due to the continuous arms-race (development of novel methods on both sides) and adaptive attackers who design attacks specifically tuned to bypass given defenses.
+
+\subsubsection{Integrated Defense (Obfuscation)}
+Attempts to build attack-resilient models by increasing model complexity or introducing randomization (e.g. adding noise to the output or selecting random features). These approaches are generally ineffective against adaptive attackers who can approximate the true prediction function by means of surrogates.
+
+
+\subsubsection{Operational Defenses}Security-aware application strategies to harden the existing system:
+\begin{itemize}
+\item \b{Stateful Application}: Monitoring access to the prediction function to detect unusual user behavior. This is limited in practice as it requires remote access to the model and is vulnerable to Sybil attacks (multiple accounts).
+\item \b{Security-Aware Testing}: Better functional testing (evaluating corner cases and decision boundaries) and differential testing (training multiple models to analyze differences).
+\end{itemize}
+
+
+
+

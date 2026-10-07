@@ -1,0 +1,59 @@
+\rsection{Problemlösen}
+\slide{Problem-Definitionen \& Arten}{
+    \begin{itemize}
+        \item \b{Geschlossenes vs. Offenes Problem:}
+        \begin{itemize}
+            \item Geschlossen: Es gibt nur einen definierten Weg oder eine einzige Lösung.
+            \item Offen: Es gibt mehrere mögliche Lösungsstrategien oder Zielzustände.
+        \end{itemize}
+        \item \b{Well-defined vs. Ill-defined Problem:}
+        \begin{itemize}
+            \item Well-defined: Ausgangszustand, Zielzustand und die möglichen Operatoren (Handlungsschritte) sind klar bekannt.
+            \item Ill-defined: Es herrscht Unklarheit über Ausgangslage, Ziel oder die möglichen Schritte.
+        \end{itemize}
+    \end{itemize}
+}
+\slide{Theorien des Problemlösens}{
+    \begin{itemize}
+        \item \b{Behaviorismus:} Problemlösen erfolgt durch "Trial-and-Error" (Versuch und Irrtum). Zufällige Lösungsversuche führen zum Erfolg und werden gelernt (unreflektierter Prozess).
+        \item \b{Gestaltpsychologie:} Problemlösen durch "Einsicht". Durch Umstrukturierung der Wahrnehmung ("gute Gestalt") wird die Lösung plötzlich erkannt.
+        \item \b{KI-Ansatz} (Informationsverarbeitung): Problemlösen als Suche im Problemraum. Systematisches Anwenden von Operatoren, um vom Ist- zum Soll-Zustand zu gelangen.
+    \end{itemize}
+}
+\slide{Strategien: Suche \& Heuristiken}{
+    \begin{itemize}
+        \item \b{Systematische Suche} (Algorithmen): Depth-first oder Breadth-first
+        \item \b{Backtracking:} Das Zurückgehen zu einem vorherigen Entscheidungspunkt, wenn eine Sackgasse erreicht wurde.
+        \begin{itemize}
+            \item Human Backtracking: Oft fehlerhaft, da Menschen aufgrund begrenzter Ressourcen ("Bounded Rationality") vergessen, welche Pfade sie schon geprüft haben, und oft ganz von vorne anfangen müssen.
+        \end{itemize}
+        \item \b{Hill Climbing (Heuristik):} Man wählt immer den Operator, der den aktuellen Zustand dem Ziel am nächsten bringt (Schritt-für-Schritt-Verbesserung).
+        \begin{itemize}
+            \item Problem: Gefahr, in einem "lokalen Maximum" stecken zu bleiben (man kann keinen notwendigen Umweg/Rückschritt machen, um den höchsten Gipfel zu erreichen).
+            \item Beispiel Hobbits \& Orks: Das Zurückrudern von zwei Figuren widerstrebt Menschen, da es die Distanz zum Ziel kurzfristig vergrößert (widerspricht Hill-Climbing-Impuls).
+        \end{itemize}
+        \item Mittel-Ziel-Analyse (Means-End Analysis): Zerlegung des Problems in Teilziele, um Differenzen zum Zielzustand schrittweise zu verringern (flexibler als Hill Climbing).
+    \end{itemize}
+}
+\slide{Einflussfaktoren \& Phänomene}{
+    \begin{itemize}
+        \item \b{Repräsentation:} Die Art, wie ein Problem mental dargestellt wird, bestimmt die Lösbarkeit. Ein falsches Format blockiert die Lösung, ein Wechsel (z. B. von visuell zu mathematisch) kann sie ermöglichen.
+        \begin{itemize}
+            \item Beispiel Schachbrett/Dominosteine: Visuelle Vorstellung ist schwer; mathematische Einsicht (Ungleichgewicht schwarz/weiß) löst das Problem sofort.
+        \end{itemize}
+        \item \b{Funktionale Gebundenheit:} Die Unfähigkeit, ein Objekt für etwas anderes als seine übliche Funktion zu verwenden.
+        \item \b{Einstellungs-Effekt (Mental Set):} Das Beharren auf einer bekannten Lösungsstrategie, auch wenn diese in einer neuen Situation ineffizient oder unpassend ist.
+        \begin{itemize}
+            \item Wasser-Umfüll-Aufgabe (Luchins): Probanden nutzen weiterhin eine komplexe Formel ($B - 2A - C$), die sie geübt haben, auch bei Aufgaben, die viel einfacher ($A + C$ oder $A - C$) lösbar wären.
+        \end{itemize}
+    \end{itemize}
+}
+\slide{Erfahrungsbasiertes Problemlösen}{
+    \begin{itemize}
+        \item \b{Fallbasiertes Schließen} (Case-based Reasoning): Nutzen früherer Lösungen für neue Probleme.
+        \item \b{Analogien:} Nutzung struktureller Ähnlichkeiten zwischen Problemen.
+        \begin{itemize}
+            \item Schwierigkeit: Menschen fokussieren oft auf Oberflächenmerkmale (Domäne, Objekte) statt auf die tiefere Struktur, weshalb Analogien oft nicht spontan erkannt werden.
+        \end{itemize}
+    \end{itemize}
+}

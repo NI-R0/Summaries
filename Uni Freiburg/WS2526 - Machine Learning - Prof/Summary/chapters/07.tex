@@ -1,0 +1,52 @@
+\section{Ensembles}
+Ensembles are aggregations of multiple base models (weak learners) used to make a final prediction / predictive model (e.g., by averaging their outputs). The goal is to improve accuracy, \b{reduce variance}, and enhance robustness compared to any individual model.
+\cf{\hat{y} = \frac{1}{K}\sum_{k=1}^{K}\hat{f}^{(k)}(x)}
+
+
+
+
+\subsection{Bagging (Bootstrap Aggregation)}
+
+\definition{Bootstrapping}{A statistical method of generating multiple diverse datasets by randomly sampling \b{with replacement} from the original training data.}
+\definition{Bagging}{A technique which involves training one separate prediction model on each of the bootstrapped datasets and aggregating their predictions. Bagging is primarily used to reduce the \b{variance} of a model without significantly affecting its bias.}
+\vspace{1em}
+\b{Requirements}: For the ensemble's overall error to be reduced, the individual base models must be \b{uncorrelated} and have \b{low bias}. If the model errors are highly correlated, the ensemble average does not help reduce the squared error.
+
+
+
+
+
+
+\subsection{Random Forests}
+While standard decision trees have low bias, they tend to be correlated when trained on similar data. \b{Random Forests} (an extension of Bagged Trees) decorrelate the trees by selecting a random subset of \f{m} features at every node, and only picking the best decision split from those \f{m} features. This increased diversity among trees leads to a stronger ensemble, improving generalization and reducing overfitting.
+
+\begin{itemize}
+\item \b{Uncertainty}: The variance of the ensemble's predictions can be used as a measure of uncertainty.
+\item \b{Out-of-Bag (OOB) Error}: Bagged ensembles produce an internal estimate of the test error using the data points that were not selected in a particular bootstrap sample.
+\end{itemize}
+
+
+\subsection{Boosting}
+Boosting is an ensemble technique that sequentially trains weak, \b{high-bias} models, where each new model tries to fix the mistakes of all previous ones. The final ensemble is a weighted sum of the sub-models, resulting in a \b{low-bias} ensemble. Boosting sequentially adds one model at a time while keeping the previously trained models fixed.
+\cf{F^{(K+1)}(x) = F^{(K)}(x) + \alpha f^{(K+1)}(x)}
+
+
+
+
+
+\subsection{Gradient Boosting}
+\b{Gradient Boosting} is a generic framework that uses gradient descent in functional space to sequentially improve the ensemble. The loss function is linearly approximated using a first-order Taylor expansion. The next submodel \f{f^{(K+1)}} is trained to regress on the negative gradients (also called pseudo-residuals) of the loss function with respect to the current ensemble's predictions.
+\cf{z_n = -\frac{\partial\fL(y_n, F^{(k)}(x_n))}{\partial F^{(k)}(x_n)}}
+\cf{f^{(k)} := \arg\min_{f} \sum_{n=1}^N (f(x_n) - z_n)^2}
+
+
+
+\subsection{AdaBoost}
+\b{AdaBoost} is a special case of Gradient Boosting that uses an exponential instance-penalty loss. It maintains a weight \f{w_i} for each data point, indicating how hard it is to predict. Initially, all weights are \f{1/N}. After a submodel is trained, the weights of \b{misclassified} instances are heavily increased, forcing the next submodel to focus on them.
+\cf{w_i^{(k+1)} := w_i^{(k)} \exp\left(\alpha_k\ \mathbb{I}\left(y_i \neq f^{(k)}(x_i)\right)\right)}
+The submodel's weight \f{\alpha_k} in the final ensemble is determined by its weighted training error rate \f{\epsilon_k}. Better models (lower error) receive exponentially higher voting weights (e.g. for \f{\epsilon_k=0.5 \rightarrow \alpha_k = 0}):
+\cf{\alpha_k := \ln\frac{1 - \epsilon_k}{\epsilon_k}}
+The final prediction then is a weighted majority vote (classification as +1 or -1):
+\cf{F^{(K)}(x) = sign\left(\sum_{k=1}^K \alpha_k f^{(k)}(x)\right)}
+
+

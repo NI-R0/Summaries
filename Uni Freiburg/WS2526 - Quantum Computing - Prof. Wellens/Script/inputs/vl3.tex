@@ -1,0 +1,116 @@
+\subsubsection*{Mehrere Qubits}
+Das Zusammensetzen mehrerer einzelner Systeme zu einem Gesamtsystem geschieht in der \ac{qm} mit dem \it{Tensorprodukt}.\\
+Betrachten wir 2 Qubits, jedes mit Basiszuständen \ket{0} und \ket{1}, so lautet die Basis für das Gesamtsystem:
+\begin{align*}
+    \cket{0} &\otimes \cket{0}\quad\text{(beide Qubits in Zustand \ket{0})}\\
+    \cket{0} &\otimes \cket{1}\quad\text{(erstes Qubit in \ket{0}, zweites in \ket{1})}\\
+    \cket{1} &\otimes \cket{0}\quad\text{usw.}\\
+    \cket{1} &\otimes \cket{1}
+\end{align*}
+Zustandsvektoren von 2 Qubits sind also im allgemeinen Linearkombinationen dieser 4 Basiszustände:
+\begin{gather*}
+    \cket{\psi}=a_{00}\cket{0}\otimes\cket{0}+a_{01}\cket{0}\otimes\cket{1}+a_{10}\cket{1}\otimes\cket{0}+a_{11}\cket{1}\otimes\cket{1}\\
+    \text{mit }a_{00},a_{01},a_{10},a_{11}\in\mathbb{C}\text{ und }|a_{00}|^2+|a_{01}|^2+|a_{10}|^2+|a_{11}|^2=1
+\end{gather*}
+Das Symbol für das Tensorprodukt "\f{\otimes}" wird häufig weggelassen, d.h. man schreibt "\f{\cket{0}\cket{0}}" oder, noch einfacher, "\f{\cket{00}}" anstelle von "\f{\cket{0}\otimes\cket{0}}".\\
+Für \f{n} Qubits erhält man entsprechend \f{2^n} Basiszustände:
+\begin{gather*}
+    \left\{\cket{00\dots00},\cket{00\dots01},\cket{00\dots10},\dots,\cket{11\dots11}\right\}\quad\text{bzw.}\\
+    \left\{\cket{i_1i_2\dots i_n}\ |\ i_1=0,1;\ i_2=0,1;\ \dots;\ i_n=0,1\right\}
+\end{gather*}
+Zustandsvektor für \f{n} Qubits:
+\begin{align*}
+    \cket{\psi} &= a_{00\dots00}\cket{00\dots00} + a_{00\dots01}\cket{00\dots01} + a_{00\dots10}\cket{00\dots10}+\dots+a_{11\dots11}\cket{11\dots11}\\
+    &= \sum_{i_1=0,1}\sum_{i_2=0,1}\dots\sum_{i_n=0,1}a_{i_1i_2\dotsi_n}\cket{i_1i_2\dots i_n}\\
+    &= \sum_{i=0}^{2^n-1}a_i\cket{i}
+\end{align*}
+In der letzten Zeile werden die Basiszustände mittels \f{i=0,1,\dots,2^n-1} durchgezählt, wobei:
+\begin{align*}
+    i &= 2^{n-1}i_1+2^{n-2}i_2+\dots+2^{1}i_{n-1}+2^0i_n\\
+    &= \sum_{k=1}^{n}2^{n-k}i_k\qquad\text{(Binärdarstellung)}
+\end{align*}
+\subsubsection*{Messung an mehreren Qubits}
+\begin{itemize}
+    \item Misst man den Zustand aller Qubits (Basis \f{\left\{\cket{i}, i=0,1,\dots,2^{n}-1\right\}}), so gilt wie gehabt:
+    \begin{gather*}
+        p_i = |\skal{i}{\psi}|^2\qquad\text{Wahrscheinlichkeit für Ergebnis "}i\text{",}
+    \end{gather*}
+    wobei \ket{\psi} der Zustandsvektor der \f{n} Qubits vor der Messung, und \ket{i} der Zustandsvektor der Qubits nach der Messung ist (bzw. \f{p_i=\cbra{i}\varrho\cket{i}}, falls sich die Qubits in einem gemischten Zustand befinden). Beipiel (für 2 Qubits):
+    \begin{gather*}
+        \cket{\psi} = a_{00}\cket{00}+a_{01}\cket{01}+a_{10}\cket{10}+a_{11}\cket{11}\\
+        \Rightarrow p_{00} = |a_{00}|^2\qquad\text{(Wahrscheinlichkeit, beide Qubits in "0" zu messen)}
+    \end{gather*}
+    \item Misst man den Zustand nur teilweise (z.B. nur für 1 Qubit), erhält man dasselbe Ergebnis wie als ob man alle Qubits misst und über die möglichen Ergebnisse der anderen Qubits summiert.\\
+    Obiges Beispiel: Wahrscheinlichkeit, das erste Qubit in "0" zu messen:
+    \begin{gather*}
+        p_{0.} = |a_{00}|^2 + |a_{01}|^2\qquad\text{(zweites Qubit in "0" oder "1")}
+    \end{gather*}
+    \item Die Summierung über alle möglichen Zustände eines Teilsystems nennt man auch die "partielle Spur". Deren allgemeine Definition ist wie folgt: Wir betrachten ein Gesamtsystem, das aus zwei Teilsystemen \f{A} und \f{B} zusammengesetzt ist (z.B. \f{A=} Qubit 1, \f{B=} Qubit 2).\\
+    Das Gesamtsystem befinde sich im Zustand \(\varrho_{AB}\). Daraus ergibt sich der \it{Zustand des Teilsystems A} durch die partielle Spur \it{über Teilsystem B}:
+    \begin{gather*}
+        \varrho_A = \text{Tr}_B(\varrho_{AB})
+    \end{gather*}
+    wobei \f{\varrho_A} durch seine Matrixelemente wie folgt definiert ist:
+    \begin{gather*}
+        \cbra{i}\varrho_A\cket{i} = \sum_k\cbra{i,k}\varrho_{AB}\cket{j,k}\qquad\text{(Summe über Basis \f{\left\{\cket{k}\right\}} von System \f{B})}
+    \end{gather*}
+    \item \b{Zustandsreduktion bei Messung an einem Teilsystem}\\
+    Erinnerung: Messung an Gesamtsystem mit Basis \f{\left\{\cket{i}\right\}\quad\Rightarrow\quad\cket{\psi}\xrightarrow[\text{Ergebnis }i]{\text{Messung}}\cket{i}}\\
+    Dies kann man verstehen als Anwendung des Projektors \f{P_i=\cket{i}\cbra{i}}, gefolgt von Normierung:
+    \begin{gather*}
+        \cket{\psi}\rightarrow P_i\cket{\psi} = \cket{i}\skal{i}{\psi} \xrightarrow{\text{Normierung}}\cket{i}\\
+        \shortintertext{(wobei das Betragsquadrat der Norm der Wahrscheinlichkeit für Ergebnis \f{i} enspricht)}
+        \Vert P_i\cket{\psi}\Vert^2 = \Vert\ \cket{i}\skal{i}{\psi}\Vert^2 = \underbrace{|\skal{i}{\psi}|}_{P_i}{^2}\ \underbrace{\Vert\cket{1}\Vert}_{=1}{^2}=P_i
+    \end{gather*}
+    Bei Messung an einem Teilsystem hat Projektor die Form: 
+    \begin{gather*}
+        P_i = \underbrace{\cket{i}\cbra{i}}_{\text{gemessenes System, Ergebnis \f{i}}}\otimes\underbrace{\mathbb{I}}_{\text{nicht gemessenes System, da} \sum_iP_i = \mathbb{I}}
+    \end{gather*}
+    Zustandsreduktion: 
+    \begin{gather*}
+        \cket{\psi}\rightarrow\frac{P_i\cket{\psi}}{\Vert\ P_i\cket{\psi}\Vert}
+    \end{gather*}
+    \b{Beispiel:}
+    \begin{gather*}
+        \cket{\psi} = a_{00}\cket{00}+ a_{01}\cket{01}+ a_{10}\cket{10}+a_{11}\cket{11}\\
+        \shortintertext{Nach Messung des ersten Qubits in $\cket{0}$ erhalten wir: 
+        $P_0 = \cket{0}\cbra{0}\otimes\mathbb{I}$}
+        P_0\cket{\psi} = a_{00}\cket{00}+a_{01}\cket{01} 
+        \qquad(\Vert P_0\cket{\psi}\Vert^2 = |a_{00}|^2+|a_{01}|^2 = \text{ WSK für Ergebnis }\cket{0})\\
+        \shortintertext{Der Zustand nach der Messung lautet:}
+        \frac{a_{00}\cket{00}+a_{01}\cket{01}}{\sqrt{|a_{00}|^2+|a_{01}|^2}}
+        = \cket{0}\otimes\frac{1}{\sqrt{|a_{00}|^2+|a_{01}|^2}}
+        (a_{00}\cket{0}+a_{01}\cket{1})
+    \end{gather*}
+    \item \b{Verschränkung}\\
+    Sei \f{\varrho_{AB}=\cket{\psi_{AB}}\cbra{\psi_{AB}}} ein reiner Zustand. \f{\cket{\psi_{AB}}} heißt Produktvektor, wenn es Vektoren \f{\cket{\psi_A}} bzw. \f{\cket{\psi_B}} in Teilsystemen \f{A} bzw. \f{B} gibt, so dass \f{\cket{\psi_{AB}} = \cket{\psi_A}\otimes\cket{\psi_B}}.\\
+    Ansonsten heißt \f{\cket{\psi_{AB}}} verschränkt. In den Übungen wurde gezeigt:
+    \begin{gather*}
+        \cket{\psi_{AB}}\text{ Produktvektor }\Rightarrow\varrho_A\text{ reiner Zustand (ebenso \f{\varrho_B})}
+    \end{gather*}
+    Dies gilt auch umgekehrt (siehe z.B. Nielsen/Chuang), also:
+    \begin{gather*}
+        \cket{\psi_{AB}}\text{ Produktvektor} \Leftrightarrow \varrho_A\text{ reiner Zustand (ebenso \f{\varrho_B})}
+    \end{gather*}
+    Mit anderen Worten: Falls \ket{\psi_{AB}} verschränkt ist (und nur dann), befinden sich die Teilsysteme jeweils in einem gemischten Zustand, obwohl der Zustand des Gesamtsystems rein ist!
+    \item \b{Dekohärenz durch Verschränkung mit der Umgebung}\\
+    Wenn ein System mit seiner Umgebung wechselwirkt, kann es sich (und wird es sich typischerweise) mit dieser verschränken. Der Zustand des Systems ist dann nicht mehr rein, sondern gemischt.\\
+    Für das Quantencomputing brauchen wir jedoch reine Zustände. Daher müssen die Qubits gut von ihrer Umgebung isoliert werden. Den Verlust der Reinheit bezeichnet man auch als "Dekohärenz". Sie stellt für die praktische Umsetzung des Quantencomputings ein entscheidendes Problem dar (mögliche Lösung: Quantenfehlerkorrektur).
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

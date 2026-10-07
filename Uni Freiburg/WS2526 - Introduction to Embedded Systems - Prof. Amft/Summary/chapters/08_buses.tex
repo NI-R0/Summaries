@@ -1,0 +1,72 @@
+\section{Buses and Communication}
+\subsection{I/O Access}
+\b{Memory-mapped I/O:} The components get mapped into the controller address space, enabling convenient transfers as writing to the memory address sends data to the component. Downside: May keep CPU busy and needs polling for updates.\\
+
+\b{Port-mapped I/O:} Uses special CPU instruction to transfer bytes. Data moves from one component via a bus address to the memory address. Also keeps CPU busy and needs polling for updates.
+
+\subsection{\ac{dma}}
+\ac{dma} is the component used in most \f{\mu C}, it offloads I/O transfers from the CPU.
+\begin{enumerate}
+    \item CPU instructs it to copy n bytes from the I/O device to a known location in the memory \b{directly}.
+    \item DMA signals the CPU when the transfer is complete. In the mean time, the CPU is free.
+\end{enumerate}
+\vspace*{1em}
+The usage of DMA gives rise to the issue of \b{cache coherency}:
+\begin{itemize}
+    \item CPU accesses location X in memory, the current value will be stored in the cache
+    \item Operations on X will update the cached copy of X, but not the external memory version
+    \item If the cached copy of X is not invalidated when a device writes a new value to the memory, then the CPU will operate on a stale value of X
+\end{itemize}
+To mitigate this issue, e.g. simple 'invalidate' flags can be broadcasted onto the bus on every write.
+
+\subsection{Interrupt Requests (IRQs)}
+Interrupts trigger the CPU on events, e.g. when a DMA operation is finished, on a keyboard press, or on a timeout. The procedure works as follows:\\
+
+(1) Interrupt request gets triggered \f{\ \rightarrow\ } (2) Stop current execution of program and save context \f{\ \rightarrow\ } (3) Execute interrupt handler \f{\ \rightarrow\ } (4) Once finished, reload context and continue.
+
+
+\subsection{Pulse Width Modulation}
+How can a \f{\mu C} communicate with other digital modules (sensors, actuators, display modules, ...)?\\
+\f{\rightarrow\ } For sensor and actuators, Pulse Width Modulation (PWM) is among the most frequent methods.
+\begin{itemize}
+    \item PWM is a digital modulation method to represent a signal as a rectangular wave with varying duty cycle \f{D} (i.e. proportion of 'on' time over regular interval)
+    \item PWM can control electrical signal power or amplitude, e.g. to switch power supply
+    \item Low power loss: No current in 'off' signal state; no voltage drop over switch in 'on' state
+\end{itemize}
+
+\b{Triangle Waverforms:} Three types (lead, centre, trail), the name describes the location of the peak\\[.5em]
+\b{Intersective PWM:} Simple PWM generator principle with fixed period \f{T} and varying duty cycle. Uses a comparator to switch PWM output state (high, low) when input wave intersects with triangle wave.
+
+\subsection{Inter-Integrated Circuit (I\f{^2}C)}
+I\f{^2}C is a single-ended, synchronous, multi-controller/multi-target ("master-slave") serial bus. It has two lines: SCL (clock) and SDA (data).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{lines.png}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\textwidth]{i2c.png}
+\end{figure}
+
+\subsection{Serial Peripheral Interface (SPI)}
+SPI is a full-duplex, synchronous, master-slave, serial communication bus with 4 lines: SS/CS (chip/ slave select), SCLK (clock), MOSI/PICO (main data), and MISO/POCI (sub data).\\
+While I\f{^2}C has a max bandwidth of 5Mbit/s, SPI has an arbitrary bandwidth (no max clock speed). Data is transferred in 4-16 bits.
+
+\subsection{Testing and Debugging}
+\subsubsection{Emulation}
+Imitate behaviour of target system as close as required, thus substituting the object that is emulated. The internal state of the emulation mechanism does not have to accurately reflect the internal state of the target as long as the behaviour matches.
+
+\subsubsection{Simulation}
+Evaluate with a model of the target system. Ideally, the simulation makes properties of the target system observable. \b{A simulation does not always lead to emulation.}
+
+\subsubsection{On-Target}
+Evaluate (behaviour) on actual target hardware. The evaluation is usually done in a lab or simulation environment to control external influences.
+
+\subsubsection{In-Field}
+Evaluate on actual target hardware within the targeted application environment.
+
+\subsubsection{JTAG}
+A boundary scan bus for testing and debugging integrated circuits. It features a serial protocol with 5 lines: TDI (test data in), TDO (test data out), TCK (test clock), TMS (test mode select), and TRST (test reset, optional). Typically operates at 10-100MHz.\\
+JTAG can be used for design verification and debugging (controllability), automated manufacturing tests, commissioning (programming of non-volatile memories), and to hack devices (all without physical access to every PCB line). For authentication it uses chain encryption.
+
+

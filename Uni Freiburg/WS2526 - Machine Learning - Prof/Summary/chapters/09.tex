@@ -1,0 +1,75 @@
+\section{Hyperparameter Optimization}
+
+\subsection{Principles \& Validation}
+While model parameters are learned to minimize the loss on a training dataset, \b{hyperparameters} (which control model complexity, learning characteristics, and optimization choices) must be tuned externally.\\
+The ultimate goal of Hyperparameter Optimization (HPO) is to find the configuration \f{\lambda^*} that minimizes the response function \f{f(\lambda, D)} (e.g., the validation loss).
+\begin{itemize}
+\item \b{Single-Split Validation}: The data is divided into disjoint training, validation, and test sets. The model is tuned on the validation set, and the final model is retrained on the combined training and validation sets before testing.
+\item \b{K-Fold Cross Validation}: The data is partitioned into \f{k} disjoint folds. The evaluation is averaged over \f{k} runs, using a different fold for validation each time, to yield a more robust performance estimate.
+\end{itemize}
+
+
+
+
+
+
+
+\subsection{Black-Box Search}
+
+\begin{itemize}
+\item \b{Grid Search}: Exhaustively evaluates configurations on a manually specified, fixed grid. It is generally inefficient because it wastes computational resources evaluating unimportant hyperparameter dimensions.
+\item \b{Random Search}: Randomly samples hyperparameter configurations. It typically outperforms Grid Search because it explores a larger number of unique values for the most important parameters.
+\end{itemize}
+
+% \ig{0.5}{Slide_11_Grid_vs_Random_Search}
+
+
+
+
+\subsection{Sequential Model Based Optimization (SMBO)}
+
+\definition{Sequential Model Based Optimization}{Optimization of \f{f} is costly as it involves many runs of the learning algorithm. SMBO, also known as Bayesian Optimization, is an iterative technique that builds a surrogate model \f{\Psi \approx f} based on previous observation history to cheaply approximate the true, computationally expensive response function.
+\begin{enumerate}
+    \item Learn a surrogate (aprroximated) model on known observations \f{\Psi\approx f}
+    \item Query \f{\Psi} for regions \f{\Lambda} where \b{expected improvement is high}
+    \item Evaluate \f{f} in these regions by running the learning algorithm
+\end{enumerate}
+}
+\cig{.7}{smbo}
+
+\begin{itemize}
+\item \b{Gaussian Processes (GP)}: Frequently used as the surrogate model because they provide both a predicted mean \f{\mu(\Psi(\lambda))} and a variance/uncertainty estimate \f{\sigma^2(\Psi(\lambda))} for unseen configurations.
+\item \b{Acquisition Function \f{a(\lambda, \Psi(\lambda))}}: A mathematical function used to query the next hyperparameter candidate. It balances \b{exploration} (searching regions of high uncertainty) and \b{exploitation} (searching regions with a good predicted mean).
+\item \b{Expected Improvement (EI)}: An acquisition function (AF) that computes the standardized expected improvement over the currently known minimum response.
+\item \b{Lower Confidence Bound (LCB)}: AF typically used for regression or minimization tasks (like error/loss).
+\cf{LCB(\lambda) = -\mu(\Psi(\lambda)) + \beta\sigma(\Psi(\lambda))}
+\item \b{Upper Confidence Bound (UCB)}: AF used for classification or maximization tasks (e.g. accuracy).
+\cf{UCB(\lambda) = \mu(\Psi(\lambda)) + \beta\sigma(\Psi(\lambda))}
+\end{itemize}
+
+\definition{Mean and Variance}{
+    \b{Mean} \f{\mu(\Psi(\lambda))} represents the predicted performance of a hyperparameter \f{\lambda}. The calculation uses the kernel matrix \f{K}, which captures similarity between previous hyperparameter evaluations to make an estimate based on past observations. Used for \b{exploitation} in the AF.\\[1em]
+    \b{Variance} \f{\sigma^2(\Psi(\lambda))} quantifies the uncertainty in the prediction. Used for \b{exploration} in the AF.
+}
+\vspace{1em}
+\b{Note}: The Kernel assumes that the more similar two hyperparameters are (i.e. the closer they are in the search space), the more correlated their predicted performances will be (\f{k(\lambda,\lambda')\approx 1}).
+
+
+\subsection{Gray-Box Search}
+Gray-box optimization significantly speeds up HPO by exploiting partial knowledge of the learning process (e.g., stopping poorly performing learning curves early, or rapidly evaluating models on smaller data subsets).
+\definition{Successive Halving}{
+    Evaluates many configurations on a very small budget, then successively halves the number of surviving configurations while proportionally increasing their allocated training budget.\\[1em]
+    \b{The Budget Problem}: A major issue with Successive Halving is that evaluations at small budgets are often a noisy proxy for full-budget performance (low rank correlation).
+}
+\definition{Hyperband}{An algorithm that mitigates the risks of Successive Halving by randomly trying different initial budgets and different numbers of configurations. It perfectly balances exploring many configurations (worse proxy correlation) against exploring fewer configurations at higher budgets (better proxy correlation).}
+
+\subsubsection{Characteristics:}
+\begin{itemize}
+\item Hyperband yields massive speedups and performs exceptionally well early in the search compared to Random Search.
+\item Bayesian Optimization (SMBO) is slower to start but performs very well in the later stages of optimization.
+\item \b{BOHB (Bayesian Optimization \& Hyperband)}: A state-of-the-art hybrid algorithm that combines the rapid early exploration of Hyperband with the strong final convergence of Bayesian Optimization.
+\end{itemize}
+
+% \ig{0.5}{Slide_33_BOHB_Comparison}
+% https://gemini.google.com/app/708db96c23ef27b1
+% https://gemini.google.com/app/c9735cd9229e1ede

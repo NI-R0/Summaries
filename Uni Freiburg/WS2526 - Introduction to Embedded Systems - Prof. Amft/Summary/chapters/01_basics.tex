@@ -1,0 +1,35 @@
+\section{Basics}
+\subsection{Terminology \& Definitions}
+% \subsubsection{Embedded Systems}
+\definition{Embedded Systems}{\ac{es} are information processing systems embedded into a larger (technical) product, controlling the larger system or providing information processing for it.}
+
+\definition{Embedded Software}{Embedded software is computer software, written to control embedded systems. Typically specialized for the particular hardware that it runs on and has time and memory constraints.}
+
+\definition{\ac{cps}}{Complex network of \b{real-time} interacting elements (e.g. \ac{es}) with physical input and output instead of standalone devices.}
+
+\subsection{Applications}
+\ac{es} can be applied to a multitude of different domains, such as:
+\begin{itemize}
+    \item \b{Automotives:} ABS, ESP, Airbags, \dots
+    \item \b{Aerospace:} Anti-Collision, Flap control, \dots
+    \item \b{Wearables:} Glasses, Watches, ...
+\end{itemize}
+
+\subsection{Characteristics}
+\ac{es} must be any number of the below characteristics (depending on the requirements, \b{not} all at once):
+\begin{enumerate}
+    \item \b{Efficiency:} Energy, Area (Hardware), Code-size, Run-time, Weight, Cost
+    \item \b{Dependable:} Reliability \f{P}(system working correctly after working at \f{t=0}); Maintainability \f{P}(system working correctly \f{t} time steps after error); Availability \f{P}(system working at \f{t}); Safety; Security (confidential data \& authentic communication)
+    \item \b{Real-Time cabable:} System must react to stimuli within a given time interval; late reactions arriving too late are wrong; hard-constrained = if failure to meet the constraint results in catastrophe (else soft-constrained); response has to be guaranteed without statistical arguments
+    \item \b{Reactivity:} Superset of real-time constraint; behaviour of system depends on input and current state (can be modeled as automata); continuous interaction with environment (at a pace given by the environment) through sensors and actuators
+\end{enumerate}
+
+\subsection{Components / Feedback loop}
+The feedback loop typically contains: (1) Sensor(s), (2) Information Processing Unit, (3) Actuator(s), (4) Memory and the
+(5) Environment. Depending on the ES some of them are optional or simply not needed. Example below: battery charging system.
+
+\vspace{0.5cm}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{1_components.png}
+\end{figure}

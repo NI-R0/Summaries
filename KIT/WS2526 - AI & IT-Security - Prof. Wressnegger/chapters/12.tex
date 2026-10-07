@@ -1,0 +1,80 @@
+\section{Attacks on Explanations}
+
+\subsection{Foundations of XAI}
+\definition{Explainable ML Pipeline}{The explanation process maps an input \f{x}, a model \f{f_{\theta}}, and a prediction \f{y} through an explanation method \f{h} to generate a relevance vector (explanation) \f{r}. This entire pipeline is denoted as the process \f{P}.}
+\vspace{1em}
+\b{Axioms of Explanations}: Theoretical properties that explanations should fulfill:
+\begin{itemize}
+\item \b{Positivity}: All relevance scores are strictly positive, \f{\forall p : R_{p}\ge0}.
+\item \b{Conservation}: The sum of all relevances equals the final prediction score, \f{\sum_{\rho=1}^{d}R_{\rho}=f_{\theta}(x)}.
+\item \b{Continuity}: Two highly similar inputs should yield highly similar explanations, \f{x_{0}\approx x_{1}\rightarrow h(x_{0})\approx h(x_{1})}.
+\end{itemize}
+\vspace{.5em}
+\b{Quality Measurements}: Descriptive Accuracy (Pixel Flipping) checks if the prediction score drops when relevant features are removed. Other methods: human judgment and synthetic tasks with known ground truth.\\[1em]
+\b{Security Motivation}: Attackers manipulate explanations for \b{fairwashing} (providing fair explanations for biased or unfair classifiers), hiding malicious biases (e.g., neural backdoors), or binding defensive resources with false explanations.
+
+
+
+\subsection{Sanity Checks vs. Attacks}
+\b{Sanity Checks}: Executed by devs using constant or random changes to test model and explanation sensitivity.
+\begin{itemize}
+\item \b{Randomized Weights}: Assesses explanation sensitivity to specific layers and model parameters.
+\item \b{Randomized Labels}: Tests if a model with high accuracy has just memorized data by training the model on randomized labels.
+\item \b{Constant Shifts}: Tests input invariance. For example, adding a constant shift \f{m_2} to inputs can be compensated by adjusting the bias \f{b_2 = b_1 - w^T m_2} without changing predictions, but explanation methods react differently to this.
+\end{itemize}
+\vspace{.5em}
+
+\b{Attacks}: Executed by an adversary using consciously chosen changes to reach an adversarial goal (e.g. always show some specific explanation, or swap explanations of two classes).
+\begin{itemize}
+\item \b{Top-K Fooling}: Forcing the originally most relevant features to receive low relevance.
+\item \b{Center-mass Fooling}: Maximally deviating the explanation's center of mass.
+\item \b{Dual Attacks}: Changing both the classification output and the explanation simultaneously.
+\item \b{Fairwashing}: Manipulate model so that sensitive features (like gender or race) appear to have low relevance in the explanation.
+\end{itemize}
+
+
+
+\subsection{Input Manipulation}
+\b{Input Manipulation}: Comparable to AdvEx, just with the goal of changing the explanation instead of the prediction. Optimizes the following problem via Gradient Descent (\f{h^t} is a sample specific target explanation):
+\cf{\min_{\delta} \lambda \underbrace{\|f_{\theta}(x) - f_{\theta}(x_{adv})\|}_{\text{classification}} + \underbrace{\|h(x_{adv}) - h^t_{x_{adv}}\|}_{\text{explanation}}}
+\b{Softplus-\f{\boldsymbol{\beta}}}: Gradient-based explanations require the second derivative \f{\frac{\partial^{2}f_{\theta}(x)}{\partial x^{2}}}, which is exactly 0 for ReLU. Therefore, ReLUs are temporarily replaced by the differentiable Softplus function during the optimization attack.
+
+
+\subsection{Model Manipulation}
+The adversary directly changes the model weights (Fine-tuning) or architecture (Malicious Training) to output a target explanation without changing standard predictions. There are 3 types of performance measures:
+\begin{itemize}
+    \item \b{Accuracy}: Optimize for global task performance (be as good as possible) while matching the target explanation \f{h^t}
+    \item \b{Global Fidelity}: Globally matches the outputs of original model (make the same mistakes) while matching the target explanation \f{h^t}
+    \item \b{Local Fidelity}: Locally match the outputs of the original model
+\end{itemize}
+
+
+\subsection{Process Manipulation}
+Attacking the complete explanation pipeline \f{P}, often by utilizing different models for different inputs.\\[1em]
+\b{Attacking LIME}: Because LIME samples perturbed inputs that are Out-Of-Distribution (OOD), an attacker can train an OOD-detector \f{f_{ODD}}. If an input is OOD, it outputs the manipulated explanation; if it is in-distribution, it outputs the normal prediction.
+
+
+
+\subsection{Defenses}
+\subsubsection{Model Level Defenses}
+Defenses on the model level help primarily against input manipulations by altering the model's properties.
+\begin{itemize}
+\item \b{Weight Decaying / Curvature Penalty}: Many attacks exploit high "curvature" in the model's decision surface. By penalizing high weight values (Weight Decay) or minimizing the Hessian matrix, we flatten the angle between piecewise linear functions, thereby forcing low curvature.
+\item \b{Smooth Activation Functions}: Replacing ReLUs with Softplus natively during training smooths the kinks in the decision boundary.
+\end{itemize}
+
+
+\subsubsection{Explanation Level Defenses}
+Helps against both input and model manipulations by altering how explanations are generated.
+\begin{itemize}
+\item \b{Smoothing}: Generating 10 to 50 explanations with slight noise and averaging them (e.g. SmoothGrad). This is effective but computationally expensive.
+\item \b{Ensembles}: Aggregating explanations from entirely different explanation methods (e.g., gradients, LRP, guided backprop) because attacks are usually heavily overfitted to one specific method.
+\item \b{Tangent Space Projected (TSP) Explanations}: Projects the explanation \f{h_{x}} back onto the lower-dimensional manifold (the tangent space \f{T_x S}) of valid training data using a projection matrix \f{P_x}. It ensures that the explanation only uses features that are actually relevant to the data distribution, filtering out the "noise" added by an attacker.
+\cf{\hat{h}(x) := P_x \circ h(x)}
+\end{itemize}
+
+
+% \begin{itemize}
+% \item Real data often lies on a lower-dimensional hyperplane. Manipulated models often rely on orthogonal features that do not exist in the true data manifold.
+% \item By projecting the explanation into the tangent space, adversarial gradients pointing away from the true manifold are discarded.
+% \end{itemize}

@@ -1,0 +1,64 @@
+\section{Evaluating Learning-Based Systems}
+
+\subsection{Pitfalls in ML for Security}
+
+\subsubsection*{Data Collection and Labeling:}
+\begin{itemize}
+    \item \b{P1 - Sampling Bias}: The collected data does not sufficiently represent the real-world distribution of the underlying security problem.\\[.5em]
+    \b{Example:} Merging generic spam emails from a recent year with corporate benign emails from an older time frame introduces temporal artifacts.\\[.5em]
+    \b{Mitigation}: Clearly define target distribution; Adversarial Validation
+    \item \b{P2 - Label Inaccuracy}: The ground-truth labels required for classification tasks are inaccurate, unstable, or erroneous.\\[.5em]
+    \b{Mitigation}: Use robust loss function; monitor noise in labels
+\end{itemize}
+
+
+
+\subsubsection*{System Design and Learning:}
+\begin{itemize}
+    \item \b{P3 - Data Snooping}: A learning model is trained with data that is typically not available in practice. This includes evaluating a detector on data that temporally precedes the training data, or removing outliers based on statistics computed over the entire dataset (including the test set).\\[.5em]
+    \b{Mitigation}: Partition data early in process and keep it fixed until final evaluation; k-fold cross-validation
+    \item \b{P4 - Biased Parameters}: The final parameters of a learning-based method are indirectly dependent on the test set, such as when multiple hyperparameter combinations are evaluated on the test set and only the best performing one is reported.\\[.5em]
+    \b{Mitigation}: Use separate validation set; NEVER optimize using test set
+\end{itemize}
+
+
+\subsubsection*{Performance Evaluation:}
+\begin{itemize}
+    \item \b{P5 - Inappropriate Baselines}: The evaluation is conducted without, or with limited, baseline methods.\\[.5em]
+    \b{Mitiagtion}: To demonstrate genuine improvements, evaluations must include the state of the art, simple baselines (e.g., linear classifiers), and non-ML solutions.
+    \item \b{P6 - Inappropriate Measures}: The chosen performance measures do not account for the constraints of the application scenario, such as class imbalance. For highly imbalanced security datasets, Precision and Recall are preferable to Accuracy or standard ROC curves.
+    \item \b{P7 - Base Rate Fallacy}: A large class imbalance is ignored when interpreting the performance measures, leading to an overestimation of performance. A seemingly low False Positive Rate (FPR) can still result in an overwhelming number of False Positives (FPs) if the base rate of attacks is extremely low.\\[.5em]
+    \b{Mitigation}: Explicitly discuss FPs/FNs in the context of the base rate
+\end{itemize}
+
+
+\subsubsection*{Deployment and Operation:}
+\begin{itemize}
+    \item \b{P9 - Inappropriate Threat Model}: The security of the machine learning model itself is not considered, leaving the system exposed to evasion or poisoning attacks. Evaluations must consider adaptive adversaries targeting the proposed system.\\[.5em]
+    \b{Mitigation}: Include white-box attacks; perform evaluations agains adaptive adversaries
+\end{itemize}
+
+
+
+\subsection{Pitfalls in LLM-Based Security}
+
+\begin{itemize}
+\item \b{Data Collection \& Pre-Training}: Vulnerable to Data Poisoning (P1), Label Inaccuracy (P2), and Data Snooping (P3).
+\item \b{Fine-Tuning \& Prompting}: Vulnerable to Model Collapse (P4), Spurious Correlations (P5), Context Truncation (P6), and Prompt Sensitivity (P7)
+\item \b{Evaluation}: Affected by Surrogate Fallacy (P8), and Model Ambiguity (P9).
+\item \b{Case Study - Hate Detection}: Utilizing different underlying versions of LLMs (e.g., different GPT-4 versions) with the exact same prompt template yields significantly different detection rates, demonstrating Model Ambiguity and Surrogate Fallacy. Exact model specification is essential for reproducibility.
+\end{itemize}
+
+
+
+\subsection{Summary}
+
+\begin{itemize}
+\item Actively check for subtle pitfalls, as they are highly prevalent even in top-tier research.
+\item Compare against simple baselines to justify using complex models
+\item Verify that the model has learned the actual concept and not just dataset artifacts like dates or file paths.
+\item Ensure chosen evaluation metrics directly reflect the planned deployment scenario.
+\end{itemize}
+
+\vspace{1.5em}
+\hrule

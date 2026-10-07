@@ -1,0 +1,30 @@
+\section{Machine Learning: Extension}
+\vspace{-0.5em}
+\definition{Discriminative \& Generative Models}{Learning models can be categorized based on their conceptual approach to modeling data:
+\begin{itemize}
+\item \b{Discriminative Models:} Model only the decision function. Discrimination is often easier than full description (e.g., SVMs, Neural Networks).
+\item \b{Generative Models:} Model the underlying concepts of the data and have the capability to generate new samples (e.g., Naive Bayes, HMM).
+\end{itemize}
+}
+% \vspace{-0.5em}
+\definition{Expected vs. Empirical Risk}{The formal goal of learning is risk minimization, but the true data distribution is usually unknown:
+\begin{itemize}
+\item \b{Expected Risk} \f{R_{\infty}(f_{\theta})}: Expected loss on data from a specific, unknown probability distribution \f{P(x,y)}.
+\cf{R_{\infty}(f_{\theta})=\int L(f_{\theta}(x),y)dP(x,y)}
+\item \b{Empirical Risk} \f{R_{n}(f_{\theta})}: The average loss calculated only on the \f{n} known training samples, which operates exclusively on the training data as a practical proxy.
+\cf{R_{n}(f_{\theta})=\frac{1}{n}\sum_{i=1}^{n}L(f_{\theta}(x_{i}),y_{i})}
+\end{itemize}
+}
+% \vspace{-0.5em}
+\definition{Structural Risk Minimization (SRM)}{A framework that balances empirical risk with model complexity. This establishes a lower bound on the expected risk to prevent overfitting. It is achieved by adding a complexity penalty term \f{C(f_{\theta})} to the minimization problem, constrained by a regularization param \f{\lambda}.
+\cf{g \mapsto argmin_{\theta \in \Theta} R_{n}(f_{\theta}) + \lambda C(f_{\theta})}
+}
+% \vspace{-0.5em}
+\definition{Additional Learning Paradigms}{Beyond strict supervised and unsupervised learning, other specific paradigms include:
+\begin{itemize}
+\item \b{Semi-supervised:} Utilizes primarily unlabeled data alongside a small amount of labeled instances.
+\item \b{Anomaly Detection:} An unsupervised technique focused on the detection of deviations from normality using generative or discriminative models. It outputs an anomaly score \f{Y=[0,1]} or distance \f{Y=\mathbb{R}^{+}} (e.g., One-class SVM).
+\end{itemize}
+}
+% \vspace{-0.5em}
+\definition{k-Nearest Neighbors (k-NN)}{A non-parametric supervised model that determines predictions based on the local neighborhood of data. During learning, it basically just stores the training data. The only parameter is the neighborhood size \f{k}, which acts as a form of regularization.}

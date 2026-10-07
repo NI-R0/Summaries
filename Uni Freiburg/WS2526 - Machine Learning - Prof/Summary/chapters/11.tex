@@ -1,0 +1,82 @@
+\section{Error Measures}
+
+\subsection{Binary Classification}
+A binary classification model predicts the probability \f{p(y_n = 1 | x_n) \approx f(x_n; \theta)}. The final estimated target \f{\hat{y}_n} is determined by applying a threshold \f{\epsilon} to the predicted probability. The results yield a confusion matrix.
+%  consisting of True Positives (TP), False Positives (FP), True Negatives (TN), and False Negatives (FN).
+
+
+\definition{Misclassification Rate (MCR)}{The ratio of incorrect predictions to the total number of predictions, which can be expressed mathematically as a sum of 0/1 error terms (0/1 step function is not differentiable, so does not work with SGD).
+\cf{MCR(y, \hat{y}) = \frac{FP + FN}{TP + TN + FP + FN} = \frac{1}{N}\sum_{n=1}^N \mathbb{I}[y_n \neq \hat{y}_n]}
+\b{Important}: MCR is a highly misleading metric for imbalanced datasets (e.g., rare disease detection) because predicting only the majority class yields a high accuracy while completely failing the actual task.
+}
+
+\definition{Proxy Loss}{A differentiable function that approximates the true, non-differentiable error metric. Minimizing the proxy loss should roughly lead to the same optimal parameters as minimizing the true metric.\\[.5em]
+\b{Example}: BCE acts as a smooth proxy for 0/1 MCR error.}
+
+
+
+\subsection{Advanced Classification Metrics}
+
+\begin{itemize}
+\item \b{Recall (True Positive Rate)}: Ratio of correctly detected positive cases out of all actual positive cases.
+\cf{TPR = \frac{TP}{TP + FN}}
+\item \b{False Positive Rate (FPR)}: Ratio of false alarms out of all actual negative cases.
+\cf{FPR = \frac{FP}{TN + FP}}
+\item \b{Receiver Operating Characteristic (ROC)}: A curve that plots TPR against FPR across all possible decision thresholds \f{\epsilon \in [0, 1]}.
+\item \b{AUC}: The Area Under the ROC Curve, providing an aggregate measure of performance across all thresholds. It is maximized by correctly ranking positive instances higher than negative ones.
+\item \b{Precision}: The ratio of actual positive cases out of all cases that the model predicted as positive.
+\cf{Precision = \frac{TP}{TP + FP}}
+\item \b{F1 Score}: The harmonic mean of Precision and Recall. It is heavily used for imbalanced datasets. Because F1 is non-differentiable and non-decomposable, a common workaround is to oversample the minority class, train the model using a proxy loss, and then tune hyperparameters to explicitly maximize the validation F1 score.
+\cf{F1 = 2 \frac{Precision \cdot Recall}{Precision + Recall}}
+\end{itemize}
+\vspace{1em}
+\cig{.25}{roc}
+
+
+
+
+\subsection{Regression Error Measures}
+Regression error measures are naturally differentiable and do not require proxies.
+\begin{itemize}
+\item \b{Scale-dependent errors}: Include Mean Absolute Error (MAE) and Root Mean Square Error (RMSE).
+\end{itemize}
+
+\cf{RMSE = \sqrt{\frac{1}{N}\sum_{n=1}^N (y_n - \hat{y}_n)^2}}
+
+\begin{itemize}
+\item \b{Scale-independent (percentage) errors}: Include Mean Absolute Percentage Error (MAPE). However, MAPE becomes undefined or extreme when the true target \f{y_n \approx 0}.
+\end{itemize}
+
+\cf{MAPE = \frac{1}{N}\sum_{n=1}^N \left|\frac{y_n - \hat{y}_n}{y_n}\right|}
+
+\begin{itemize}
+\item \b{Mean Absolute Scaled Error (MASE)}: Fixes the instability of MAPE by scaling the error using the average error of a naive baseline model instead of the true target value.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Ranking \& Information Retrieval}
+The goal in ranking is to learn a function that outputs relevance scores \f{s_i = f(x_i)} for documents matching a specific query \f{q}, such that the predicted order matches the true relevance labels \f{l_i}.
+\begin{itemize}
+\item \b{Discounted Cumulative Gain (DCG@K)}: A measure that sums the true relevances of the top K ranked documents, heavily penalizing relevant documents that are placed lower in the ranking.
+\cf{DCG@K = \sum_{i=1}^K \frac{2^{l_i} - 1}{\log_2(i + 1)}}
+\item \b{Normalized DCG (NDCG@K)}: DCG scales unboundedly depending on the query. NDCG normalizes it to a \f{[0, 1]} range by dividing the predicted DCG by the Ideal DCG (IDCG), which is the DCG obtained by a perfectly sorted ranking.
+\cf{NDCG@K = \frac{DCG@K}{IDCG@K}}
+\end{itemize}
+
+
+\definition{Pairwise Rank Loss}{A technique that reframes the ranking problem by estimating the probability that any given pair of documents \f{(i, j)} is correctly ranked relative to each other.\\[1em]
+To train a pairwise ranking model, we define a target state \f{S_{i,j}} (\f{1} if document \f{i} is more relevant, \f{-1} if less, and \f{0} if equal) and optimize the parameters to minimize the pairwise log loss.
+\cf{\mathcal{L}*{i,j} = \frac{1}{2}(1 - S*{i,j})(s_i - s_j) + \log(1 + e^{-(s_i - s_j)})}
+}
+
+\vfill
+\cig{.98}{methods}

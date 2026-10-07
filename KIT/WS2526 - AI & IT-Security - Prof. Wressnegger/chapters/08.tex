@@ -1,0 +1,73 @@
+\section{Adversarial Training}
+
+Adversarial Training seeks to make the final prediction model more robust against adversarial attacks (AdvEx) (i.e. against perturbations of the inputs) by solving a min-max optimization problem during training.
+\cf{\min_{\theta} \frac{1}{n}\sum_{i=1}^{n} \max_{||\delta_i||_p \le \epsilon} L(x_i+\delta_i, \theta, y_i)}
+\begin{itemize}
+\item \b{Inner Maximization}: Finds the strongest possible adversarial examples for the current model by maximizing the loss function \f{L}.
+\item \b{Outer Minimization}: Optimizes the model parameters \f{\theta} to minimize the empirical risk on the generated adversarial examples, thus making the model robust to them.
+\end{itemize}
+
+
+
+\subsection{FGSM \& PGD Adv-Train}
+\begin{itemize}
+\item \b{FGSM Adv-Train}: Uses a fast, one-step attack to generate adversarial examples during training. However, it suffers heavily from \b{Catastrophic Overfitting}, where the model only learns to defeat this specific, simple attack.This causes the robustness to suddenly collapse unless early stopping is applied.
+\cf{
+    \min_{\theta} \frac{1}{n}\sum_{i=1}^{n} L(x_i+\delta_i, \theta, y_i)\quad\text{, where}\quad \delta = \epsilon \cdot \text{sign}(\nabla_{x_i} L(x_i, \theta, y_i))
+}
+\item \b{PGD Adv-Train}: Uses a \f{K}-step iterative attack to generate stronger and more reliable adversarial examples, effectively learning a robust decision boundary.\\[.5em]
+\b{Challenges}: Highly expensive computation (e.g., \f{10\times} more data generation for PGD-10), limits standard generalization (accuracy drops), and struggles with robustness generalization (gap between train and test robustness).
+\end{itemize}
+
+\cig{.5}{pgd-adv-train}
+
+
+
+\subsection{Accelerating Adversarial Training}
+\begin{itemize}
+    \item \b{Free Adv-Train}: Accelerates training by fully utilizing adversarial examples across \f{m} mini-batch replays, updating the perturbation and model parameters simultaneously.
+    \cig{.5}{free-adv-train}
+    \item \b{Fast Adv-Train}: Designed to fix the catastrophic overfitting problem in standard FGSM Adv-Train. It combines \b{random initialization} (which diversifies the threat model) with strict \b{early stopping}.
+    \cig{.5}{fast-adv-train}
+\end{itemize}
+
+
+
+
+\subsection{Standard Generalization (TRADES)}
+Because adversarial attacks are completely unavoidable, a principled trade-off between standard accuracy and adversarial robustness must be established. To quantify this trade-off, we use the robust error \f{R_{rob}}, which is composed of the natural classification error \f{R_{nat}} and the decision boundary classification error \f{R_{bdy}}:
+\cf{
+    R_{rob}(f_{\theta}) = R_{nat}(f_{\theta}) + R_{bdy}(f_{\theta})
+}
+
+\begin{itemize}
+\item \b{Natural Error \f{R_{nat}}}: The error on standard unperturbed data. A low \f{R_{nat}} indicates high prediction performance.
+\item \b{Boundary Error \f{R_{bdy}}}: The error caused specifically by adversarial perturbations pushing data across the decision boundary. A low \f{R_{bdy}} indicates high robustness against attacks.
+\end{itemize}
+
+To balance the different parts of the robustness equation, one can introduce different upper limitation terms (for accuracy, for the boundary robustness, or for both). For instance, the upper bound on the boundary error is defined using a surrogate loss function \f{\phi} (\f{B} denotes the \f{\epsilon}-neighborhood of input data \f{x}):
+\cf{R_{bdy}(f_{\theta})\le\frac{1}{n}\sum_{i=1}^{n}\max_{x_i+\delta_i\in B(x_i,\epsilon)}\phi\left(f_{\theta}(x_i+\delta_i)\cdot \frac{f_\theta(x_i)}{\lambda}\right)}
+
+TRADES is an optimization approach that replaces the standard accuracy term with empirical risk and utilizes Kullback-Leibler (KL) loss for the boundary robustness term (as surrogate loss). The trade-off is explicitly controlled by a regularization constant \f{\lambda}:
+$$\min_{\theta} \frac{1}{n} \sum_{i=1}^{n} \left[ L(x_i, \theta, y_i) + \frac{1}{\lambda} \cdot \max_{x_i+\delta_i \in B(x_i, \epsilon)} \text{KL}(f_{\theta}(x_i) \parallel f_{\theta}(x_i + \delta_i)) \right]$$
+
+
+
+
+\subsection{Robustness Generalization \& Improvement}
+
+\definition{Robust Overfitting}{
+    A phenomenon where the lowest adversarial error on the test set is reached early, and a huge gap forms between training set robustness and test set robustness.\\
+    Standard solutions include Data Augmentation (Cut-Mix, Aug-Mix), \f{l_{1/2}} regularization, and early stopping.
+}
+\definition{Friendly Adversarial Training (FAT)}{Addresses the strong "Cross-Over Mixture" of data distributions caused by standard PGD Adv-Train, meaning that using the "strongest" PGD examples can sometimes "kill" training by creating too much confusion. FAT uses early-stopped PGD to generate "friendly" adversarial examples that just barely cross the decision boundary.}
+
+\definition{Misclassification Aware Adv-Train (MART)}{Recognizes the unequal importance of correctly versus incorrectly classified examples for building adversarial robustness. It applies a Boosted Cross Entropy (BCE) loss explicitly to misclassified examples as a form of regularization to further improve overall model robustness.}
+
+
+
+
+
+
+
+

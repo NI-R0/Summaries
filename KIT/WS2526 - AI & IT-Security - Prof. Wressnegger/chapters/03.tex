@@ -1,0 +1,144 @@
+\section{Anomaly Detection for Intrusion Detection}
+
+\subsection{Basic Concepts}
+\definition{Attack}{
+    An attack is an attempt to compromise the confidentiality, integrity, or availability of resources or information. Different types of attacks include \b{intrusions} and \b{malware}.
+}
+\definition{Intrusion Detection System}{
+    An IDS is a type of \b{reactive security} system that specifically monitors a stream of events to find these attacks. It can be classified by where it looks (network vs. host), how it analyzes (signatures vs. ML), and how it reacts (just reporting vs. actually blocking).
+}
+
+
+
+\subsection{Conventional Intrusion Detection}
+Conventional IDS relies on \b{signatures}, meaning specific patterns like strings or regular expressions found in packet payloads. These signatures have to be manually crafted based on known attacks.
+\begin{itemize}
+    \item[$+$] No false positives
+    \item[$-$] Easily evadable (e.g. by using unicode or double encoding) 
+    \item[$-$] Signatures don't scale and don't work against unknown attacks (very brittle)
+\end{itemize}
+
+
+\subsection{ML for Attack Detection}
+To mitigate the inefficiency of conventional ID, nowadays we use ML for this task. The resulting system has to be \b{effective} (good detection rate with few false positives), \b{efficient} (can handle large amounts of data), and \b{robust} (resistant against evasion and attacks). The ML pipeline consists of following steps:
+
+\subsubsection{Data Collection}
+Record network traffic.
+
+\subsubsection{Feature Extraction \& Embedding}
+See chapter 2. An additional method for structural features: Use a parser to turn a protocol (like HTTP) into a tree structure, and then mapping all possible sub-trees to a vector.
+
+\subsubsection{Learning the Model}
+There are different approaches for learning-based detection:
+\begin{enumerate}
+    \item Modeling of malicious activity only (e.g. virus signatures, unsupervised)
+    \item Modeling benign activity only (e.g. anomaly detection, unsupervised)
+    \item Learn the difference between malicious and benign activity (classification, supervised)
+\end{enumerate}
+
+\subsubsection{Anomaly Detection}
+\b{Assumptions:} Most training data is "good", and unknown attacks will look different from that good data.\\
+
+\b{The Semantic Gap:} Just because sth. is an anomaly (mathematically weird) doesn't mean it's malicious.
+
+\subsection{Modeling "Normality"}
+Benign data can intuitively be represented using hyper-spheres, where the anomalies are the outliers.
+\begin{itemize}
+    \item \b{Center of Mass}: Simple global model of normality by calculating the average vector of all training points as the radius of the sphere. An anomaly score is then given by the distance from the center:
+    \cf{
+        \mu = \frac{1}{n}\sum_{i=1}^{n}\phi(x_i)\quad,\quad f(z) = \Vert\phi(z)-\mu\Vert^2=\sum_{i=1}^{n}(\phi(z)_i - \mu_i)
+    }
+    \item \b{Center of Neighborhood}: Simple local model of normality, where the sphere is located at the center of the neighborhood \f{N_z} as \f{k}-nearest neighbors of \f{z}. The anomaly score is given by the distance to the local center.
+    \item \b{One-Class SVMs}: Standard for anomaly detection that seeks a hyper-sphere enclosing the data with the minimum volume \f{R^2}.
+    \cf{
+        \min_{\mu, R} R^{2}\quad\text{s.t.}\quad||\phi(x_{i}) - \mu||^{2} \le R^{2}
+    }
+    To handle noisy data or outliers, the sphere is "softened" using slack variables $\xi_{i}\geq 0$ and a parameter $C$:
+    \cf{
+        \min_{\mu, R} R^{2}+C\sum_{i=1}^{n}\xi_i\quad\text{s.t.}\quad||\phi(x_{i}) - \mu||^{2} \le R^{2} + \xi_i
+    }
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\clearpage
+
+% \subsection{Intrusion Detection Systems (IDS)}
+
+% \definition{Intrusion Detection System (IDS)}{A security mechanism designed to monitor network traffic or host activities to identify malicious behavior, policy violations, or unauthorized access.}
+
+% \begin{itemize}
+% \item \b{Host-based IDS (HIDS)}: Monitors activities on a single host, such as system logs, file integrity, and running processes.
+% \item \b{Network-based IDS (NIDS)}: Monitors and analyzes network traffic across the network infrastructure.
+% \end{itemize}
+
+% \definition{Misuse Detection}{A detection strategy that compares observed data against a predefined database of known attack signatures.}
+% \begin{itemize}
+% \item \b{Pros}: High detection accuracy for known attacks, leading to a very low False Positive Rate (FPR).
+% \item \b{Cons}: Unable to detect novel or zero-day attacks, resulting in a high False Negative Rate (FNR) for new threats.
+% \end{itemize}
+
+% \definition{Anomaly Detection}{A detection strategy that builds a statistical or machine learning model of "normal" behavior and flags any significant deviations as potential attacks.}
+% \begin{itemize}
+% \item \b{Core Assumption}: Attacks manifest as anomalies, meaning malicious behavior is a subset of anomalous behavior.
+% \item \b{Pros}: Capable of detecting novel, zero-day attacks without requiring prior knowledge or signatures.
+% \item \b{Cons}: Prone to high False Positive Rates because not all anomalies are malicious (e.g., benign software updates or changes in user behavior).
+% \end{itemize}
+
+% \subsection{Application-Layer NIDS (AL-NIDS)}
+
+% \definition{AL-NIDS}{Network intrusion detection operating at the application layer (Layer 7). It analyzes the actual payload content (e.g., HTTP requests, FTP commands) rather than just network headers.}
+
+% \begin{itemize}
+% \item Many modern attacks target application vulnerabilities directly over standard open ports (e.g., port 80 or 443), making standard network-layer analysis insufficient.
+% \item Requires \b{Deep Packet Inspection (DPI)} to extract, parse, and interpret the application payload data.
+% \item Feature extraction techniques like \f{n}-grams or tokenization are heavily used to vectorize this unstructured payload data for machine learning algorithms.
+% \end{itemize}
+
+% \subsection{Payload Anomaly Detection Models}
+
+% \definition{PayL}{One of the first successful AL-NIDS models. It builds length-conditioned models of normal payloads using 1-grams (byte frequency distributions).}
+% \begin{itemize}
+% \item Payloads are clustered by length, and a distinct normal profile is created for each length range.
+% \item Anomalies are detected by calculating the \b{Mahalanobis distance} between a new payload's byte frequency vector and the centroid of its corresponding length profile.
+% \end{itemize}
+
+% \definition{McPAD (Multiple Classifier Payload Anomaly Detection)}{An AL-NIDS that improves upon PayL by capturing structural information within the payload using \f{2-\nu}-grams (byte pairs separated by a gap of \f{\nu} bytes).}
+% \begin{itemize}
+% \item Extracts multiple sets of \f{2-\nu}-grams for various values of \f{\nu} to capture relationships across different distances.
+% \item Uses an ensemble of \b{One-Class SVMs}, training a separate SVM for each \f{\nu}-gap feature space.
+% \item Predictions from all individual SVMs are combined to make a final anomaly decision, which increases robustness and evades simple mimicry attacks.
+% \end{itemize}
+
+% \definition{HMMPayl}{An advanced AL-NIDS model that utilizes Hidden Markov Models (HMM) to capture the exact sequence and transition probabilities between bytes in the payload.}
+% \begin{itemize}
+% \item Models the payload as a sequence of observations generated by hidden states.
+% \item Provides high detection accuracy by understanding the structural grammar of the payload.
+% \item Computationally expensive to train and evaluate compared to simpler \f{n}-gram approaches.
+% \end{itemize}
+
+% \subsection{Evaluation and The Base-Rate Fallacy}
+
+% \begin{itemize}
+% \item Anomaly detection models are typically evaluated using ROC curves and the Area Under the Curve (AUC), plotting the True Positive Rate (TPR) against the False Positive Rate (FPR) across different detection thresholds.
+% \end{itemize}
+
+% \definition{The Base-Rate Fallacy}{A cognitive error introduced to the intrusion detection context by Stefan Axelsson. It demonstrates that when the prior probability (base rate) of an attack is extremely low, the overwhelming majority of alarms generated by an IDS will be false positives, even if the model's FPR is remarkably small.}
+
+% \begin{itemize}
+% \item By applying Bayes' Theorem, we calculate the probability that an alarm actually indicates a real attack \f{P(\text{Attack} | \text{Alarm})}:
+% \cf{P(\text{Attack}|\text{Alarm}) = \frac{P(\text{Alarm}|\text{Attack}) \cdot P(\text{Attack})}{P(\text{Alarm})}}
+% \item The total probability of an alarm \f{P(\text{Alarm})} is composed of true positives and false positives:
+% \cf{P(\text{Alarm}) = P(\text{Alarm}|\text{Attack})P(\text{Attack}) + P(\text{Alarm}|\neg\text{Attack})P(\neg\text{Attack})}
+% \item \b{Detection Rate (TPR)}: Represented by \f{P(\text{Alarm}|\text{Attack})}.
+% \item \b{False Positive Rate (FPR)}: Represented by \f{P(\text{Alarm}|\neg\text{Attack})}.
+% \item \b{Base Rate}: \f{P(\text{Attack})}, which is typically a tiny fraction of total traffic (e.g., \f{10^{-5}}).
+% \item Because \f{P(\neg\text{Attack}) \approx 1}, the false positive term \f{P(\text{Alarm}|\neg\text{Attack})P(\neg\text{Attack})} dominates the denominator, causing the final confidence \f{P(\text{Attack}|\text{Alarm})} to be unacceptably low in practice.
+% \end{itemize}

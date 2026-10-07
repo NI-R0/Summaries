@@ -1,0 +1,105 @@
+\section{Petri/CE/PT Nets}
+In contrast to hierarchical state machines, state transitions in Petri Nets are asynchronous. Focus on modelling causal dependencies; no global synchronization assumed \f{\ \rightarrow\ } message passing only. Petri nets can be used to model concurrent distributed systems (e.g. UML).
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.5\textwidth]{petri.png}
+\end{figure}
+
+\subsection{Components}
+\begin{itemize}
+    \item \b{Conditions:} Represent "local states" and are either met or not met (potential state space)
+    \item \b{Events:} May take place if certain conditions are met (represents state transition)
+    \item \b{Flow relation:} Relates conditions and events
+    \item \b{Tokens:} Assignment of tokens to conditions specify a global state 
+\end{itemize}
+\definition{Petri Net}{
+    A Petri Net \f{N = (C,E,F,M_0)} is defined with:
+    \begin{enumerate}
+        \item \f{C}: set of conditions/places
+        \item \f{E}: set of events/transitions
+        \item \f{F}: set of edges (binary flow relations) with \f{F\subseteq(C\times E)\cup(E\times C),\quad}\f{C} and \f{E} disjoint
+        \item \f{M_0: C\rightarrow \mathbb{N}} as the initial marking
+    \end{enumerate}
+} 
+\definition{Preconditions / Postconditions}{
+    Let \f{N} be a Petri Net and let \f{x\in E, y\in C}:
+    \begin{enumerate}
+        \item \f{\cdot x := \left\{y\ |\ (y\times x)\in F\right\}} is called the set of preconditions
+        \item \f{x\cdot := \left\{y\ |\ (x\times y)\in F\right\}} is called the set of postconditions
+    \end{enumerate}
+}
+
+\subsection{Marking}
+A marking is a mapping \f{M:C\rightarrow\left\{0,1\right\}}. Firing event \f{x} generates new markings on all conditions \f{C} according to the following rules:
+\begin{enumerate}
+    \item An event \f{x} can be fired, iff \f{\cdot x} is marked and \f{x\cdot} is unmarked
+    \item After firing, \f{\cdot x} is unmarked and \f{x\cdot} is marked
+    \item \f{M\rightarrow M'}, iff \f{M'} results from \f{M} by firing \it{exactly} one transition
+\end{enumerate}
+
+\subsection{Condition-Event Nets}
+\definition{Different Concepts}{
+    \begin{enumerate}
+        \item \f{(c,e)\in C\times E\rightarrow (c,e)} is called \b{loop} iff \f{cFe\wedge eFc}.
+        \item Net \f{N=(C,E,F)} is called \b{pure}, if \f{F} does not contain loops.
+        \item Net is called \b{simple}, if there are no two transitions that have the same sets of input and output places: \f{\forall x,y\in E: \cdot x = \cdot y \wedge x\cdot = y\cdot \ \Rightarrow\  x=y}
+    \end{enumerate}
+}
+\definition{C/E-Nets}{
+    A Petri Net \f{N=(C,E,F)} together with a non-empty set of markings \f{M} is called C/E-Net, iff:
+    \begin{itemize}
+        \item \f{N} is simple, pure, ad has no isolated elements
+        \item \f{M} is closed wrt. "firing" and "inverse firing"
+        \item \f{N} is deadlock-free: For each event \f{e\in E} exists a marking \f{m\in M} that allows firing at \f{e}
+    \end{itemize}
+}
+\subsection{Properties}
+\begin{itemize}
+    \item Marking \f{M'} is \b{reachable} from marking \f{M}, iff there exists a sequence of firings that transform \f{M} into \f{M'}
+    \item C/E net is \b{cyclic}, iff any two markings are reachable from each other
+    \item C/E net fulfills \b{liveness}, iff \f{N} is deadlock-free
+    \begin{itemize}
+        \item \b{Strong liveness:} For each \f{M} and \f{e} exists \f{M'} so that \f{M'} is reachable from \f{M} and \f{M'} activates \f{e} for firing.
+        \item \b{Weak liveness:} For each \f{M} an event \f{e} exists so that \f{M} activates \f{e} for firing.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Place/Transition Nets}
+PT-Nets can model resource (i.e. producer/consumer) usage and causal relationships, by allowing more than one token per condition, capacities of places, and weights of edges. The downside is that the state space may become infinite.\\
+Nets can be used to verifiy properties such as reachability, liveness, or bounds on the number of tokens.
+
+\definition{PT-Nets}{
+    A net \f{N=(P,T,F,K,W,M_0)} is called PT-Net (non-deterministic), iff:
+    \begin{itemize}
+        \item \f{N=(P,T,F)} is a net with places \f{p\in P} and transitions \f{t\in T}
+        \item \f{K:P\rightarrow (N_0\cup\left\{\omega\right\})\backslash \left\{0\right\}} denotes the capacity of places; \f{\omega\equiv \infty} capacity. A place \f{p_i} can hold \f{K(p_i)} tokens at maximum.
+        \item \f{W: F\rightarrow (N_0\backslash \left\{0\right\})} denotes the weight of graph edges
+        \item \f{M_0: P\rightarrow N_0\cup\left\{\omega\right\}} represents the initial marking of places
+    \end{itemize}
+    A net \f{N} is \b{contact-free}, if capacities in \f{\cdot t} never prevent activation of the transition \f{t}. A \b{pure} and \b{contact-free} PT-Net is completely defined by \f{N} and \f{M_0}.\\
+    Since capacities of places are not considered in \f{N} (here: matrix \f{P\times T}), we can not always compute transitions!
+}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.7\textwidth]{ptnet.png}
+\end{figure}
+
+\subsubsection{Pros and Cons}
+\begin{table}[h!]
+\begin{tabular}{|p{.45\textwidth}|p{.475\textwidth}|}\hline
+\textbf{Andvantages}                                          & \textbf{Disadvantages}                           \\\hline\hline
+Can model distributed applications & problems with modeling timing \\\hline
+Well-known theory for proving properties & no programming elements \\\hline
+                                 & no hierarchy \\\hline
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+

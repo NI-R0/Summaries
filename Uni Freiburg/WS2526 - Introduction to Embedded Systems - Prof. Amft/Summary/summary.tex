@@ -1,0 +1,208 @@
+\documentclass[a4paper,11pt]{article}
+
+% Package imports
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{bm}
+\usepackage{chngcntr}
+\usepackage{framed}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath, amssymb, amsthm}
+
+\usepackage{needspace} % ensures rule+heading stay together
+
+\newcommand{\rsectionpre}{%
+  % Only if not at the top of a page
+  \ifdim\pagetotal>0pt
+    % If there isn't room for the rule + heading, break first
+    \Needspace*{3\baselineskip}%
+    % If we didn't break, draw the rule
+    \ifdim\pagetotal>0pt
+      \noindent\rule{\linewidth}{0.4pt}\par
+      \vspace{2em}%
+      \nobreak % avoid a break between rule and heading
+    \fi
+  \fi
+}
+
+\titleclass{\rsection}{straight}[\section]
+
+% Tell titlesec how to format \ruledsection
+\titleformat{\rsection}[block]
+  {\rsectionpre\normalfont\Large\bfseries} % format (rule first)
+  {\thesection}{1em}{}
+
+% Optional: starred version \ruledsection* (unnumbered)
+\titleformat*{\rsection}{\rsectionpre\normalfont\Large\bfseries}
+
+\titlespacing*{\rsection}
+  {0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+
+\makeatletter
+\let\c@rsection\c@section
+\makeatother
+
+% Page layout
+\geometry{left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\graphicspath{ {./images/} }
+
+% Header definition
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Introduction to Embedded Systems - WS25/26}
+\rhead{\thepage}
+
+% Custom commands for numbered definitions and theorems
+\newcounter{definitioncounter}
+\newcounter{theoremcounter}
+\counterwithin{definitioncounter}{subsection}
+\counterwithin{theoremcounter}{subsection}
+
+% Theorem and definition styles with rounded borders and numbering
+\newtcolorbox{definitionboxold}{colback=white, colframe=black, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{theorembox}{colback=white, colframe=blue, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{definitionbar}{
+  colback=white,
+  enhanced,
+  frame hidden,
+  borderline west={1pt}{0pt}{black},
+  left=6pt,
+  top=1pt,
+  bottom=1pt
+}
+\newtcolorbox{definitionbox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=black,
+  coltitle=black,
+  boxrule=.5pt,
+  arc=5pt,
+  fonttitle=\bfseries,
+%   title filled=true,
+  title={Definition \thedefinitioncounter\hspace{.8em}(#2)},
+%   title=My Title,
+  attach boxed title to top left={yshift=-0.7\baselineskip-0.4pt,xshift=3mm},
+  boxed title style={
+    colback=white,
+    colframe=white,
+    left=6pt,
+    right=6pt,
+    % before upper=\strut
+  },
+%   boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm, colback=white,before upper=\strut}
+  top=10pt,
+  bottom=6pt,
+  left=6pt,
+  right=6pt,
+  #1
+}
+\newtcolorbox{tileddefinitionbox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=black,
+  coltitle=black,
+  boxrule=.5pt,
+  arc=5pt,
+  fonttitle=\bfseries,
+%   title filled=true,
+  title={Definition \thedefinitioncounter\hspace{.8em}(#2)},
+%   title=My Title,
+  attach boxed title to top left={yshift=-0.7\baselineskip-0.4pt,xshift=3mm},
+  boxed title style={
+    colback=white,
+    colframe=white,
+    left=6pt,
+    right=6pt,
+    % before upper=\strut
+  },
+%   boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm, colback=white,before upper=\strut}
+  top=10pt,
+  bottom=6pt,
+  left=6pt,
+  right=6pt,
+  sidebyside,
+  sidebyside gap=5mm,
+  sidebyside align=center,
+  righthand width=0.33\textwidth,
+  segmentation hidden,
+  #1
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\skip\footins}{0.5cm} % Adjust this to change the space above the footnotes
+\raggedbottom
+
+\newenvironment{leftindent}{\par\leftskip1em\relax\rightskip0cm\relax}
+{\par\leftskip0cm\relax\rightskip0cm\relax}
+
+\newcommand{\definition}[2]{%
+    \vspace{0.2cm}
+    \refstepcounter{definitioncounter}%
+    % \textbf{Definition \thedefinitioncounter\hspace{.8em}(#1)}
+    % \vspace{0.2cm}\newline
+    \begin{definitionbox}{#1}
+    #2
+    \end{definitionbox}
+    % \vspace{0.3cm}
+}
+\newcommand{\tdefinition}[2]{%
+    \vspace{0.2cm}
+    \refstepcounter{definitioncounter}%
+    % \textbf{Definition \thedefinitioncounter\hspace{.8em}(#1)}
+    % \vspace{0.2cm}\newline
+    \begin{tileddefinitionbox}{#1}
+    #2
+    \end{tileddefinitionbox}
+    % \vspace{0.3cm}
+}
+
+\newcommand{\theorem}[1]{%
+    \refstepcounter{theoremcounter}%
+    \begin{theorembox}
+    \textbf{Theorem \thetheoremcounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{theorembox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{${#1}$}
+\renewcommand{\b}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+\newcommand{\pL}{\f{\mathcal{L}}}
+\newcommand{\fL}{\mathcal{L}}
+
+\begin{document}
+
+\input{acronyms.tex}
+
+% Title section
+\begin{center}
+    {\huge Introduction to Embedded Systems (WS25/26) \par}
+    \vspace{0.5cm}
+{\large Niklas Rodenbüsch $\quad\mid\quad$ \today \par}
+\end{center}
+\vspace{0.5cm}
+
+
+\input{chapters/01_basics.tex}
+\input{chapters/02_specs.tex}
+\input{chapters/03_fsm.tex}
+\input{chapters/04_statecharts.tex}
+\input{chapters/05_petrinets.tex}
+\input{chapters/06_DSE.tex}
+\input{chapters/07_memory.tex}
+\input{chapters/08_buses.tex}
+\input{chapters/09_sensors.tex}
+\input{chapters/10_misc.tex}
+\input{chapters/11_ai.tex}
+% \input{chapters/12_vhdl.tex}
+
+
+\end{document}

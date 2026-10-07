@@ -1,0 +1,134 @@
+\subsection{2-Qubit-Gatter: CNOT}
+Das CNOT-Gatter ("controlled-NOT") funkioniert wie folgt:
+\begin{itemize}
+    \item Falls das control-qubit im Zustand \ket{0} ist, passiert nichts.
+    \item Falls das control-qubit im Zustand \ket{1} ist, wird die Operation NOT (bzw. X) auf das target-qubit angewandt.
+\end{itemize}
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{cnot}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{cnot2}
+\end{subfigure}
+\end{figure}
+
+Das CNOT-Gatter bildet zusammen mit den 1-Qubit-Gattern eine \b{universelle Menge} von Quantengattern, d.h. jede unitäre Operation auf \f{n} Qubits kann durch CNOT und 1-Qubit-Gatter erzeugt werden. (Hier weggelassen: Beweis)\\
+Im allgemeinen kann jede unitäre Operation \f{U} auf 2 Qubits mit Hilfe von 3 CNOT-Gattern und 8 1-Qubit-Gattern erzeugt werden:
+
+\cig{.6}{universell}
+
+Ein Beispiel, für das 3 CNOT-Gatter benötigt werden, ist das SWAP-Gatter: \cf{\textrm{SWAP}\ \cket{\psi}\otimes\cket{\chi} = \cket{\chi}\otimes\cket{\psi}}
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{swap}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.6\linewidth]{swap2}
+\end{subfigure}
+\end{figure}
+
+Beim 2. CNOT ist hier die Rolle von control und target vertauscht. Manchmal lässt die QC-Hardware das CNOT-Gatter jedoch nur in einer Richtung zu. Die Umkehrung kann dann wie rechts in der obigen Abbildung erreicht werden.\\
+SWAP-Gatter spielen im Quantencomputing eine wichtige Rolle, welche mit der "Konnektivität" der Qubits zu tun hat. In der Quantencomputer-Hardware sind nämlich CNOT-Gatter meistens nur zwischen bestimmten Paaren von Qubits implementiert. Beispiel: 5-Qubit ibmq-vigo
+
+\cig{.9}{swap3}
+
+Da jedes SWAP-Gatter 3 CNOTs benötigt, sind dies insgesamt 13 CNOTs! Dies ist wichtig, da die CNOT-Gatter im allgemeinen die größte Fehlerquelle darstellen (2025: ca. 0.2\% für 2-Qubit-Gatter).\\
+Zum Schluss geben wir noch ein Beispiel für ein 3-Qubit-Gatter an, und wie dieses mit Hilfe von CNOT- und 1-Qubit-Gattern realisiert werden kann: Für ein beliebiges 1-Qubit-Gatter \f{U} definieren wir das zweifach kontrollierte \f{U}-Gatter \f{C_2U} wie folgt:
+
+\cig{.6}{cnot3}
+
+Für das Gatter werden insgesamt 8 CNOT-Gatter benötigt (da CV bzw. CV\f{^\dagger} jeweils 2 CNOT-Gatter enthält).\\
+
+Ein allgemeines Rezept, wie man eine beliebige unitäre Operation auf \f{n} Qubits mit CNOT- und 1-Qubit-Gattern erzeugen kann, wird z.B. im Buch von Nielsen/Chuang angegeben. Allerdings benötigt man im allgemeinen hierfür eine exponentiell große Anzahl von Gattern. Für Quantencomputing sind hingegen nur solche Schaltkreise von praktischem Nutzen, bei denen die Anzahl der Gatter polynomial mit \f{n} skaliert. Wie man eine gegebene Operation optimal (d.h. mit möglichst wenigen 1- und 2-Qubit-Gattern) darstellt, ist ein schwieriges, noch ungelöstes Problem.
+
+\subsection{Simulierbarkeit durch klassische Computer}
+Im allgemeinen kann man einen Quantenschaltkreis mit genügend vielen Qubits (\f{n>50...60}) nicht auf einem klassischen Computer simulieren. Dies scheitert daran, dass der Quantenzustand (Dimension \f{2^n}) nicht mit dem verfügbaren Speicherplatz dargestellt werden kann. Es gibt folgende Ausnahmen:
+\begin{itemize}
+    \item \b{Nur 1-Qubit Gatter:} Der Quantenzustand bleibt dann immer ein Produktzustand\\
+    \f{\cket{\psi_1}\otimes\cket{\psi_2}\otimes...\otimes\cket{\psi_n}}, welcher mit \f{2n} statt \f{2^n} Parametern dargestellt werden kann.
+    \item \b{Clifford-Gatter:} Hierzu zählen \f{X,Y,Z,H,S} und CNOT. Quantenschaltkreise, die nur mit diesen Gattern erzeugt werden, können ebenfalls effizient auf klassischen Computern simuliert werden. Clifford-Gatter bilden Pauli-Matrizen auf Pauli-Matrizen ab (ein Gegenbeispiel ist T).
+\end{itemize}
+
+\subsubsection{n-Qubit-Pauli-Operatoren}
+n-Qubit-Pauli-Operatoren sind Produkte der 1-Qubit-Pauli-Operatoren X,Y,Z und \(\mathbb{I}\). Ein Beispiel: \f{P = X\otimes\mathbb{I}\otimes Z = X_1Z_3} ist ein 3-Qubit-Pauli-Operator (X auf Qubit 1 und Z auf Qubit 3).\\
+Ein Gatter ist ein Clifford-Gatter, wenn für alle Pauli-Operatoren P gilt: \f{CPC^\dagger=P'}, wobei \f{P'} ebenfalls ein Pauli-Operator ist. Die Simulation eines nur aus Clifford-Gattern bestehenden Schaltkreises funktioniert deshalb wie folgt:
+\begin{itemize}
+  \item Anfangszustand \ket{00...0} ist Eigenzustand der \f{n} Pauli-Operatoren \f{Z_1, Z_2,...,Z_n} jeweils zum\\Eigenwert +1, also:
+  \begin{flalign*}
+    Z_1\cket{00...0} = \cket{00...0}\quad, ...,\quad Z_n\cket{00...0} = \cket{00...0}     
+  \end{flalign*}
+  \item Der Zustand \f{\cket{\psi} = C\cket{00...0}} ist dann Eigenzustand von \f{CZ_1C^\dagger=P_1}, \f{CZ_2C^\dagger=P_2} usw., da:
+  \cf{
+    CZ_1C^\dagger\cket{\psi} = CZ_1C^\dagger C\cket{00...0} = CZ_1\cket{00...0} = C\cket{00...0}=\cket{\psi}
+  }
+  \item Ebenso gilt nach Anwendung weiterer Clifford-Gatter \f{C'}: Ist \ket{\psi} Eigenzustand von \f{P_1,...,P_n}, so ist \f{\cket{\psi'}=C'\cket{\psi}} Eigenzustand von \f{P_1', ..., P_n'}, wobei \f{P_i'=C'P_iC'^\dagger}
+  \item Der Zustand des \f{n}-Qubit-Registers kann also im Computer durch \f{n} Pauli-Operatoren dargestellt werden, wobei jeder Pauli-Operator nur \f{2n} Bits benötigt (4 Möglichkeiten, also 2 Bit pro Qubit: \f{X,Y,Z} oder \f{\mathbb{I}}).
+  \item Die Simulation des Messprozesses (in der Standardbasis) ist in diesem Formalismus ebenfalls möglich (siehe Nielsen/Chuang).
+\end{itemize}
+
+\subsection{Klassische Berechnungen auf dem Quantencomputer}
+Umgekehrt kann jedoch jede klassische Rechnung auf einem Quantencomputer mit einer der Anzahl klassischer Bits vergleichbaren Anzahl Qubits durchgeführt werden.\\
+
+Wir betrachten z.B. die Berechnung einer Funktion \f{f(x)\in\left\{0,1\right\}}, wobei der Input \f{x} aus \f{n} Bits besteht. Für diese Funktion \f{f} existiert dann ein klassischer Schaltkreis, der aus elementaren Gattern wie NOT, AND, XOR usw. besteht. Der zu \f{f} gehörige Quantenschaltkreis \f{U_f} ist wie folgt definiert:
+\cf{U_f\cket{x}\otimes\cket{0}=\cket{x}\otimes\cket{f(x)}}
+Um \f{U_f} aus dem klassischen Schaltkreis zu konstruieren, sehen wir uns zunächst einige elementare Gatter an:
+\cig{.65}{u_f}
+
+Man beachte, dass das AND-Gatter die Einführung eines 3. Hilfsqubits (auch "Ancilla"-Qubit genannt) erfordert, um eine reversible Operation zu erhalten (Quantengatter sind stets unitär, d.h. umkehrbar, da \f{UU^\dagger=\mathbb{I}\Rightarrow U^{-1}=U^\dagger}). Beispielsweise wäre die Operation \f{A\cket{x,y}=\cket{x,x\wedge y}} nicht reversibel, da \f{A\cket{0,0}=A\cket{0,1}=\cket{0,0}}.\\
+Setzt man \f{\cket{y}=\cket{0}} beim XOR-Gatter, kann man das klassische COPY-Gatter realisieren: 
+\cf{\textrm{CNOT}\cket{x,0}=\cket{x,x}}
+Das "No-Cloning-Theorem" besagt, dass nur die Zustände \ket{0} und \ket{1} kopiert werden können, nicht beliebige Superpositionen \ket{\psi}. Ein Gatter \f{U} mit \f{U\cket{\psi,0}=\cket{\psi,\psi}} für ein beliebiges \f{\cket{\psi}} kann es nicht geben!\\
+Mit den obigen elementaren Gattern können wir nun folgenden Schaltkreis konstruieren, wobei evtl. eine gewisse Anzahl \f{m} von Ancilla-Qubits benötigt wird:
+\cig{.6}{o_f}
+Das Output-Qubit befindet sich im Zustand \ket{f(x)}. Der Zustand \ket{g(x)} ist beliebig und im folgenden ohne Belang. Wir kopieren das Output-Qubit und stellen durch den inversen Schaltkreis \f{O_f^{-1}} den Anfangszustand wieder her (Symbol "/" ist ein aus mehreren Qubits bestehendes Register):
+\cig{.6}{o_f2}
+
+Die \f{m} Ancilla-Qubits bleiben im Zustand \ket{0} und werden im folgenden außer Acht gelassen. Für die restlichen Qubits gilt nun:
+\cf{
+  \cket{x}\otimes\cket{0}\quad\longrightarrow\quad\cket{x}\otimes\cket{f(x)}
+}
+Also genau wie der oben definierte Schaltkreis \f{U_f}!\\[1em]
+
+Kann man in einem Quantenalgorithmus auch direkt \f{O_f} statt \f{U_f} verwenden und auf das Wiederherstellen des Anfangszustands mittels \f{O_f^{-1}} verzichten? Nein, denn 
+dies kann aufgrund des unbekannten Zustands \ket{g(x)} zu falschen Ergebnissen führen, falls man mit Superpositionszuständen rechnet. Falls z.B. \f{\cket{g(x_1)}=\cket{g(x_2)}=:g}, so gilt:
+\cf{
+  O_f\cket{0}\otimes(\cket{x_1}+\cket{x_2}) = \cket{g}\otimes(\cket{f(x_1)}+\cket{f(x_2)})\quad\Rightarrow\quad\textrm{Output-Qubit in reinem Zustand}
+}
+Ansonsten gilt:
+\cf{
+  O_f\cket{0}\otimes(\cket{x_1}+\cket{x_2}) = \cket{g(x_1)}\otimes\cket{f(x_1)}+\cket{g(x_2)}\otimes\cket{f(x_2)}\quad\Rightarrow\quad\textrm{Output-Qubit in gemischtem Zustand}
+}
+
+\subsection{Deutsch-Algorithmus}
+Wir kommen nun zu unserem ersten Quantenalgorithmus: der Deutsch-Algorithmus ist der einfachste Quantenalgorithmus, der eine bestimmte Aufgabe effizienter als ein klassischer Algorithmus lösen kann, und daher gut für illustrative Zwecke geeignet, auch wenn die durch ihm gelöste Aufgabe keinen bekannten praktischen Zweck erfüllt.\\[0.5em]
+\b{Aufgabe:} Für eine gegebene Funktion \f{f:\left\{0,1\right\}\rightarrow\left\{0,1\right\}}, welche in Form einer blackbox vorliegt (z.B. eines in seiner internen Funktion unbekannten elektronischen Schaltkreises), finde heraus, ob \f{f(0)=f(1)} (konstant) oder \f{f(0)\neq f(1)} (alternierend).\\
+Klassisch muss der Schaltkreis für \f{f} zweimal durchlaufen werden, um sowohl \f{f(0)} als auch \f{f(1)} zu berechnen. Quantenmechanisch muss der zu \f{f} gehörige Quantenschaltkreis nur \b{einmal} durchlaufen werden. Dieser Schaltkreis realisiert folgende unitäre Operation auf einem Register von 2 Qubits:
+\cf{
+  U_f\cket{i}\otimes\cket{j}=\cket{i}\otimes\cket{j\oplus f(i)}
+}
+Hierbei ist \f{\oplus} die binäre Addition (d.h. modulo 2). Das Register braucht 2 Qubits, damit \f{U_f} unitär ist. Die Operation \f{\cket{i}\rightarrow\cket{f(i)}} mit 1 Qubit wäre nicht unitär, falls \f{f} konstant ist. Z.B. \f{f(0)=f(1)=0} würde folgender Matrix entsprechen:
+\cf{
+  f = \matr{1&1\\0&0}\quad\textrm{wobei}\quad ff^\dagger = \matr{1&1\\0&0}\matr{1&0\\1&0}=\matr{2&0\\0&0}\neq\mathbb{I}
+}
+
+\cig{1}{deutsch}
+Die Messung (4) liefert also mit 100\% WSK das Ergebnis "0", wenn \f{f} konstant ist, bzw. "1" falls \f{f} alternierend ist (Herleitung weggelassen). \\
+Dieses Beispiel illustriert die Idee des "Quantenparallelismus" (d.h. eine Funktion \f{f(x)} kann gleichzeitig für verschiedene Argumente \f{x} ausgewertet werden). Wir sehen aber auch, dass der Algorithmus auf eine spezielle Art konstruiert werden muss, damit zum Schluss ein eindeutiges Messergebnis die Lösung des Problems liefert.
+
+
+
+
+
+
+
+
+

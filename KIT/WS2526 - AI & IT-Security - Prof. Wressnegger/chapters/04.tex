@@ -1,0 +1,37 @@
+\section{Malware Classification}
+
+\subsection{Classification for Attack Detection}
+Unlike anomaly detection, classification of malware is a supervised learning problem and requires representative data from \it{all} classes. We generally assume that \b{unknown attacks are related to known attacks}.
+% \b{Note}: All practical detection approaches are approximations!
+
+\subsubsection{Data Collection}
+The required data can be collected using either \b{Honeypots} (active or passive baits) or \b{Forensic Analysis} (analysis of past security incidents, quarantined malware, physhing mails, ...).\\[1em]
+\b{Security Risks}: Systems can be undermined by \b{Poisoning} (injecting bad data during training), \b{Mimicry} (making malware look benign), or \b{Red Herrings} (flooding the system with false alarms).
+
+\subsubsection{Feature Extraction}
+\definition{Static Analysis}{Extracting features by analyzing the malware executable file without executing it. Features include strings, byte \f{n}-grams, and Portable Executable (PE) headers.
+\begin{itemize}
+\item \b{Pros}: Extremely fast, inherently safe (no execution risk), and can theoretically analyze all execution paths to achieve full code coverage.
+\item \b{Cons}: Highly vulnerable to static evasion techniques like packing, obfuscation, and encryption, which hide the true malicious payload.
+\end{itemize}}
+
+\definition{Dynamic Analysis}{Extracting features by running the malware in a controlled, monitored environment (sandbox) and recording its runtime behavior. Features include API calls, file system changes, and network traffic.
+\begin{itemize}
+\item \b{Pros}: Resilient against packing and static obfuscation, as the malware is forced to unpack itself in memory to execute.
+\item \b{Cons}: Computationally expensive (slow), may not trigger all execution paths (low code coverage), and is susceptible to environment evasion (e.g., malware detecting the sandbox and remaining dormant).
+\end{itemize}}
+
+
+\subsection{Models for Malware Classification}
+\begin{itemize}
+    \item \b{Perceptron}: A weighted model that learns by iteratively updating its weights \f{w}. In the single perceptron case, \f{w} defines the orientation of the hyperplane, and it only converges for linearly separable data. Decision function:
+    \cf{f(z) = sign(\langle\phi(z),w\rangle)}
+    \item \b{Two-Class SVM}: A model with weight \f{w} and bias \f{b} (defining the hyperplane) that is optimized such that the margin \f{M=\frac{2}{||W||}} between the hyperplane and both classes is maximized, subject to correctly separating the classes:
+    \cf{\min_{w,b}||w||\quad\text{s.t.}\quad y_i\cdot\left(\langle\phi(x_i),w\rangle+b\right)\geq 1 - \xi_i}
+    Just as before, to handle non-linear data (i.e. outliers), slack variables ($\xi_i \geq 0$) allow some samples to fall on the wrong side of the margin. Furthermore, we can use the Kernel trick to separate data in higher-dimensional spaces.
+\end{itemize}
+
+
+
+
+

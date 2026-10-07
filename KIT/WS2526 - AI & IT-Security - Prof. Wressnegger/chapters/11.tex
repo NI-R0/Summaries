@@ -1,0 +1,75 @@
+\section{Membership Inference Attacks}
+Another attack strategy agains MLaaS. MIA aims to determine if a specific data record $(x, f(x))$ was part of the target model's training set. This is especially problematic when the training data contains sensitive information (e.g. patient records).
+
+\subsubsection*{Why MIA works:}
+\begin{itemize}
+    \item \b{Overfitting}: Primary cause; Overfitting can lead to the \b{generalization gap} (difference between training accuracy and testing accuracy (\f{g=p_{0}-p_{1}\ge0})). If a model exhibits a generalization gap, there exists an MIA with an expected attack success rate strictly greater than 0.5.
+    \item \b{Model type}: If model's decision boundary is sensitive a particular data (e.g. Decision Trees)
+    \item Class imbalance in the training data
+\end{itemize}
+
+
+
+\subsection{Binary-Classifier Based MIA (Shadow Training)}
+\b{Shadow Training} is an attack method that trains a binary classifier (the attack model) to detect membership status by simulating the target model's behavior using multiple "shadow models".
+\begin{enumerate}
+    \item \b{Train Shadow Models}: Train multiple shadow models $D_k$ to substitute the target model.
+    \item \b{Construct Dataset}: Create a dataset of "member" outputs (from shadow training data) and "non-member" outputs (from shadow test data).
+    \begin{itemize}
+        \item \b{Model-based synthesis}: Uses the target model itself to generate confident examples when the adversary has no prior data knowledge.
+        \item \b{Statistic-based synthesis}: Samples feature values from a distribution when the adversary knows the prior marginal distributions.
+    \end{itemize}
+    \item \b{Train Attack Model}: Train a binary classifier on the combined predictions (member vs. non-member) of the shadow models.
+\end{enumerate}
+
+\subsubsection*{Black-Box vs. White-Box Setting:}
+In a black-box setting, the attack model is trained exclusively on the prediction vectors \f{v=\hat{p}(y|x)}. In a white-box setting, the input vector concatenates the prediction vector with internal model gradients and outputs:
+\cf{v=(\frac{\partial L}{\partial\theta_{1}},f(x;\theta_{1}),...,\frac{\partial L}{\partial\theta_{i}},f(x;\theta_{i}),\hat{p}(y|x))}
+
+
+
+\subsection{Metric-Based MIA}
+In this version of MIA, membership is inferred if a specific metric passes a threshold $\tau$. It relies solely on the intuition that models behave more confidently and accurately on data they have seen before.
+\begin{itemize}
+    \item[M1.] \b{Correctness}: A query is considered a member if it can be correctly classified:
+    \cf{M_{corr}(\hat{p}(y|x),y_{t})=I(\arg\max\hat{p}(y|x)=y_{t})}
+    \item[M2.] \b{Loss}: A query is considered a member if its loss is smaller than a threshold \f{\tau}.
+    \cf{M_{loss}(\hat{p}(y|x),y_{t})=I(\fL(\hat{p}(y|x);y_{t})\leq\tau)}
+    \item[M3.] \b{Confidence}: A query is considered a member if its maximum confidence score exceeds a threshold \f{\tau}.
+    \cf{M_{conf}(\hat{p}(y|x),y_{t})=I(\max\hat{p}(y|x)>\tau)}
+\end{itemize}
+\vspace{1em}
+\begin{itemize}
+    \item[M4.] \b{Pred. Entropy}: Standard entropy \f{H(\hat{p}(y|x))=-\sum_{i}p_{i}\log(p_{i})} is lower for training data. However, highly confident but wrong predictions also yield low entropy, making it flawed.
+    \cf{M_{ent}(\hat{p}(y|x),y_{t})=I(H(\hat{p}(y|x))<\tau)}
+    \item[M5.] \b{Modified Pred. Entropy}: Uses the ground truth label \f{y_t} to fix the flaws of standard entropy.
+    \cf{MH(\hat{p}(y|x),y_{t})=-(1-p_{y_{t}})\log(p_{y_{t}})-\sum_{i\ne y_{t}}p_{i}\log(1-p_{i})}
+    \cf{M_{ent}(\hat{p}(y|x),y_{t})=I(MH(\hat{p}(y|x))\leq\tau)}
+\end{itemize}
+
+
+
+\subsection{Defense Against MIA}
+\definition{Confidence Masking}{
+    Hiding the true confidence scores by returning only the top-k scores or just the predicted labels. Top-k does not mitigate shadow training, while label-only is affected by prediction correctness when a generalization gap exists.\\[.5em]
+    \b{MemGuard} adds crafted noise (adversarial examples) to the output scores to disrupt the attack model without altering the predicted label.
+}
+\definition{Adversarial Regularization}{
+    Techniques like L2-norm, dropout, or label smoothing improve generalizability, which results in similar output distributions for members and non-members.\\[.5em]
+    \b{Adversarial Regularization}: A Min-Max game where the target model is trained to minimize its own loss while simultaneously minimizing the max gain of an internal attack model.
+}
+\definition{KD for Membership Privacy}{
+    Given a private labeled dataset and some unlabeled (public) reference data from the same distribution, one can train an unprotected model \f{\theta_{up}} on the private data and then use \f{\theta_{up}} to select appropriate reference data with low entropy to train a final prediction model \f{\theta_p} on.
+}
+\definition{Differential Privacy (DP-SGD)}{
+    Limits the contribution of any single data sample during training. It iteratively computes gradients, clips them to a bound \f{C} (to restrict contribution), and adds Gaussian noise \f{N(0,z^{2}C^{2}I)} before updating the parameters.
+}
+
+
+
+
+
+
+\clearpage
+
+

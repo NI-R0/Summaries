@@ -1,0 +1,98 @@
+\section{Neural Networks}
+
+
+
+
+
+\subsection{Multi-Layer Perceptrons (MLP)}
+
+\definition{Neuron}{A single computational unit that applies a non-linear activation function \f{g(\cdot)} to a linear combination of its inputs.
+\cf{h(x) = g\left(w_0 + \sum_{i=1}^M w_i x_i\right)}}
+\definition{Multi-Layer Perceptron (MLP)}{A feedforward, fully-connected neural network that defines a parametric mapping \f{\hat{y} = f(x;w)} composed of multiple layers of interconnected neurons.\\
+\b{Feedworward} means that the network forms an acyclic directed graph where the signal only propagates forward, with no backward loops or intra-layer connections.\\
+\b{Fully-connected} means that each neuron in a given layer is connected to all neurons in the subsequent layer. An MLP acts as a deep function composition: \f{\hat{y} = f^{(L)}(f^{(L-1)}(...f^{(1)}(x)))}.
+}
+
+
+
+
+\subsection{Activation Functions}
+
+\begin{itemize}
+\item \b{ReLU (Rectified Linear Unit)}: Fast computation, prevents vanishing gradients.
+\cf{g(z) = \max(0, z)}
+\item \b{Sigmoid}: Squeezes the output into a range between 0 and 1. Its derivative is \f{\sigma(z)(1 - \sigma(z))}.
+\cf{g(z) = \frac{1}{1+e^{-z}}}
+\item \b{Tanh}: Squeezes the output into a range between -1 and 1. Improves gradient flow.
+\cf{g(z) = \frac{e^{2z}-1}{e^{2z}+1}}
+\end{itemize}
+
+
+
+
+\subsection{Output Layers \& Loss Functions}
+
+\begin{itemize}
+\item \b{Regression} (continuous target): Uses a linear output layer (no activation function). It assumes a Gaussian distribution and is trained using the Mean Squared Error (MSE) loss.
+\item \b{Binary Classification}: Uses a Logistic Sigmoid output layer to predict the probability of the positive class. It is trained using Binary Cross-Entropy (Logistic Loss).
+\cf{
+    \hat{y}_i = P(y=1|x) = \sigma(z) = \frac{e^z}{e^z+1}
+}
+\item \b{Multi-Class Classification}: Uses a Softmax output layer to normalize unnormalized log probabilities (logits) \f{z_i} into a valid probability distribution across all classes. Trained using Cross-Entropy or KL-Divergence.
+\cf{\hat{y}_i = P(y=k|x) = \text{softmax}(z_i) = \frac{e^{z_k}}{\sum_i e^{z_i}}}
+\end{itemize}
+
+
+
+
+
+
+\subsection{Optimization \& Backpropagation}
+\definition{Chain Rule of Calculus}{
+    A mathematical tool used to compute derivatives of composite functions. For a composite function \f{g(f(x))}, the derivative with respect to \f{x} is given by:
+    \cf{
+        \frac{\delta g(f(x))}{\delta x} = g'(f(x))\cdot f'(x)
+    }
+}
+\definition{Backpropagation}{An algorithm that leverages the chain rule of calculus to efficiently compute the (stochastic) gradients of the loss with respect to every weight in the network. These gradients are then used to update the weights via optimization techniques such as SGD.
+\cf{w_{i,j}^{(l)} \leftarrow w_{i,j}^{(l)} - \eta\cdot\frac{\partial \fL}{\partial w_{i,j}^{(l)}}}
+}
+
+\begin{itemize}
+\item \b{Forward Pass}: The input is fed through the network to compute the loss, and all intermediate node activations are stored in memory.
+\item \b{Backward Pass}: Gradients are computed starting from the output layer and propagating backwards. Computations from later layers are reused for earlier layers to reduce computational complexity.
+\item \b{Memory Requirements}: Training requires roughly three times more memory than inference because it must store model parameters, intermediate activations, and the gradients simultaneously.
+\end{itemize}
+
+\cig{.7}{grad}
+
+
+
+
+\subsection{Regularization of Neural Networks}
+Adding regularization constrains the capacity of the model, which effectively increases its bias and reduces its variance to prevent overfitting. There are multiple techniques one can choose from:
+\begin{itemize}
+\item \b{Capacity}: Number of parameters
+\item \b{Structural}: Neural Architecture Seach (NAS), Skip Connections, \dots
+\item \b{Ensembling}: Dropout
+\item \b{Early Stopping}: Stop training when validation loss begins to continuously increase
+\item \b{Implicit}: Batch Normalization, Layer Normalization
+\item \b{L1 (Weight Decay)}: Encourages sparse weights.
+\cf{J = \fL(w; x,y) + \alpha ||w||_1 = \fL+\alpha\sum_k|w_k| \quad\rightarrow\quad \nabla_w J = \nabla_w\fL(w;x,y)+\alpha\cdot\text{sign}(w)}
+\item \b{L2 (Weight Decay)}: Smoothly penalizes large weight values.
+\cf{J = \fL(w; x,y) + \frac{\alpha}{2}w^Tw = \fL+\frac{\alpha}{2}||w||_2^2 \quad\rightarrow\quad \nabla_w J = \nabla_w\fL(w;x,y)+\alpha w}
+\end{itemize}
+
+
+
+\subsection{Convolutional Neural Networks (CNNs)}
+
+\begin{itemize}
+\item \b{Sparse Connectivity}: Instead of fully connected dense layers, CNNs use small kernels (filters) that only interact with a local receptive field. This captures meaningful local features (like edges) and greatly reduces both memory footprint and the number of computations.
+\item \b{Parameter Sharing}: The exact same kernel weights are applied (slid) across the entire input image. This drastically reduces the parameter count and provides \b{translation-equivariance} (if a feature shifts in the input, it shifts equally in the output).
+\item By stacking multiple convolutional layers, the network can capture increasingly complex features as deeper layers look at larger aggregated portions of the original image.
+\item For a 2D input \f{V} and a Kernel \f{K}, the convolution operation is given by:
+\cf{Z(i,j) = \sum_m\sum_nV(i+m,j+n)K(m,n)}
+Where \f{Z(i,j)} is the value of the resulting feature map at position \f{(i,j)}. 
+\end{itemize}
+

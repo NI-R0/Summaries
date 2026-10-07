@@ -1,0 +1,454 @@
+\documentclass[a4paper,11pt]{article}
+
+% Package imports
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{bm}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+
+\usepackage{needspace} % ensures rule+heading stay together
+
+\newcommand{\rsectionpre}{%
+  % Only if not at the top of a page
+  \ifdim\pagetotal>0pt
+    % If there isn't room for the rule + heading, break first
+    \Needspace*{3\baselineskip}%
+    % If we didn't break, draw the rule
+    \ifdim\pagetotal>0pt
+      \noindent\rule{\linewidth}{0.4pt}\par
+      \vspace{2em}%
+      \nobreak % avoid a break between rule and heading
+    \fi
+  \fi
+}
+
+\newcommand{\rsection}{\section}
+
+% Tell titlesec how to format \ruledsection
+\titleformat{\rsection}[block]
+  {\rsectionpre\normalfont\Large\bfseries} % format (rule first)
+  {\thesection}{1em}{}
+
+% Optional: starred version \ruledsection* (unnumbered)
+\titleformat*{\rsection}{\rsectionpre\normalfont\Large\bfseries}
+
+% Page layout
+\geometry{left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\graphicspath{ {./images/} }
+
+% Header definition
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Reinforcement Learning - SS25}
+\rhead{\thepage}
+
+% Theorem and definition styles with rounded borders and numbering
+\newtcolorbox{definitionbox}{colback=white, colframe=black, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{theorembox}{colback=white, colframe=black, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+
+% Custom commands for numbered definitions and theorems
+\newcounter{definitioncounter}
+\newcounter{theoremcounter}
+
+\setlength{\parindent}{0pt}
+\setlength{\skip\footins}{0.5cm} % Adjust this to change the space above the footnotes
+\raggedbottom
+
+\newcommand{\definition}[1]{%
+    \refstepcounter{definitioncounter}%
+    \begin{definitionbox}
+    \textbf{Definition \thedefinitioncounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{definitionbox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\theorem}[1]{%
+    \refstepcounter{theoremcounter}%
+    \begin{theorembox}
+    \textbf{Theorem \thetheoremcounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{theorembox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{${#1}$}
+\renewcommand{\b}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+\newcommand{\pL}{\f{\mathcal{L}}}
+\newcommand{\fL}{\mathcal{L}}
+
+\begin{document}
+
+% Title section
+\begin{center}
+    {\huge Reinforcement Learning - SS25 \par}
+    \vspace{0.5cm}
+    {\large Niklas Rodenbüsch \par}
+    \vspace{0.5cm}
+    {\large September 7, 2025 \par}
+\end{center}
+\vspace{0.5cm}
+
+
+
+\section{Reinforcement Learning Fundamentals}
+
+\definition{
+    \textbf{Core RL Components:}
+    \begin{itemize}
+        \item \textbf{States} \f{s \in S}: Finite set of environment states
+        \item \textbf{Actions} \f{a \in A}: Finite set of possible actions
+        \item \textbf{Rewards} \f{r \in R}: Scalar feedback signals
+        \item \textbf{Policies} \f{\pi}: Action selection strategies
+        \begin{itemize}
+            \item Deterministic: \f{\pi(s) = a}
+            \item Stochastic: \f{\pi(a|s) = p(a|s)}
+        \end{itemize}
+        \item \textbf{Value Function} \f{v^\pi(s) = \mathbb{E}[G_t|s_t = s]}: Expected return from state
+        \item \textbf{Action-Value Function} \f{q^\pi(s,a) = \mathbb{E}[G_t|s_t = s, a_t = a]}: Expected return from state-action pair
+    \end{itemize}
+}
+
+The goal in RL is to maximize expected cumulative reward. We often use \textbf{discounted rewards} to handle uncertainty about future rewards:
+\cf{G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \cdots = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}}
+where \f{\gamma \in [0,1]} is the discount factor.
+
+\b{Bellman Equations} provide recursive relationships for value functions:
+\cf{v^\pi(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma v^\pi(s')]}
+\cf{q^\pi(s,a) = \sum_{s',r} p(s',r|s,a)[r + \gamma \sum_{a'} \pi(a'|s')q^\pi(s',a')]}
+
+\section{Markov Decision Process (MDP)}
+
+\definition{
+    An MDP satisfies the \textbf{Markov Property}: the future depends only on the current state, not the history.
+    \cf{p(s',r|s_t,a_t) = p(s',r|s_t,a_t,\ldots,s_0,a_0)}
+}
+
+\b{Example - Robot Cleaning}: A robot has charge levels \{high, low, none\} and actions \{explore, recharge\}. The transition probabilities depend only on current charge and action, demonstrating the Markov property.
+
+\textbf{Optimal Policy} \f{\pi^*} satisfies: \f{v^{\pi^*}(s) \geq v^\pi(s)} for all states and policies.
+
+\section{Multi-Armed Bandits (MAB)}
+
+MAB problems have multiple actions but no states. The goal is to minimize \textbf{regret}:
+\cf{\text{Regret} = \mathbb{E}\left[\sum_{t=1}^T (q^*(a^*) - q^*(a_t))\right]}
+
+\subsection{Solution Methods:}
+
+\textbf{$\epsilon$-Greedy}: Choose best action with probability \f{1-\varepsilon}, random with \f{\varepsilon}.
+Action-value update: \f{q_{n+1} = q_n + \alpha(r_n - q_n)}
+
+\textbf{UCB (Upper Confidence Bound)}: Select action based on optimism in face of uncertainty:
+\cf{a_t = \arg\max_a \left[q_t(a) + c\sqrt{\frac{\ln t}{N_t(a)}}\right]}
+The second term promotes exploration of less-tried actions.
+
+\textbf{Softmax Selection}: Choose actions probabilistically based on their values:
+\cf{p(a_t = a) = \frac{\exp(q_t(a)/\tau)}{\sum_{a'} \exp(q_t(a')/\tau)}}
+where \f{\tau} controls exploration (\f{\tau \to 0}: greedy, \f{\tau \to \infty}: random).
+
+\subsection{MAB Action Value Updates}
+Incremental update rule for action values:
+$$q_{n+1}(a) = q_n(a) + \frac{1}{n}[r_n - q_n(a)]$$
+
+Or with step size $\alpha$:
+$$q_{n+1}(a) = q_n(a) + \alpha[r_n - q_n(a)]$$
+
+Where $n$ is the number of times action $a$ has been selected.
+
+\section{Dynamic Programming}
+
+Dynamic programming finds optimal policies using the Bellman equations when the MDP model is known.
+
+\b{Policy Iteration}:
+\begin{enumerate}
+    \item \textbf{Policy Evaluation}: Compute \f{v^\pi} for current policy
+    \item \textbf{Policy Improvement}: Update policy greedily: \f{\pi'(s) = \arg\max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v^\pi(s')]}
+    \item Repeat until convergence
+\end{enumerate}
+
+\b{Value Iteration}: Directly compute optimal value function:
+\cf{v_{k+1}(s) = \max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v_k(s')]}
+Then extract optimal policy: \f{\pi(s) = \arg\max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v^*(s')]}
+
+\subsection{DP Method Characteristics}
+\textbf{Policy Iteration:}\\
+- Uses Bellman Expectation Equation for policy evaluation\\
+- Guaranteed convergence to optimal policy\\
+- Requires full model knowledge\\
+
+\textbf{Value Iteration:}\\
+- Uses Bellman Optimality Equation\\
+- No explicit policy during iterations\\
+- Extracts policy only at the end: $\pi(s) = \arg\max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v^*(s')]$
+
+\section{Monte Carlo Methods}
+
+MC methods are \textbf{model-free} - they learn from experience without knowing the MDP model.
+
+\b{Key Characteristics}:
+\begin{itemize}
+    \item Update only after complete episodes
+    \item Low bias (use actual returns)
+    \item High variance (single sample estimates)
+    \item No bootstrapping required
+\end{itemize}
+
+\textbf{MC Prediction}: Estimate value function by averaging returns:
+\cf{v^\pi(s) = \frac{1}{N(s)} \sum_{i: s_t^{(i)} = s} G_t^{(i)}}
+
+\b{MC Control Methods}:
+\begin{itemize}
+    \item \textbf{On-policy}: Use same policy for behavior and learning (e.g., e-greedy)
+    \item \textbf{Off-policy}: Learn target policy from behavior policy using importance sampling
+\end{itemize}
+
+\textbf{Importance Sampling} for off-policy learning:
+\cf{\rho_{t:T-1} = \prod_{k=t}^{T-1} \frac{\pi(a_k|s_k)}{b(a_k|s_k)}}
+This ratio corrects for the difference between target and behavior policies.
+
+\section{Temporal Difference Learning}
+
+TD methods combine advantages of DP (bootstrapping) and MC (model-free learning).
+
+\b{Key Advantages}:
+\begin{itemize}
+    \item Online learning (update after each step)
+    \item Lower variance than MC
+    \item Can handle infinite episodes
+\end{itemize}
+
+\textbf{TD(0) Update}:
+\cf{v(s_t) \leftarrow v(s_t) + \alpha[r_{t+1} + \gamma v(s_{t+1}) - v(s_t)]}
+
+The \textbf{TD error} \f{\delta_t = r_{t+1} + \gamma v(s_{t+1}) - v(s_t)} drives learning.
+
+\b{TD Control Methods}:
+
+\textbf{SARSA (On-policy)}:
+\cf{q(s_t,a_t) \leftarrow q(s_t,a_t) + \alpha[r_{t+1} + \gamma q(s_{t+1},a_{t+1}) - q(s_t,a_t)]}
+
+\textbf{Q-Learning (Off-policy)}:
+\cf{q(s_t,a_t) \leftarrow q(s_t,a_t) + \alpha[r_{t+1} + \gamma \max_a q(s_{t+1},a) - q(s_t,a_t)]}
+
+\textbf{Expected SARSA}:
+\cf{q(s_t,a_t) \leftarrow q(s_t,a_t) + \alpha[r_{t+1} + \gamma \sum_a \pi(a|s_{t+1})q(s_{t+1},a) - q(s_t,a_t)]}
+
+\textbf{Double Q-Learning} addresses overestimation bias by maintaining two Q-functions:
+\cf{q_1(s_t,a_t) \leftarrow q_1(s_t,a_t) + \alpha[r_{t+1} + \gamma q_2(s_{t+1}, \arg\max_a q_1(s_{t+1},a)) - q_1(s_t,a_t)]}
+
+\subsection{Monte Carlo vs Temporal Difference Comparison}
+\begin{tabular}{|l|l|l|}
+\hline
+Property & Monte Carlo & Temporal Difference \\
+\hline
+Variance & Higher & Lower \\
+Bias & Unbiased (uses actual returns) & Biased (bootstrapping) \\
+Initial value sensitivity & Less sensitive & More sensitive \\
+Learning frequency & End of episode & Every time step \\
+Episode requirement & Complete episodes & Can handle incomplete \\
+\hline
+\end{tabular}
+
+\section{Function Approximation}
+
+When state spaces are large or continuous, we need function approximation instead of tabular methods.
+
+\definition{
+    \textbf{Function Approximation}: Represent value functions as parameterized functions \f{\hat{v}(s,\mathbf{w})} where \f{\mathbf{w}} are learnable parameters.
+}
+
+\b{Linear Methods}: \f{\hat{v}(s,\mathbf{w}) = \mathbf{w}^T \mathbf{x}(s)}
+where \f{\mathbf{x}(s)} is a feature vector. Linear TD methods have convergence guarantees.
+
+\textbf{Semi-gradient TD}: 
+\cf{\mathbf{w}_{t+1} = \mathbf{w}_t + \alpha[r_{t+1} + \gamma \hat{v}(s_{t+1},\mathbf{w}_t) - \hat{v}(s_t,\mathbf{w}_t)]\nabla \hat{v}(s_t,\mathbf{w}_t)}
+
+Called "semi-gradient" because the target \f{r_{t+1} + \gamma \hat{v}(s_{t+1},\mathbf{w}_t)} also depends on \f{\mathbf{w}_t}.
+
+\b{Deep Q-Networks (DQN)}:
+\begin{itemize}
+    \item Use neural networks to approximate Q-function
+    \item \textbf{Experience Replay}: Store transitions, sample mini-batches randomly
+    \item \textbf{Target Network}: Separate network for computing targets, updated periodically
+\end{itemize}
+
+\textbf{Deadly Triad}: Combining function approximation + bootstrapping + off-policy learning can cause instability.\\
+\textbf{Solutions:}\\
+- Target Networks (DQN): Separate network for computing targets\\
+- Experience Replay: Break correlation in training data\\
+- Double Q-Learning: Address overestimation bias
+
+\section{Policy Gradient Methods}
+
+Instead of learning value functions, directly optimize parameterized policies \f{\pi(a|s,\boldsymbol{\theta})}.
+
+\theorem{
+    \textbf{Policy Gradient Theorem}: The gradient of expected return is:
+    \cf{\nabla J(\boldsymbol{\theta}) = \mathbb{E}_\pi[q^\pi(s,a) \nabla \ln \pi(a|s,\boldsymbol{\theta})]}
+}
+
+\textbf{REINFORCE}: Monte Carlo policy gradient method:
+\cf{\boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \alpha G_t \nabla \ln \pi(a_t|s_t,\boldsymbol{\theta}_t)}
+
+High variance can be reduced using a \textbf{baseline} \f{b(s)}:
+\cf{\boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \alpha (G_t - b(s_t)) \nabla \ln \pi(a_t|s_t,\boldsymbol{\theta}_t)}
+
+\b{Actor-Critic Methods}: Combine policy gradient (actor) with value function approximation (critic):
+\begin{itemize}
+    \item \textbf{Actor}: Policy \f{\pi(a|s,\boldsymbol{\theta})}
+    \item \textbf{Critic}: Value function \f{\hat{v}(s,\mathbf{w})}
+\end{itemize}
+Update using TD error: \f{\delta_t = r_{t+1} + \gamma \hat{v}(s_{t+1},\mathbf{w}_t) - \hat{v}(s_t,\mathbf{w}_t)}
+
+\subsection{Score Function}
+For a policy $\pi(a|s,\theta)$, the score function is:
+$$\nabla_\theta \ln \pi(a|s,\theta)$$
+
+This appears in the policy gradient theorem and REINFORCE updates.
+
+\subsection{REINFORCE with Baseline}
+To reduce variance, subtract a baseline $b(s)$:
+$$\theta_{t+1} = \theta_t + \alpha(G_t - b(s_t))\nabla \ln \pi(a_t|s_t, \theta_t)$$
+
+Common baselines:
+- State value function: $b(s) = v^{\pi}(s)$
+- Average return
+- Any function that doesn't depend on the action
+
+% Add new section for DDPG
+\subsection{Deep Deterministic Policy Gradient (DDPG)}
+\textbf{Classification:} Off-policy method
+
+\textbf{Key features:}
+- Uses experience replay buffer
+- Deterministic policy
+- Actor-critic architecture
+- Target networks for both actor and critic
+- Gaussian exploration noise added to actions
+
+\textbf{Why off-policy:}
+- Experience replay uses transitions from previous policies
+- State distribution not generated by current target policy
+
+% Add Model-Based RL section
+\section{Model-Based Reinforcement Learning}
+
+\subsection{Overview}
+Learn a model $f$ of the environment transition function $p(s',r|s,a)$, then use this model for planning.
+
+\subsection{Dyna Algorithm}
+Combines:
+- Direct RL: Learn from real experience
+- Planning: Learn from simulated experience using the model
+
+\textbf{Dyna-Q Steps:}
+\begin{enumerate}
+\item Take action, observe reward and next state
+\item Update Q-function with real experience
+\item Update model with real experience  
+\item Repeat n times: sample from model and update Q-function
+\end{enumerate}
+
+\subsection{Model Learning}
+For Gaussian model: $f(s'|s,a;\theta) = \mathcal{N}(\mu(s,a;\theta), \Sigma)$
+
+Where $\mu(s,a;\theta) = \theta^T \phi(s,a)$ with feature map $\phi(s,a)$.
+
+\subsection{Advantages and Disadvantages}
+\textbf{Advantages:}
+- More sample efficient
+- Can plan ahead
+- Can simulate experience
+
+\textbf{Disadvantages:}
+- Model errors compound
+- Computationally expensive
+- Model bias affects performance
+
+\subsection{Planning Methods}
+\textbf{Full Dynamic Programming:}
+- Use learned model in Bellman equations
+- Computationally expensive for large state spaces
+
+\textbf{Sampling-based Planning:}
+- Sample transitions from learned model
+- Apply MC or TD methods to sampled experience
+- More computationally efficient but higher variance
+
+\section{Advanced Topics}
+
+\b{n-step Methods}: Bridge between TD ($n=1$) and MC ($n=\infty$):
+\cf{G_{t:t+n} = r_{t+1} + \gamma r_{t+2} + \cdots + \gamma^{n-1} r_{t+n} + \gamma^n \hat{v}(s_{t+n})}
+
+\textbf{TD($\lambda$)}: Combines multiple n-step returns using eligibility traces:
+\cf{G_t^\lambda = (1-\lambda) \sum_{n=1}^{\infty} \lambda^{n-1} G_{t:t+n}}
+
+\textbf{Eligibility Traces}: Track which states should receive credit for rewards:
+\cf{\mathbf{z}_t = \gamma \lambda \mathbf{z}_{t-1} + \nabla \hat{v}(s_t,\mathbf{w}_t)}
+
+\b{Model-Based RL}:
+\begin{itemize}
+    \item Learn environment model \f{p(s',r|s,a)}
+    \item Use model for planning (generating simulated experience)
+    \item \textbf{Dyna}: Interleave real experience with planning updates
+\end{itemize}
+
+\textbf{Monte Carlo Tree Search (MCTS)}:
+\begin{enumerate}
+    \item \textbf{Selection}: Navigate tree using tree policy
+    \item \textbf{Expansion}: Add new nodes
+    \item \textbf{Simulation}: Random rollout from leaf
+    \item \textbf{Backpropagation}: Update values along path
+\end{enumerate}
+
+\b{Key Tradeoffs}:
+\begin{itemize}
+    \item \textbf{Exploration vs Exploitation}: Balance trying new actions vs using known good ones
+    \item \textbf{Bias vs Variance}: TD (higher bias, lower variance) vs MC (lower bias, higher variance)  
+    \item \textbf{Sample Efficiency vs Stability}: Off-policy (more efficient) vs on-policy (more stable)
+\end{itemize}
+
+\section{Important Formulations for Exam}
+
+\textbf{UCB Confidence Bound:}
+$$\sqrt{\frac{\ln t}{N_t(a)}}$$
+
+\textbf{TD Error:}
+$$\delta_t = r_{t+1} + \gamma v(s_{t+1}) - v(s_t)$$
+
+\textbf{Importance Sampling Ratio:}
+$$\rho_{t:T-1} = \prod_{k=t}^{T-1} \frac{\pi(a_k|s_k)}{b(a_k|s_k)}$$
+
+\textbf{Semi-gradient Update:}
+$$w_{t+1} = w_t + \alpha[r_{t+1} + \gamma \hat{v}(s_{t+1}, w_t) - \hat{v}(s_t, w_t)]\nabla \hat{v}(s_t, w_t)$$
+
+% Add problem formalization tips
+\subsection{MDP Formalization Tips}
+When formalizing a problem as an MDP:
+\begin{enumerate}
+\item Clearly define state space $S$
+\item Define action space $A$ (may be state-dependent)
+\item Specify reward function $R$
+\item Define transition probabilities $p(s',r|s,a)$
+\item Only include transitions with non-zero probability
+\end{enumerate}
+
+% Add regret analysis
+\subsection{Regret Analysis}
+\textbf{Definition:}
+$$\text{Regret} = E\left[\sum_{t=1}^T (q^*(a^*) - q^*(a_t))\right]$$
+
+\textbf{Asymptotic behavior:}
+- $\epsilon$-greedy: Linear regret (always explores with fixed probability)
+- UCB: Logarithmic regret (exploration decreases over time)
+
+
+\end{document}

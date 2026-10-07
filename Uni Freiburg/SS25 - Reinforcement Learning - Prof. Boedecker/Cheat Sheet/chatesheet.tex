@@ -1,0 +1,242 @@
+\documentclass[8pt,landscape,a4paper]{article}
+\usepackage[margin=0.25in]{geometry}
+\usepackage{multicol}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{bm}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+% Reduce spacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5pt}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{0pt}
+% Section formatting
+\titleformat{\section}{\normalfont\fontsize{10}{11}\bfseries\color{blue}}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont\fontsize{9}{10}\bfseries\color{teal}}{\thesubsection}{0.3em}{}
+\titlespacing*{\section}{0pt}{1.2em}{0pt}
+\titlespacing*{\subsection}{0pt}{0.7em}{0pt}
+\begin{document}
+\begin{multicols*}{3}
+
+\section{RL Fundamentals}
+\textbf{Definition:} State $s \in S$, Action $a \in A$, Reward $r \in \mathbb{R}$, Policy $\pi(a|s)$
+
+\textbf{Value Functions:}
+$v_\pi(s) = \mathbb{E}_\pi[G_t|s_t=s]$
+$q_\pi(s,a) = \mathbb{E}_\pi[G_t|s_t=s,a_t=a]$
+
+\textbf{Returns:} $G_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}$ (discounted), $G_t = \sum_{k=0}^{\infty} r_{t+k+1}$ (undiscounted)
+
+\textbf{Connection:} $v_\pi(s) = \sum_a \pi(a|s)q_\pi(s,a)$ (stochastic), $v_\pi(s) = q_\pi(s,\pi(s))$ (deterministic)
+
+\textbf{Bellman Equations:}
+$v_\pi(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma v_\pi(s')]$
+$q_\pi(s,a) = \sum_{s',r} p(s',r|s,a)[r + \gamma \sum_{a'} \pi(a'|s')q_\pi(s',a')]$
+
+\textbf{Optimality:} $\pi^* \text{ optimal if } v_{\pi^*}(s) \geq v_\pi(s), \forall s, \pi$
+$v^*(s) = \max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v^*(s')]$
+$q^*(s,a) = \sum_{s',r} p(s',r|s,a)[r + \gamma \max_{a'} q^*(s',a')]$
+
+\section{MDP \& Markov Property}
+\textbf{Markov Property:} $p(s',r|s_t,a_t) = p(s',r|s_t,a_t,...,s_0,a_0)$
+
+\textbf{Transition Prob:} $P: S \times \mathcal{R} \times S \times A \to [0,1]$
+
+\textbf{POMDP:} Partially Observable MDP with observations $\omega \in \Omega$, $p(s|\omega)$
+
+\section{Multi-Armed Bandits}
+\textbf{Objective:} Minimize total regret $\mathbb{E}[\sum_{t=1}^T (q(a^*) - q(a_t))]$
+
+\textbf{Action-Value Est:} $q_t(a) = \frac{1}{N_t(a)} \sum_{t=1}^T r_t \mathbf{1}(a_t=a)$
+
+\textbf{Update Rule:} $q_{n+1} = q_n + \alpha(r_n - q_n)$ where $\alpha = 1/n$ or constant
+
+\subsection{$\epsilon$-Greedy}
+With prob $1-\epsilon$: $a_t = \arg\max_a q_t(a)$
+With prob $\epsilon$: random action
+Decay: $\epsilon_{t+1} = (1-t/T)\epsilon_{\text{init}}$
+
+\subsection{Softmax}
+$p(a_t=a) = \frac{\exp(q_t(a)/\tau)}{\sum_{a'} \exp(q_t(a')/\tau)}$
+
+\subsection{UCB}
+$a_t = \arg\max_a \left[ q_t(a) + c\sqrt{\frac{\log t}{N_t(a)}} \right]$
+
+\section{Dynamic Programming}
+Requires full MDP model. Complexity: $O(|S|^2|A|)$ per iteration
+
+\subsection{Policy Iteration}
+1. \textbf{Policy Evaluation:} Solve $v_\pi(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma v_\pi(s')]$
+2. \textbf{Policy Improvement:} $\pi'(s) = \arg\max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v_\pi(s')]$
+3. Repeat until convergence
+
+\subsection{Value Iteration}
+$v_{k+1}(s) = \max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v_k(s')]$
+Extract policy: $\pi(s) = \arg\max_a \sum_{s',r} p(s',r|s,a)[r + \gamma v(s')]$
+
+\section{Monte Carlo Methods}
+Model-free, uses complete episodes. Low bias, high variance.
+
+\textbf{Update:} $v_\pi(s_t) = v_\pi(s_t) + \alpha(G_t - v_\pi(s_t))$
+
+\textbf{First-visit vs Every-visit:} Average returns from first/all visits to $s$
+
+\subsection{On-Policy Control}
+Use $\epsilon$-greedy on $q_\pi(s,a)$. Policy improvement guaranteed for $\epsilon$-greedy.
+
+\subsection{Off-Policy Control}
+\textbf{Importance Sampling:} $\rho_{t:T-1} = \prod_{\tau=t}^{T-1} \frac{\pi(a_\tau|s_\tau)}{b(a_\tau|s_\tau)}$
+$v_\pi(s) = \mathbb{E}_b[\rho_{t:T-1} G_t | s_t=s]$
+
+\section{Temporal Difference Learning}
+Model-free, updates every step. Higher bias, lower variance.
+
+\textbf{TD Error:} $\delta_t = r_{t+1} + \gamma v_\pi(s_{t+1}) - v_\pi(s_t)$
+
+\textbf{TD Target:} $r_{t+1} + \gamma v_\pi(s_{t+1})$
+
+\subsection{TD(0) Prediction}
+$v_\pi(s_t) = v_\pi(s_t) + \alpha \delta_t$
+
+\subsection{SARSA (On-Policy)}
+$q_\pi(s_t,a_t) = q_\pi(s_t,a_t) + \alpha[r_{t+1} + \gamma q_\pi(s_{t+1},a_{t+1}) - q_\pi(s_t,a_t)]$
+
+\subsection{Q-Learning (Off-Policy)}
+$q_\pi(s_t,a_t) = q_\pi(s_t,a_t) + \alpha[r_{t+1} + \gamma \max_a q_\pi(s_{t+1},a) - q_\pi(s_t,a_t)]$
+
+\subsection{Expected SARSA}
+$q_\pi(s_t,a_t) = q_\pi(s_t,a_t) + \alpha[r_{t+1} + \gamma \mathbb{E}_\pi[q_\pi(s_{t+1},a)] - q_\pi(s_t,a_t)]$
+
+\subsection{Double Q-Learning}
+Maintain $q_1, q_2$. Update one with prob 0.5:
+$q_1(s_t,a_t) = q_1(s_t,a_t) + \alpha[r_{t+1} + \gamma q_2(s_{t+1}, \arg\max_a q_1(s_{t+1},a)) - q_1(s_t,a_t)]$
+
+\section{Model-Based RL}
+Learn model $p(s',r|s,a)$, then plan.
+
+\textbf{Dyna-Q:} Combine learning + planning
+1. Real experience: Update $q(s,a)$
+2. Model learning: Store $(s,a) \to (s',r)$
+3. Planning: Sample from model, update $q(s,a)$
+
+\textbf{Prioritized Sweeping:} Priority = $|r + \gamma \max_{a'} q(s',a') - q(s,a)|$
+
+\subsection{MCTS}
+1. \textbf{Selection:} Tree policy to leaf
+2. \textbf{Expansion:} Add child nodes
+3. \textbf{Simulation:} Rollout policy
+4. \textbf{Backup:} MC control update
+
+\section{Function Approximation}
+For large state/action spaces. Parameterize $\hat{v}(s,w)$ or $\hat{q}(s,a,w)$.
+
+\textbf{MSE Objective:} $J(w) = \mathbb{E}_\pi[(v_\pi(s) - \hat{v}(s,w))^2]$
+
+\textbf{Gradient:} $w_{t+1} = w_t + \alpha[v_\pi(s_t) - \hat{v}(s_t,w_t)] \nabla_w \hat{v}(s_t,w_t)$
+
+\subsection{MC with Function Approx}
+$w_{t+1} = w_t + \alpha[G_t - \hat{v}(s_t,w_t)] \nabla_w \hat{v}(s_t,w_t)$
+
+\subsection{Semi-Gradient TD(0)}
+$w_{t+1} = w_t + \alpha[r_{t+1} + \gamma \hat{v}(s_{t+1},w_t) - \hat{v}(s_t,w_t)] \nabla_w \hat{v}(s_t,w_t)$
+
+\subsection{Linear Methods}
+$\hat{v}(s,w) = w^T x(s)$, $\nabla_w \hat{v}(s,w) = x(s)$
+Guaranteed convergence for MC and semi-gradient TD(0).
+
+\textbf{Convergence Condition:} Matrix $A = \mathbb{E}[x(s_t)(x(s_t) - \gamma x(s_{t+1}))^T]$ must be positive definite.
+
+\subsection{Deadly Triad}
+Instability when combining: Function Approximation + Bootstrapping + Off-Policy
+
+\section{Deep Q-Networks (DQN)}
+\textbf{Experience Replay:} Store $(s,a,r,s')$, sample mini-batch
+\textbf{Target Network:} $\hat{q}(s',a',w^-)$ updated every $C$ steps
+$L(w) = \mathbb{E}[(r + \gamma \max_{a'} \hat{q}(s',a',w^-) - \hat{q}(s,a,w))^2]$
+
+\section{n-Step Methods}
+\textbf{n-Step Return:} $G_{t:t+n} = \sum_{k=0}^{n-1} \gamma^k r_{t+k+1} + \gamma^n v(s_{t+n})$
+
+\textbf{n-Step TD:} $v(s_t) = v(s_t) + \alpha[G_{t:t+n} - v(s_t)]$
+
+\subsection{TD($\lambda$)}
+\textbf{$\lambda$-Return:} $G_t^\lambda = (1-\lambda) \sum_{n=1}^{\infty} \lambda^{n-1} G_{t:t+n}$
+
+\textbf{Eligibility Traces:} $z_t = \gamma\lambda z_{t-1} + \nabla_w \hat{v}(s_t,w)$
+$w_{t+1} = w_t + \alpha \delta_t z_t$
+
+\section{Policy Gradient}
+Parameterize policy $\pi(a|s,\theta)$ directly.
+
+\textbf{Objective:} $J(\theta) = \sum_s \rho(s) v_\pi(s)$ where $\rho(s)$ is stationary distribution
+
+\textbf{Policy Gradient Theorem:}
+$\nabla_\theta J(\theta) = \mathbb{E}_\pi[q_\pi(s,a) \nabla_\theta \ln \pi(a|s,\theta)]$
+
+\subsection{REINFORCE}
+$\theta_{t+1} = \theta_t + \alpha \gamma^t G_t \nabla_\theta \ln \pi(a_t|s_t,\theta_t)$
+
+\textbf{With Baseline:} Replace $G_t$ with $G_t - b(s_t)$
+Common choice: $b(s_t) = \hat{v}(s_t,w)$
+
+\subsection{Actor-Critic}
+\textbf{Actor:} Policy $\pi(a|s,\theta)$
+\textbf{Critic:} Value function $\hat{v}(s,w)$
+$\theta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta \ln \pi(a_t|s_t,\theta_t)$
+$w_{t+1} = w_t + \alpha_w \delta_t \nabla_w \hat{v}(s_t,w_t)$
+
+\subsection{PPO (Proximal Policy Optimization)}
+\textbf{Clipped Objective:} $L^{CLIP}(\theta) = \mathbb{E}_t[\min(r_t(\theta)\hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$
+where $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}$
+
+\textbf{Advantage:} $\hat{A}_t = \hat{Q}(s_t,a_t) - \hat{V}(s_t)$
+
+\section{Advanced Methods}
+\subsection{Distributional RL}
+Model value distribution instead of expectation. Can handle multi-modalities.
+
+\subsection{DDPG}
+Actor-critic for continuous actions. Deterministic policy gradient.
+\textbf{Actor:} $a = \mu(s|\theta^\mu)$
+\textbf{Critic:} $Q(s,a|\theta^Q)$
+
+\subsection{TD3}
+Improvements to DDPG:
+1. \textbf{Clipped Double Q:} $\min(Q_1, Q_2)$
+2. \textbf{Delayed Updates:} Update policy less frequently
+3. \textbf{Target Smoothing:} Add noise to target actions
+
+\subsection{SAC (Soft Actor-Critic)}
+Maximum entropy RL: $J(\pi) = \mathbb{E}_\pi[r + \alpha H(\pi(\cdot|s))]$
+where $H(\pi) = -\sum_a \pi(a|s) \log \pi(a|s)$
+
+\section{Key Algorithms Comparison}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Method} & \textbf{Model} & \textbf{Policy} & \textbf{Bias/Var} \\
+\hline
+MC & Free & On/Off & Low/High \\
+TD & Free & On/Off & High/Low \\
+DP & Based & - & Low/Low \\
+\hline
+\end{tabular}
+
+\textbf{On-Policy:} Same policy for learning and acting (SARSA, Policy Gradient)
+\textbf{Off-Policy:} Different policies (Q-Learning, Importance Sampling)
+
+\section{Key Convergence Results}
+\textbf{Linear Semi-Gradient TD(0):} Converges if $A$ is positive definite
+\textbf{Tabular Q-Learning:} Converges w/ appropriate learning rates
+\textbf{Policy Gradient:} Converges to local optimum
+\textbf{Off-Policy + Function Approx:} Can diverge (Deadly Triad)
+
+\end{multicols*}
+\end{document}

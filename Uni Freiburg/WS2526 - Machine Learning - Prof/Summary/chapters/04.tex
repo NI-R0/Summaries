@@ -1,0 +1,69 @@
+\section{Support Vector Machines}
+Support Vector Machines (SVMs) are a powerful class of supervised learning algorithms used for classification and regression tasks.
+
+
+\subsection{Linear Hyperplanes \& Margins}
+\definition{Hyperplane}{A linear hyperplane \f{\mathcal{H}(w, w_0)} is a sub-space that divides the space into two parts, defined by the equation \f{w^T x + w_0 = 0}. The weight vector \f{w} is always orthogonal to the hyperplane.\\
+The distance \f{d} between a point \f{x} and the hyperplane is given by:
+\cf{d(x, w, w_0) = \frac{|w^T x + w_0|}{||w||_2}}
+}
+\vspace{.5em}
+\b{Maximum Margin Hyperplane}: Instead of just finding any separating line, SVMs search for the hyperplane that yields the maximum margin to all data points, which improves generalization.\\[1em]
+\b{Scaling}: Scaling \f{w} and \f{w_0} by any non-zero scalar \f{\beta} does not change the hyperplane, as \f{\beta(w^Tx+w_0)=0} is equivalent to \f{w^Tx+w_0=0}.\\[1em]
+\b{Perceptron}: A simple linear classifier for binary classification. An input \f{x} gets classified using the equation \f{f(x;w)=sign(w^Tx+w_0)}.
+
+
+
+
+\subsection{Linear Optimization Problem}
+To find the maximum margin hyperplane, we want to maximize the margin \f{\frac{1}{||w||_2}}, which is mathematically equivalent to minimizing \f{w^T w} (or \f{\frac{1}{2}w^T w}).\\[1em]
+\b{Hard Margin SVM} (for perfectly linearly separable data) restricts the optimization with the constraint that all instances are correctly classified outside the margin.
+\cf{\arg\min_{w,w_0} \frac{1}{2} w^T w \quad \text{s.t.} \quad \forall i: y_i(w^T x_i + w_0) \ge 1}
+Scaling \f{w} and \f{w_0} changes the functional margin without changing the actual geometric hyperplane, so we enforce the functional margin to be exactly 1 at the boundary.
+
+
+
+
+
+\subsection{Soft Margin \& Hinge Loss}
+For data that is not perfectly linearly separable, we introduce a \b{slack variable} \f{\xi_i \ge 0} to tolerate mistakes and violations of the margin. A hyperparameter \f{C} controls the tolerance to these violations. A higher \f{C} heavily penalizes mistakes (leading to a smaller margin), while a lower \f{C} allows more violations (leading to a wider margin).
+\cf{\arg\min_{w,w_0} w^T w + C \sum_{i=1}^N \xi_i \quad \text{s.t.} \quad \forall i: y_i(w^T x_i + w_0) \ge 1 - \xi_i}
+\vspace{.5em}
+\cig{.5}{slack}
+\vspace{.5em}
+The Soft Margin SVM objective can be rewritten purely as a regularized Hinge Loss optimization problem (where \f{\lambda = 1/C}), which can be solved using SGD.
+\cf{\arg\min_{w,w_0} \sum_{i=1}^N \max(0, 1 - y_i(w^T x_i + w_0)) + \lambda \sum_{m=1}^M w_m^2}
+
+
+
+
+
+\subsection{Dual Formulation \& Support Vectors}
+\definition{Dual Form}{While the \b{primal form} optimizes the parameters \f{w} and \f{w_0} directly, the \b{dual form} is an equivalent optimization problem that maximizes over Lagrange multipliers \f{\alpha}.}
+\definition{Support Vectors}{The subset of training data points that lie exactly on the margin boundary or violate it. In the dual formulation, these are the only points where \f{\alpha_i > 0}. They completely define the decision boundary.
+\cf{f(x, \alpha, w_0) = sign\left(\sum_{i=1}^N \alpha_i y_i x_i^T x + w_0\right)}}
+In the dual prediction model, inference on a new point only requires computing its dot product similarity with the Support Vectors, completely ignoring all other training points.
+
+
+
+\subsection{Non-Linear SVM \& The Kernel Trick}
+Data that is not linearly separable in its original space can become separable by applying a non-linear mapping \f{\phi(x)} to project it into a higher-dimensional space.
+\definition{The Kernel Trick}{Computing the dot product \f{\phi(x_i)^T \phi(x_j)} in a high-dimensional space is computationally expensive. The kernel trick replaces this dot product with a Kernel function \f{K(x_i, x_j)}, which computes the equivalent dot product directly in the lower-dimensional input space. The dual prediction model using a kernel becomes:
+\cf{f(x,w,w_0) = sign\left(\sum_{i=1}^{N}\alpha_iy_iK(x_i,x)+w_0\right)}
+}
+\vspace{.5em}
+Common Kernels include:
+\begin{itemize}
+\item \b{Linear Kernel}: \f{K(x,x')=x^Tx'} 
+\item \b{Polynomial Kernel}: \f{K(x,x')=(x^Tx'+c)^d}
+\item \b{Radial Basis Function (RBF)}: \f{K(x,x')=e^{-\gamma||x-x'||^2}}
+\end{itemize}
+
+
+\subsection{Pros \& Cons}
+
+\begin{itemize}
+\item \b{Pros}: Works well when there is a clear margin, highly effective in high-dimensional spaces, and very memory efficient (since it only stores support vectors).
+\item \b{Cons}: Struggles with overlapping classes, scales poorly to very large datasets (computationally expensive to train), performs poorly on extremely noisy data, and choosing the optimal kernel is difficult.
+\end{itemize}
+

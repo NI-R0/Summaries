@@ -1,0 +1,53 @@
+\section{Principles of Regularization}
+
+
+
+\subsection{Bias-Variance Tradeoff}
+The expected test error of a model can be decomposed into three main components: Bias\f{^2}, Variance, and Noise:
+\cf{\mathbb{E}_{x,y,D}[(f(x; D) - y)^2] = \text{Bias}^2 + \text{Variance} + \text{Noise}}
+
+\b{Bias}: Measures how much the expected model prediction deviates from the true underlying function \f{f(x)}. A high bias implies the model is too simple, leading to underfitting.
+\cf{\text{Bias}^2 = (\overline{f}(x) - f(x))^2}
+
+\b{Variance}: Measures how much the model's predictions vary when trained on different datasets. A high variance implies the model is overly sensitive to training data fluctuations, leading to overfitting.
+\cf{\text{Variance} = \mathbb{E}_D[(\hat{f}(x; D) - \overline{f}(x))^2]}
+
+\b{Noise}: The irreducible error inherent to the data itself due to randomness or unobserved factors.
+\cf{\text{Noise} = \mathbb{E}_{y|x}[(y - f(x))^2]}
+\vfill
+% \cig{.4}{bv}
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{.45\textwidth}
+        \centering
+        \ig{.7}{bv}
+    \end{subfigure}
+    \begin{subfigure}{.45\textwidth}
+        \centering
+        \ig{.9}{fitting}
+    \end{subfigure}
+\end{figure}
+\vfill
+
+
+
+\subsection{Regularization Objectives}
+\definition{Regularization}{
+    A method to prevent overfitting by adding a penalty term \f{\Omega(\theta)} to the learning objective, which actively discourages overly complex models.
+    \cf{\theta^* = \arg\min_{\theta} \left[ \frac{1}{N} \sum_{i=1}^N \fL(y_i, f(x_i; \theta))\right] + \alpha \Omega(\theta)}
+    Here \f{\alpha} acts as the regularization strength hyperparameter. By increasing \f{\alpha}, we slightly increase bias (simpler model) \& significantly reduce variance.
+}
+
+
+
+\subsection{Types of Regularization}
+
+\begin{enumerate}
+    \item \b{L1 Regularization (Lasso)}: Actively encourages \b{sparsity}, meaning many model weights become exactly zero during the optimization process, which effectively acts as automatic feature selection.
+    \cf{\Omega(\theta) = \frac{1}{|\theta|} \sum_{k=1}^{|\theta|} |\theta_k|}
+    \item \b{L2 Regularization (Ridge)}: Smoothly discourages large parameter values without necessarily driving them to exactly zero.
+    \cf{\Omega(\theta) = \frac{1}{|\theta|} \sum_{k=1}^{|\theta|} \theta_k^2}
+    \item \b{Weight Decay Equivalence}: In the context of gradient descent, applying a weight decay update rule is mathematically equivalent to optimizing a model with L2 regularization (where \f{\alpha = 2\mu\lambda}).
+    \cf{\theta_{t+1} = \theta_t - \alpha \theta_t - \mu \frac{\partial \fL}{\partial \theta_t}}
+\end{enumerate}
+

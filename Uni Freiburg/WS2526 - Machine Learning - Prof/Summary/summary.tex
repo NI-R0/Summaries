@@ -1,0 +1,253 @@
+\documentclass[a4paper,10pt]{article}
+
+% Package imports
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage{chngcntr}
+\usepackage{framed}
+\usepackage[nolist]{acronym}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{multicol}
+
+\usepackage{needspace} % ensures rule+heading stay together
+
+
+\setlist[itemize]{leftmargin=7.5mm}
+% \setlist[itemize,2]{leftmargin=5.5mm}
+\setlist[itemize,2]{label=$\circ$}
+
+\newcommand{\rsectionpre}{%
+  % Only if not at the top of a page
+  \ifdim\pagetotal>0pt
+    % If there isn't room for the rule + heading, break first
+    \Needspace*{3\baselineskip}%
+    % If we didn't break, draw the rule
+    \ifdim\pagetotal>0pt
+      \noindent\rule{\linewidth}{0.4pt}\par
+      \vspace{2em}%
+      \nobreak % avoid a break between rule and heading
+    \fi
+  \fi
+}
+
+\titleclass{\rsection}{straight}[\section]
+
+% Tell titlesec how to format \ruledsection
+\titleformat{\rsection}[block]
+  {\rsectionpre\normalfont\Large\bfseries} % format (rule first)
+  {\thesection}{1em}{}
+
+% Optional: starred version \ruledsection* (unnumbered)
+\titleformat*{\rsection}{\rsectionpre\normalfont\Large\bfseries}
+
+\titlespacing*{\rsection}
+  {0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+
+\makeatletter
+\let\c@rsection\c@section
+\makeatother
+
+% Page layout
+\geometry{left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+\graphicspath{ {./images/} }
+
+% Header definition
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Machine Learning - WS25/26}
+\rhead{\thepage}
+
+% Custom commands for numbered definitions and theorems
+\newcounter{definitioncounter}
+\newcounter{theoremcounter}
+\counterwithin{definitioncounter}{section}
+\counterwithin{theoremcounter}{subsection}
+
+% Theorem and definition styles with rounded borders and numbering
+\newtcolorbox{definitionboxold}{colback=white, colframe=black, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{theorembox}{colback=white, colframe=blue, arc=5pt, boxrule=1pt, left=5pt, right=5pt, top=5pt, bottom=5pt}
+\newtcolorbox{definitionbar}{
+  colback=white,
+  enhanced,
+  frame hidden,
+  borderline west={1pt}{0pt}{black},
+  left=6pt,
+  top=1pt,
+  bottom=1pt
+}
+\newtcolorbox{definitionbox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=black,
+  coltitle=black,
+  boxrule=.5pt,
+  arc=5pt,
+  fonttitle=\bfseries,
+%   title filled=true,
+  title={Definition \thedefinitioncounter\hspace{.8em}(#2)},
+%   title=My Title,
+  attach boxed title to top left={yshift=-0.7\baselineskip-0.4pt,xshift=3mm},
+  boxed title style={
+    colback=white,
+    colframe=white,
+    left=6pt,
+    right=6pt,
+    % before upper=\strut
+  },
+%   boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm, colback=white,before upper=\strut}
+  top=10pt,
+  bottom=6pt,
+  left=6pt,
+  right=6pt,
+  #1
+}
+\newtcolorbox{tileddefinitionbox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=black,
+  coltitle=black,
+  boxrule=.5pt,
+  arc=5pt,
+  fonttitle=\bfseries,
+%   title filled=true,
+  title={Definition \thedefinitioncounter\hspace{.8em}(#2)},
+%   title=My Title,
+  attach boxed title to top left={yshift=-0.7\baselineskip-0.4pt,xshift=3mm},
+  boxed title style={
+    colback=white,
+    colframe=white,
+    left=6pt,
+    right=6pt,
+    % before upper=\strut
+  },
+%   boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm, colback=white,before upper=\strut}
+  top=10pt,
+  bottom=6pt,
+  left=6pt,
+  right=6pt,
+  sidebyside,
+  sidebyside gap=5mm,
+  sidebyside align=top,
+  righthand width=0.33\textwidth,
+  segmentation hidden,
+  #1
+}
+\newtcolorbox{slidebox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=black,
+  coltitle=black,
+  boxrule=.5pt,
+  arc=5pt,
+  fonttitle=\fontsize{11pt}{\baselineskip}\bfseries,
+%   title filled=true,
+  title={#2},
+%   title=My Title,
+  attach boxed title to top left={yshift=-0.7\baselineskip-0.4pt,xshift=3mm},
+  boxed title style={
+    colback=white,
+    colframe=white,
+    left=6pt,
+    right=6pt,
+    % before upper=\strut
+  },
+%   boxed title style={tile,size=minimal,left=0.5mm,right=0.5mm, colback=white,before upper=\strut}
+  top=10pt,
+  bottom=6pt,
+  left=6pt,
+  right=9pt,
+  #1
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\skip\footins}{0.5cm} % Adjust this to change the space above the footnotes
+\raggedbottom
+
+\newenvironment{leftindent}{\par\leftskip1em\relax\rightskip0cm\relax}
+{\par\leftskip0cm\relax\rightskip0cm\relax}
+
+\newcommand{\ig}[2]{
+  \includegraphics[width=#1\textwidth]{#2}
+}
+\newcommand{\cig}[2]{
+  \begin{center}
+    \includegraphics[width=#1\textwidth]{#2}
+  \end{center}
+}
+\newcommand{\slide}[2]{
+  \vspace{0.1cm}
+  \begin{slidebox}{#1}
+  #2
+  \end{slidebox}
+}
+\newcommand{\definition}[2]{%
+    \vspace{.05cm}
+    \refstepcounter{definitioncounter}%
+    % \textbf{Definition \thedefinitioncounter\hspace{.8em}(#1)}
+    % \vspace{0.2cm}\newline
+    \begin{definitionbox}{#1}
+    #2
+    \end{definitionbox}
+    % \vspace{0.3cm}
+}
+\newcommand{\tdefinition}[2]{%
+    % \vspace{0.1cm}
+    \refstepcounter{definitioncounter}%
+    % \textbf{Definition \thedefinitioncounter\hspace{.8em}(#1)}
+    % \vspace{0.2cm}\newline
+    \begin{tileddefinitionbox}{#1}
+    #2
+    \end{tileddefinitionbox}
+    % \vspace{0.3cm}
+}
+
+\newcommand{\theorem}[1]{%
+    \refstepcounter{theoremcounter}%
+    \begin{theorembox}
+    \textbf{Theorem \thetheoremcounter:}
+    \vspace{0.2cm}\newline
+    #1
+    \end{theorembox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\cf}[1]{\[#1\]}
+\newcommand{\f}[1]{${#1}$}
+\renewcommand{\b}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+\newcommand{\pL}{\f{\mathcal{L}\ }}
+\newcommand{\fL}{\mathcal{L}}
+
+\begin{document}
+
+\input{acronyms.tex}
+% Title section
+\begin{center}
+    {\huge Machine Learning (WS25/26) \par}
+    \vspace{0.5cm}
+{\large Niklas Rodenbüsch $\quad\mid\quad$ \today \par}
+\end{center}
+\vspace{0.5cm}
+
+\input{chapters/01.tex}
+\input{chapters/02.tex}
+\input{chapters/03.tex}
+\input{chapters/04.tex}
+\input{chapters/05.tex}
+\input{chapters/06.tex}
+\input{chapters/07.tex}
+\input{chapters/08.tex}
+\input{chapters/09.tex}
+\input{chapters/10.tex}
+\input{chapters/11.tex}
+\input{chapters/12.tex}
+
+\end{document}

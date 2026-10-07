@@ -1,0 +1,57 @@
+\section{Gradient Boosted Decision Trees}
+GBDTs are an ensemble learning method that combines decision trees with boosting to improve predictive accuracy. Trees are added sequentially, with each new tree trained to minimize the residual errors of the previous ensemble. 
+
+
+
+
+\subsection{Tree Prediction Model \& Regularization}
+A decision tree partitions the feature space into \f{T} leaves and outputs a specific weight \f{w_j} for each leaf. Let \f{q(x_n)} denote the function that maps an input instance to its corresponding leaf index. The prediction of the tree is simply the weight of that assigned leaf.
+\cf{f(x_n) = w_{q(x_n)}}
+
+A tree overfits if it has too many steps (excessive number of leaves \f{T}) or excessively high jumps between steps (large leaf weights \f{w}). To prevent this, a regularization term \f{\Omega(f)} is added to penalize both the total number of leaves (controlled by hyperparameter \f{\gamma}) and the magnitude of the leaf weights (controlled by L2 regularization hyperparameter \f{\lambda}).
+\cf{\Omega(f) = \gamma T + \frac{\lambda}{2} \sum_{j=1}^T w_j^2}
+
+
+
+
+
+\subsection{Boosted Ensemble Objective \& Taylor Approximation}
+Gradient Boosted Decision Trees (GBDTs) use an additive strategy, creating an ensemble where the prediction at step \f{k} is the previous ensemble's prediction plus the new tree's prediction.
+\cf{\hat{y}_n^{(k)} = \hat{y}_n^{(k-1)} + f^{(k)}(x_n)}
+
+To find the optimal \f{k}-th tree, the algorithm minimizes the loss function over all instances plus the regularization term of the new tree.\\ Because optimizing the loss function directly at each iteration of boosting is expensive and can lead to unstable updates, GBDTs approximate the loss using a \b{second-degree Taylor expansion}. This approximation relies on the first-order gradient \f{G_n} and the second-order Hessian \f{H_n} of the loss function with respect to the previous prediction.
+\cf{\fL_n^{(k)} \approx \fL_n^{(k-1)} + \nabla_n f^{(k)}(x_n) + \frac{1}{2} H_n (f^{(k)}(x_n))^2}
+
+
+
+
+
+
+
+
+\subsection{Optimal Leaves \& Split Gain}
+
+By substituting the tree prediction \f{w_j} into the approximated objective, the optimal weight for any specific leaf \f{j} can be calculated using a closed-form solution.\\
+The optimal weight for leaf \f{j} depends entirely on the sum of the gradients and Hessians of the instances assigned to that leaf, scaled by the regularization term \f{\lambda}.
+\cf{w_j^* = -\frac{\sum_{n \in I_j} G_n}{\lambda + \sum_{n \in I_j} H_n}}
+
+To determine how to grow the tree (i.e., finding the best split), the algorithm calculates the \b{Gain} of splitting a leaf into a Left and Right child. The best split rule maximizes this gain.
+\cf{Gain_j = \frac{1}{2} \left[ \frac{(\sum_{Left} G_n)^2}{\lambda + \sum_{Left} H_n} + \frac{(\sum_{Right} G_n)^2}{\lambda + \sum_{Right} H_n} - \frac{(\sum_{Parent} G_n)^2}{\lambda + \sum_{Parent} H_n} \right] - \gamma}
+
+\b{Stopping Condition}: The tree stops growing a specific branch if the maximum split gain is less than or equal to zero (which is inherently controlled by the complexity penalty \f{\gamma}).
+
+
+
+
+
+
+\subsection{Properties \& Algorithmic Complexity}
+
+\begin{itemize}
+\item \b{Complexity}: For an ensemble of \f{k} trees with maximum depth \f{\log(T)} and \f{M} features across \f{N} data points, the overall training complexity is \f{O(k M N \log(T))}.
+\item \b{Pros}: Extremely fast, works right out-of-the-box for tabular data without heavy preprocessing, handles categorical features natively, allows arbitrary loss functions, and produces low-bias and low-variance models.
+\item \b{Cons}: Less flexible than Neural Networks (e.g., cannot easily do multi-task learning or handle complex unstructured data), possesses less interpretability than a single decision tree, and has limited scalability compared to mini-batch NNs.
+\end{itemize}
+
+
+

@@ -1,0 +1,91 @@
+\section{Introduction}
+A \b{task} in \ac{ml} refers to a specific problem that needs solving, and often involves an \b{agent} making a \b{decision} based on a \b{context} to achieve a specific \b{goal}.
+
+\subsection{Supervised \& Unsupervised Learning}
+\definition{Supervised Learning}{
+    Supervised Learning uses labeled data for tasks such as Classification, Regression, and Ranking. The general supervised learning process maps input features \f{x} to a ground truth target \f{y} using a prediction model \f{\hat{y} = f(x)}.
+}
+\definition{Unsupervised Learning}{
+    Unsupervised Learning uses unlabeled data to find hidden patterns, applied in tasks like Clustering and Dimensionality Reduction.
+}
+
+\subsection{Model Families}
+
+\definition{Parametric Models}{Models that assume a specific functional form with a fixed number of parameters that do not grow with the dataset size (e.g., Linear/Logistic Regression, Linear SVM).}
+
+\definition{Non-Parametric Models}{Models whose complexity and number of parameters grow dynamically with the amount of training data, having no fixed functional form (e.g., k-NN, Decision Trees, Kernel SVM, Naive Bayes).}
+
+\subsubsection{Examples of Prediction Models}
+\begin{itemize}
+\item \b{Linear Models}: Simple models characterized by low variance but high bias. They assume a linear relationship between the input features and the targe and calculate the output as a weighted sum of (linear) input features:
+\cf{\hat{y} = \theta_0 + \sum_{m=1}^{M}\theta_mx_m}
+\item \b{Polynomial Regression}: Extends linear models by including higher-degree terms to capture non-\\linearities (more complex relationships).
+\cf{\hat{y} = \sum_{j=1}^{M}\theta_jx^j}
+\item \b{Decision Trees}: Highly interpretable models but prone to high variance and overfitting.
+\item \b{Neural Networks}: Highly powerful and flexible models that also exhibit high variance. Uses multiple layers of non-linear functions to model complex patterns.
+\end{itemize}
+
+
+\subsection{Loss Functions - Overview}
+A loss function \pL quantifies the distance (i.e. error) between the model's prediction \f{\hat{y}} and the true target \f{y}, thus measuring how well a model performs on given input data. Example loss functions include:
+\begin{itemize}
+\item \b{MSE (L2 Loss)}: Penalizes large errors heavily; consequently, it is very sensitive to outliers.
+\cf{\fL_{MSE}(y, \hat{y}) = (y - \hat{y})^2 = \frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2}
+\item \b{MAE (L1 Loss)}: Minimizes absolute differences; much more robust to outliers than MSE.
+\cf{\fL_{MAE}(y, \hat{y}) = |y - \hat{y}| = \frac{1}{N}\sum_{i=1}^{N}|y_i - \hat{y}_i|}
+\item \b{Huber Loss}: Combines L1 and L2 properties, acting like L2 for small errors and L1 for large errors.
+\end{itemize}
+\vspace{.5em}
+For \b{classification tasks}, the true target \f{y} is discrete (e.g., \f{y \in \{0, 1\}} for binary classification or one-hot encoded vectors for multi-class). The actual error metric is the \b{Misclassification Rate (MCR)}, which is non-differentiable. Furthermore, using MSE on probability outputs creates a non-convex loss surface. Instead, we use differentiable \b{proxy losses} that frame the problem probabilistically:
+\begin{itemize}
+\item \b{Misclassification Rate (MCR)}: The true evaluation metric (not used for gradient optimization), computing the ratio of incorrect predictions.
+\cf{\fL_{MCR}(y, \hat{y}) = \frac{1}{N}\sum_{i=1}^{N}\mathbb{I}[y_i \neq \hat{y}_i]}
+\item \b{Logistic Loss (BCE)}: The standard proxy loss for binary classification, which heavily penalizes confident but incorrect predictions.
+\cf{\fL_{BCE}(y, \hat{y}) = - \frac{1}{N} \sum_{i=1}^N \left[ y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \right]}
+\item \b{Softmax Cross-Entropy}: Generalizes BCE to multi-class problems. It measures the dissimilarity between the true one-hot encoded target distribution and the predicted probability distribution over \f{C} classes.
+\cf{\fL_{CE}(y, \hat{y}) = - \frac{1}{N} \sum_{i=1}^N \sum_{c=1}^C y_{i,c} \log(\hat{y}_{i,c})}
+\item \b{Hinge Loss}: Used primarily for Support Vector Machines (SVMs) to enforce a maximum margin. It penalizes predictions that fall on the wrong side of the margin boundary (Note: assumes labels \f{y \in \{-1, 1\}} and \f{\hat{y}} is the raw model output).
+\cf{\fL_{Hinge}(y, \hat{y}) = \frac{1}{N} \sum_{i=1}^N \max(0, 1 - y_i \hat{y}_i)}
+\item \b{Kullback-Leibler (KL) Divergence}: Measures how one probability distribution \f{\hat{y}} diverges from a reference true probability distribution \f{y}. Minimizing Cross-Entropy is mathematically equivalent to minimizing KL-Divergence.
+\cf{D_{KL}(y || \hat{y}) = \sum_{c=1}^C y_c \log\left(\frac{y_c}{\hat{y}_c}\right)}
+\end{itemize}
+
+
+
+
+\subsection{Overfitting \& Underfitting}
+
+\definition{Overfitting}{Occurs when a model memorizes the training data and its noise, leading to poor generalization on unseen data. It is characterized by \b{High Variance} and \b{Low Bias}.\\[1em]
+\b{Detection}: Validation error increases while training error decreases.\\[1em]
+\b{Mitigation}: Add more data, reduce model complexity (by means of feature selection or regularization), ensembling}
+
+\definition{Underfitting}{Occurs when a model is too simple to capture the underlying patterns of the data. It is characterized by \b{High Bias} and \b{Low Variance}.\\[1em]
+\b{Detection}: Validation and training error remain large.\\[1em]
+\b{Mitigation}: Add informative features, decrease regularization, increase model capacity}
+
+
+\subsection{Probabilistic Interpretation \& MLE}
+
+Models can be viewed probabilistically by assuming the target \f{y} is generated by a deterministic function plus random Gaussian noise: 
+\cf{y \sim \mathcal{N}(f(x; \theta), \sigma^2)} 
+This approach acknowledges uncertainty and provides a more interpretable measure of confidence in predictions.
+
+\definition{Maximum Likelihood Estimation (MLE)}{A statistical method used to estimate model parameters \f{\theta} by maximizing the probability (likelihood) of observing the given training data under the assumed model.}
+\vspace{.5em}
+For a linear regression model assuming normally distributed errors, \f{\epsilon_n\sim\mathcal{N}(0,\sigma^2)}, optimizing the parameters via MLE is mathematically equivalent to minimizing the Mean Squared Error (MSE).
+
+\subsection{Machine Learning Design Cycle}
+\vspace*{.5em}
+\begin{center}
+    \ig{.8}{design}
+\end{center}
+\vspace{.1cm}
+\begin{enumerate}
+\item \b{Pre-processing}: Collecting data, cleaning, handling missing values, and addressing outliers.
+\item \b{Feature Extraction \& Encoding}: Deriving meaningful features from raw data and encoding categorical variables.
+\item \b{Feature Selection}: Reducing dimensionality by selecting the most relevant features.
+\item \b{Machine Learning}: Applying the chosen algorithm to train the model.
+\item \b{Evaluation \& Model Selection}: Testing performance on validation sets and tuning hyperparameters.
+\item \b{Post-processing}: Ensuring fairness, avoiding bias, and cont. monitoring of the model after deployment.
+\end{enumerate}
+\clearpage

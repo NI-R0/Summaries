@@ -1,0 +1,42 @@
+\section{Decision Trees}
+
+\subsection{Decision Trees as Piecewise Functions}
+
+\definition{Decision Tree}{A non-parametric machine learning model that predicts the value of a target variable by learning simple decision rules inferred from the data features. It works by recursively partitioning the feature space into distinct regions. They can be used for both classification and regression tasks.}
+\vspace{.5em}
+Every k-ary split can be represented as a sequence of binary splits, which are computationally faster and often yield better predictions. For each partitioned region \f{R_j}, the tree aggregates the target values of the data points in that region (e.g., mean for regression) to yield a constant prediction model \f{\hat{y}^{(R_j)}}.\\[.5em]
+The mathematical prediction model of a tree with parameters \f{\theta = \langle R_1, ..., R_J, \hat{y}^{(R_1)}, ..., \hat{y}^{(R_J)} \rangle} uses an indicator function \f{\mathbb{I}(\cdot)} that checks if \f{x} belongs to region \f{R_j}:
+\cf{f(x; \theta) = \sum_{j=1}^J \hat{y}^{(R_j)} \cdot \mathbb{I}(x \in R_j)}
+
+\vspace{1em}
+
+\b{Depth}: The distance of a node from the root node.\\[.5em]
+\b{Height}: The maximum depth of any node in the entire tree.
+
+
+
+
+\subsection{Choosing a Split Point (CART Algorithm)}
+The goal of choosing a split is to minimize the impurity \f{H(\mathcal{D})} of the resulting subsets \f{\mathcal{D}}. Purity measures how homogeneous the data points in a node are, meaning that for regression, the target values should be similar (low variance), and for classification, the class labels should be well-separated.\\
+
+The Classification and Regression Trees (CART) algorithm finds split points by exhaustively searching through the mid-points of unique feature values. A split \f{x \le v} divides the dataset \f{\mathcal{D}} into a left subset \f{\mathcal{D}^{(L)}} and a right subset \f{\mathcal{D}^{(R)}}:
+\begin{itemize}
+\item \b{Regression Trees}: The impurity metric used is \b{variance}. The predicted target for a region is simply the mean target value of the split subset. The best split for regression maximizes the variance reduction:
+\cf{|\mathcal{D}| \cdot H(\mathcal{D}) = \sum_{(x,y) \in \mathcal{D}}(y - \hat{y}(x))^2}
+\item \b{Classification Trees}: The impurity metric used is \b{entropy}. The entropy of a discrete random variable \f{V} with \f{K} possible outcomes is defined as:
+\cf{H(V) = -\sum_{k=1}^K p(v_k) \log_2 p(v_k)}
+\item \b{Optimal Split}: The optimal split for decision trees maximizes the \b{Information Gain} \f{I(x \le v)}:
+\cf{I(x \le v) = |\mathcal{D}| \cdot H(\mathcal{D}) - (|\mathcal{D}|^{(L)} \cdot H(\mathcal{D}^{(L)}) - |\mathcal{D}|^{(R)} \cdot H(\mathcal{D}^{(R)}))}
+\end{itemize}
+
+
+
+
+\subsection{Properties of Decision Trees}
+
+\begin{itemize}
+\item \b{Pros}: Highly interpretable, handle categorical input values natively, handle unimportant features well, and are scalable for large datasets.
+\item \b{Cons}: They are heavily prone to overfitting and are deterministic (making them unsuitable for some specific ensemble methods).
+\item \b{Bias-Variance}: Because trees are very expressive and highly sensitive to small changes in training data, they are considered \b{High Variance} and \b{Low Bias} models.
+\item \b{Regularization}: To prevent a decision tree from overfitting, you can tune hyperparameters such as the maximum depth of the tree (max\_depth) or the minimum number of samples required to form a leaf (min\_leaf).
+\end{itemize}

@@ -1,0 +1,46 @@
+
+\section{Linear Methods in Machine Learning}
+\definition{Linear Methods}{A foundational class of algorithms that model relationships between input features and output predictions by computing a weighted sum of the features. They assume the decision boundary is a straight line (2D) or a hyperplane (higher dimensions).}
+
+
+
+\subsection{Linear Regression}
+\definition{Linear Regression}{
+    Linear regression predicts a continuous target variable by finding the optimal weights \f{w} and bias \f{w_0}.
+    \cf{f(x_i; w) = w_0 + w_1 x_{i,1} + ... + w_D x_{i,D} = w_0 + x_i w^T}
+    It assumes a strictly linear relationship between inputs and outputs, which may fail to capture complex data structures.
+}
+\definition{Basis Functions}{
+    Mathematical transformations \f{\phi(x)} applied to input features to map them into a higher-dimensional space, allowing linear models to capture non-linear relationships (e.g., polynomial or Gaussian functions).
+    \cf{f(x_i, w) = w_0 + \sum_{j=1}^M w_j \phi(x_i)_j}
+}
+
+
+\subsection{Optimization of Weights}
+To find the best weight vector \f{w} that minimizes the loss function, two main approaches can be used:
+\begin{enumerate}
+\item \b{Analytical Solution}: The optimal weights can be computed directly using the normal equation (iff the errors fulfill a few assumptions). This solution becomes computationally expensive for large datasets due to the matrix inversion step, which has a complexity of \f{O(D^3)}.
+\cf{w = (X^T X)^{-1} X^T y}
+\item \b{Iterative Optimization (Gradient Descent)}: A numerical method used to iteratively update weights by taking steps in the direction of the steepest descent of the loss function \f{J(w)}.
+\cf{w \leftarrow w - \eta \frac{\partial J(w)}{\partial w}}
+\end{enumerate}
+
+
+
+\subsection{Linear Classification \& Logistic Regression}
+\definition{Linear Classification}{Categorizes data into distinct classes by defining a linear decision boundary (hyperplane) that separates the feature space.}
+\definition{Logistic Regression}{
+    A linear classification model used for binary classification. It applies the \b{sigmoid} (or logistic) function to squeeze the linear output into a probability between 0 and 1.
+    \cf{h_w(x) = \frac{1}{1 + e^{-w^T x}}}
+}
+
+
+
+\subsection{Optimization in Logistic Regression}
+Because the sigmoid function makes the loss function non-linear, logistic regression cannot be solved analytically. It must be optimized using Gradient Descent. The gradient of the binary cross-entropy loss with respect to the weights is calculated as follows:
+\cf{\frac{\partial J(w)}{\partial w} = \sum_{i=1}^N (h_w(x_i) - y_i)x_i}
+
+\definition{Stochastic Gradient Descent (SGD)}{
+    An optimization variant that approximates the true gradient by using a single random data point or a small mini-batch at each step, making it much faster and more memory-efficient for large datasets.\\
+    SGD introduces noise into the gradient estimation, which can prevent the model from getting stuck in local minima and allows for frequent weight updates without scanning the entire dataset.
+}

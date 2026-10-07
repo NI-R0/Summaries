@@ -1,0 +1,52 @@
+\section{Fighting Overfitting}
+
+\subsection{Dropout}
+
+\definition{Dropout}{A regularization technique for NNs that acts like bagging by training an ensemble of random subnetworks. It achieves this by randomly dropping out (multiplying by zero) input and hidden nodes during each training step.}
+
+\subsubsection{How it works:}
+\begin{enumerate}
+\item For each mini-batch, binary drop-out masks \f{\mu} are sampled from a Bernoulli distribution (e.g., probability \f{p=0.8} to keep an input unit, and \f{p=0.5} to keep a hidden unit).
+\item \b{Forward Pass}: The output of a layer is element-wise multiplied by its corresponding mask.
+\cf{h^{(1)} = g^{(1)}(w^{(1)T}(x \odot \mu^{(0)}) + b^{(1)})}
+\item \b{Backward Pass}: Gradients are multiplied by the exact same masks that were sampled and stored during the forward pass.
+\item \b{Inference}: To ensure the expected value of the activations remains the same during testing (when no nodes are dropped), the weights are scaled by the keep probability \f{p}. In practice, DL libraries apply inverse scaling (\f{1/p}) during training so no adjustments are needed at inference.
+\end{enumerate}
+
+
+
+
+
+
+\subsection{Structural Regularization}
+
+\begin{itemize}
+\item \b{Residual Networks}: Introduce skip connections across layers (e.g., \f{\mathcal{F}(x) + x}). This allows the network to easily learn identity functions and helps gradients flow backward without vanishing, enabling the training of much deeper networks.
+\item \b{Shake-Shake}: Applied to residual blocks with multiple branches. It randomly weights the parallel paths for each mini-batch using a random variable \f{\alpha \in \mathcal{U}(0, 1)}. Different weights are sampled for the forward and backward passes, adding noise to the gradients which improves generalization.
+\end{itemize}
+
+
+
+
+
+
+
+\subsection{Data Augmentation}
+Data augmentation expands the training set by applying label-preserving transformations to the inputs, creating modified versions of the same sample at different epochs.
+\begin{itemize}
+\item \b{Cutout}: Randomly sets a \f{k \times k} square patch of an image to zero (black).
+\item \b{Mixup}: Creates new "Frankenstein" instances by taking a linear interpolation of two existing inputs and their corresponding labels, using a random factor \f{\lambda \in [0, 1]}.
+\cf{\tilde{x} := \lambda x^{(a)} + (1-\lambda)x^{(b)}}
+\item \b{Cutmix}: Extends Mixup by swapping patches between two images using a random binary spatial mask.
+\item \b{Trainable Augmentation (AutoAugment)}: Instead of manually engineering policies, a Recurrent Neural Network (RNN) controller learns the optimal augmentation strategy (operation types, probabilities, and magnitudes) via Reinforcement Learning, using the validation accuracy of a child network as the reward signal.
+\end{itemize}
+
+
+
+
+
+\subsection{Regularization Cocktails}
+A single regularizer is rarely optimal. Instead, modern approaches combine a set of \f{K} different regularizers (e.g., Dropout, Mixup, Weight Decay, Batch Normalization) into a \b{"Cocktail"}. The hyperparameters of all individual regularizers within the cocktail are jointly optimized using HPO techniques.\\[.5em]
+Empirically, fine-tuned cocktails of regularizers perform substantially better than any singular regularizer applied in isolation.
+
+

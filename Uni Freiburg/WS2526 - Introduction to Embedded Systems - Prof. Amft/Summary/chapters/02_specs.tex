@@ -1,0 +1,39 @@
+\section{Specification}
+The first step of designing an \ac{es} is to translate the description into a formal specification, and \b{prove} that the specs meet the goals the system.
+\subsection{Abstraction/Hierarchy}
+\begin{itemize}
+    \item \b{Behavioural hierarchy:} Describe the systems overall behaviour (states, events, outputs)
+    \item \b{Structural hierarchy:} Describe the physical composition (processors, actuators, sensors)
+\end{itemize}
+\subsection{Timing Behaviour}
+Since \ac{es} are real-time systems, explicit timing requirements must be specified: \\[0.5em]
+\b{(1)} Elapsed time for execution; \b{(2)} Delay of processes; \b{(3)} Timeouts for events; \\
+\b{(4)} Deadlines for task finishing
+\subsection{Dependable Systems}
+Dependable systems fulfill the following requirements: \\[0.5em]
+\b{(1)} Unambiguous semantics; \b{(2)} Support formal verification; \b{(3)} Are executable; \\
+\b{(4)} Appropriate model for computation (execution model for each component, communication model)
+\subsection{Further Specifications}
+\begin{itemize}
+    \item \b{Event-Handling:} Specify how internal \& external events are handled.
+    \item \b{Concurrency:} Specify how distributed and parallel operations happen.
+    \item \b{Synchronization and Communication:} Communication (i.e. mutual exclusion) between components
+    \item \b{Non-functional properties:} Fault tolerance, Weight, Size, Power consumption, ...
+\end{itemize}
+\subsection{Computational Specifications}
+\begin{itemize}
+    \item \b{Presence of programming elements} (i.e. arithmetic operations, loops, function calls)
+    \item \b{Executability:} Plausibility checking
+    \item \b{Readability}
+    \item \b{Domain-Specific support}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+

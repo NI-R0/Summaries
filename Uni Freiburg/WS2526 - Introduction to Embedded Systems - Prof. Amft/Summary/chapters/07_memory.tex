@@ -1,0 +1,30 @@
+\section{Memory}
+% Locality, memory hierarchies, cache systems, scratch pad memory, general types
+Nowadays there are two types of machine models: more flexible "von Neumann" machines (which use one homogeneous memory for instructions and data), and more secure "harvard" machines which separate instruction and data memory.\\
+
+One of the biggest issues in modern computing is the "memory wall", which is a synonym for the fact that processor speed is (increasingly) far faster than memory access times.
+
+\subsection{Locality}
+Programs tend to use data and instructions with addresses near or equal to those they have used recently. Recently referenced items are likely to be referenced again in the near future (temporal locality). Items with nearby addresses tend to be referenced close together in time (spatial locality).
+
+\subsection{Memory Hierarchy}
+For efficiency, fast memory access times and large memory sizes are required. However, not all memory is required all the time. This results in a trade-off problem: Latency vs cost + energy.\\
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.7\textwidth]{memory1.png}
+\end{figure}
+
+\subsection{Cache} Smaller, faster torage that acts as staging area for subset of data in a larger, slower device. Data is copied in block-sized units from main memory. Main question is which cache blocks to map the memory blocks to?\\[0.5em]
+\b{Direct Mapping:} [Cache block address] = [Memory block address] mod [\# cache blocks]\\[0.5em]
+\b{Associative Cache:} k blocks are in cache associated with same index. Cache tags are used to link to a specific set of memory blocks by comparing tags. When cache is full, replace block using FIFO or LRU (least recently used).\\
+
+\b{Note:} For the Worst Case Execution Time analysis one has to assume that (almost) every access to the cache results in a cache miss.
+
+\subsection{Memory Types}
+\b{Non-volatile:} Keeps memory state without power (e.g. Flash, EPROM), read-only, usually slow and limited in number of write cycles, stores programs and rarely data.\\[0.5em]
+\b{Volatile:} Keeps state only for short time, SRAM for fast and deterministic access (but power hungry, used as Cache), DRAM which depends on access order and needs periodic refresh
+
+\subsection{\ac{spm}}
+\acp{spm} are small physical memories directly mapped into the CPU's address space. This makes them fast and predictable and less power intensive. Usually frequently used instructions, variables, and intermediate results are stored in the SPM. SPM does not use tags, memory is directly accessed by the address.
+
+\newpage

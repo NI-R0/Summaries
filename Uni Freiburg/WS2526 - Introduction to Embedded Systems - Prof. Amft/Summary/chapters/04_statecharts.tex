@@ -1,0 +1,80 @@
+\section{Statecharts}
+Especially when dealing with complex systems (many states) and/or concurrency, Moore and Mealy are not useful. Statecharts extend the classical machines with concepts like non-determinism (OR), history, variables, concurrency (AND), and timing/simulation.\\[0.5em]
+Statecharts produce I/O differently as well: Transitions can be active on the presence of events, produce events, or change variables.\\[0.5em]
+\b{Real-world examples:} Automotive applications (industry standard), UML
+
+\subsection{Transitions}
+% \begin{wrapfigure}{R}{.3\textwidth}
+%     \centering
+%     \includegraphics[width=.9\linewidth]{sc1.png}
+% \end{wrapfigure}
+A transition from state A to B occurs iff event f is present while being in A. On transition the event \f{g} is produced. Produced events exist for one step only.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{cs2.png}
+\end{figure}
+
+\subsection{Non-Determinism}
+Multiple events can be present at the same time. While non-deterministic transitions are possible, tools usually warn beforehand so they can be handled using e.g. priority specification (see below).
+
+\subsection{Hierarchy}
+Statecharts introduce superstates \f{S}. Superstates S are called \b{OR}-superstates, if exactly one of the substates of \f{S} is active whenever \f{S} is active.\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{sc3.png}
+\end{figure}
+
+Current states of statecharts are called active states. States that are not composed of other states are called basic states. States containing other states are called superstates. For each basic state s, the superstates containing s are called ancestor states. When a basic state is active, all its ancestor states are active too.\\
+The state hiearchy can be represented as a tree, where basic states are the leafs. The highest level in the hierarchy has priority when multiple transitions (i.e. events) are active at the same time.
+
+\subsection{History}
+To determine which substate is entered when a superstate is entered, different history mechanisms can be used. \b{Note:} Nested superstates need a default state each!
+\begin{itemize}
+    \item \b{Default:} Filled circle (not a state itself) pointing to a substate. Entered each time \f{S} is entered.
+    \item \b{History:} Enters substate \f{S} was in before \f{S} was left, or default if \f{S} entered for the first time.
+    \item \b{Deep History:} Deep history remembers states at the sub-hierarchy level too!
+\end{itemize}
+
+\subsection{Event-Condition-Action}
+Statecharts include typed variables (e.g. numbers) to represent data (states + variables = \it{status}). Values of variables keep their value until they are reassigned. Values of variables are visible to all parts of a statechart (shared memory). New values become effective in the execution stage for the current step and are obtained by all parts of the model in the \it{following} step.\\[0.5em]
+This makes transition functions possible: A transition may be taken if an event occured in the last step AND a condition referring to a variable is true. Actions can then either be variable assignments or creation of events.\\
+
+\b{Event types:} Atomic events (A, B, BUTTON), entering/exciting state \f{en(S)/ex(S)}, variable value change \f{ch(x)}, access to variable \f{rd(x)/wr(x)}, condition value changes \f{tr(co)/fs(co)}\\
+
+\b{Condition types:} Atomic conditions, constants (true/false), relations between values, residing in a state \f{in(S)}\\
+
+\b{Action types:} Atomic actions, emmitting events \f{raise(E)}, variable assignment, compound actions, list of actions, conditional actions
+
+\subsection{Concurrency}
+Concurrency can be expressed via \b{AND}-Superstates, where \it{all} substates are active when \f{S} is active.\\[0.5em]
+\b{Important}: Concurrency can lead to different types of conflicts (e.g. write-write if two parallel transitions write the same variable). 
+
+\subsection{Timers}
+Statecharts support special timeout events, e.g. "if event \f{a} does not happen while being in state \f{X} for 20ms, a timout event will take place and activate state \f{Y}".
+
+\subsection{Simulation}
+Execution of a statechart consists of a sequence of steps (arbitrarily small time), each leading from one \it{status} to another. At each step, the current system status \f{s_i}, the current time \f{t}, and internal/external changes \f{\Delta} are given. The goal then is to find the internal events \f{e_i} and new status \f{s_{i+1}}.\\
+External events not yet seen in the previous step and changes of external data not seen in the previous step are called external changes for the current step.\\[0.5em]
+\b{Status} now consists of: active states, values of variables, generated events from previous steps, values of history connectors, set of all timeout events.
+
+\subsubsection{Simulation Step}
+(1) Update timeout events \f{\ \rightarrow\ } (2) Determine sequence of transitions to be taken, based on current i/e events and i/e variables \f{\ \rightarrow\ } (3) Compute next states and actions \f{\ \rightarrow\ } (4) Apply transitions
+
+\subsection{Pros and Cons}
+\begin{table}[h!]
+\begin{tabular}{|p{.45\textwidth}|p{.475\textwidth}|}\hline
+\textbf{Andvantages}                                          & \textbf{Disadvantages}                           \\\hline\hline
+Simple transformation into hard- and software implementations & Complex for large systems                        \\\hline
+Efficient for simulation                                      & Not useful for distributed applications          \\\hline
+Basis for formal verification                                 & No formal representations of operations and data \\\hline
+Arbitrary nesting of superstates possible                     & Large part of status is hidden in variables      \\\hline
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+
+

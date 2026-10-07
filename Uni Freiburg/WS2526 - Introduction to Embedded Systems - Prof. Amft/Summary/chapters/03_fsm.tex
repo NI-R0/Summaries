@@ -1,0 +1,45 @@
+\section{\ac{fsm}}
+An FSM is a (graphical exception-oriented) model for the internal state of an embedded system (desribes states, actions and how to handle exceptions). Inputs are internal/external events, and states are the memory content after events.\\ 
+FSM can be used for e.g. input validation, concurrent event handling, or program flow (interrupt handling).
+\tdefinition{FSM / Acceptor}{
+    \f{M = (I, S, s_0, \delta, F)} is a deterministic finite automataton, iff:
+        \begin{itemize}
+            \item \f{I} is a finite, non-empty set of input symbols
+            \item \f{S} is a finite, non-empty set of states
+            \item \f{s_0 \in S} is the initial state
+            \item \f{\delta: S\times I \rightarrow S} as transition function
+            \item \f{F\subseteq S} are final (accepted) states
+        \end{itemize}
+
+    \tcblower
+
+    \centering
+    \includegraphics[width=.9\linewidth]{fsm.png}
+}
+\subsection{Moore and Mealy Machines}
+\tdefinition{Moore Machine}{
+    Moore machines \f{(I, O, S, s_0, \delta, F, \lambda)} extend acceptors by:
+    \begin{itemize}
+        \item \f{O} as a finite, non-empty set of output symbols
+        \item \f{\lambda: S\rightarrow O} as output function
+    \end{itemize}
+    The Moore Machine on the right outputs the result of \f{c\%4}.\\
+    Note: For an input of length \f{n}, we get \f{n+1} outputs, as we get to \f{s_0} using the empty input symbol \f{w_0 = \epsilon}.
+    % \vspace*{0.5cm}
+    \tcblower
+
+    \centering
+    \includegraphics[width=.8\linewidth]{moore.png}
+}
+\tdefinition{Mealy Machine}{
+    Mealy machines \f{(I, O, S, s_0, \delta, F, \lambda)} differ from Moore machines in their output function: \f{\lambda: S\times I \rightarrow O}\\
+    Mealy machines create outputs during state transitions, with the output for the initial transition being '-'.\\
+
+    Examples: Enigma, Traffic light, Number classification, ...
+    \tcblower
+    \centering
+    \includegraphics[width=.8\linewidth]{mealy.png}
+}
+
+Mealy machines depend on the current state and the current input symbol, while Moore machines can be seen as special Mealy machines where the output does not depend on the current input symbol.\\[0.5em]
+\b{Important:} Moore can be transformed into Mealy and (partially) vice versa.

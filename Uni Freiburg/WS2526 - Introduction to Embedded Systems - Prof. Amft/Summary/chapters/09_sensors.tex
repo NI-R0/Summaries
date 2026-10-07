@@ -1,0 +1,88 @@
+\section{Sensors and Actuators}
+\subsection{Measurements}
+Sensors model a state of the environment through (time discrete) observations.\hfill
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{measure.png}
+\end{figure}
+
+The (analogue) signal captured by sensors is then digitised, i.e. converted from being continuous in \f{t,x} to being dicontinuous in both dimensions. To achieve this, different conversion strategies exist, all differing in conversion speed, accuracy of the values, and amplitude resolution after quantisation.\hfill
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=.7\textwidth]{signals.png}
+\end{figure}
+% \noindent
+\subsection{Parallel/Direct Conversion}
+\begin{wrapfigure}{r}{.3\textwidth}
+    % \centering
+    % \includegraphics[width=.98\linewidth]{parallel.png}
+    \raisebox{0pt}[\dimexpr\height-0.8\baselineskip\relax]{\includegraphics[width=.98\linewidth]{parallel.png}}
+\end{wrapfigure}
+Parallel converters work by comparing input voltage to a reference voltage using \f{2^n-1} parallel comparators.
+
+The example on the right shows a 3-Bit converter. This approach is typically limited to \f{2^{N=8}=256} states and achieves frequencies greater than 1GHz.
+
+To convert an n-bit digital signal into analogue, one can then use a parallel DAC as pictured below (n switches). The problem is that digital switches could be asynchronous, causing undefined u\f{_{\textrm{out}}}.
+\vfill
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{dac.png}
+\end{figure}
+\vfill
+\clearpage
+
+\subsection{Successive Approximation}
+\begin{wrapfigure}{r}{.3\textwidth}
+    % \centering
+    % \includegraphics[width=.98\linewidth]{successive.png}
+    \raisebox{0pt}[\dimexpr\height-2\baselineskip\relax]{\includegraphics[width=.98\linewidth]{successive.png}}
+\end{wrapfigure}
+Successive Approximation is a sequential conversion technique that works according to the \b{weighting principle}. 
+
+A DAC creates different reference voltages to be compared to the input. SA can resolve 24bits and upwards at a frequency of around 1MHz.
+
+\subsection{Sample \& Hold}
+The idea is to charge up to u\f{_{\textrm{in}}} as fast as possible (sample) and hold u\f{_{\textrm{out}}} constant for as long as possible.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.65\textwidth]{sh.png}
+\end{figure}
+
+\subsection{Dual/Multi-Slope Integrating Converter}
+The main idea behind this technique is to convert and unknown voltage into a time delay, which is then encoded. It is accurate, produces low noise, has a linear transfer function, but is rather slow with a max. frequency of around 0.1-1kHz.
+\begin{enumerate}
+    \item Integrate u\f{_{\textrm{in}}} for fixed time (until counter flips to 0), results in u\f{_{\textrm{C}}}
+    \item Apply u\f{_{\textrm{ref}}} with opposite polarity to integrator until 0V, thus comparator zeros and blocks clock at gate to maintain count result 
+    \item Encode u\f{_{\textrm{in}}} as a function of u\f{_{\textrm{ref}}}, run-up time \f{t_0} and run-down time \f{t_U}
+\end{enumerate}
+
+\subsection{Aliasing}
+Aliasing describes the effect when e.g. car wheels seem to spin backwards while accelerating. The same effect can also occure when sampling from an input signal.
+
+To avoid aliasing, sampling intervals \f{T_s = 1/f_s} must be carefully chosen so that they can represent the original signal. A signal with maximum frequency of \f{f_{\textrm{in}}} must be sampled at \f{f_s\geq 2f_{\textrm{in}}}. Aliasing orrurs when \f{f_s < 2 f_{\textrm{in}} \leftrightarrow 0.5f_s < f_{\textrm{in}}}.
+
+For a signal with two frequency components, one must sample at \f{f_s \geq 2(f_b - f_a)} to prevent aliasing.\hfill
+\newline
+
+More generally, given a sampling rate \f{f_s}, two frequencies \f{f} and \f{f'} are aliases of each other if \f{\exists k\in\mathbb{N}: f' = f + kf_s}. The \b{Nyquist Theorem} states, that the only range in which the original frequency can correctly be sampled/reconstructed is the \b{Nyquist bandwidth} from 0 to \f{0.5f_s}. 
+
+Example: sampling at \f{0.2f_s \rightarrow f_s \geq 5f_{\textrm{in}}\rightarrow\textrm{ no aliasing}}.
+
+\subsection{Aliasing Filters}
+\b{Baseband sampling:} All signals of interest lie within Nyquist bandwidth (first Nyquist zone). Images at higher frequencies are filtered.\hfill\\[.5em]
+\b{Undersampling:} Sampling signals outside first Nyquist zone. Image in first Nyquist zone contain all information in frequency-reversed order. Sampled signal may lie in any Nyquist zone. Image in first Nyquist zone retains all information. For this the Nyquist criterion is updated to \f{f_s\geq2\Delta f} where \f{\Delta f} is the bandwidth of the signal of interest.
+
+\clearpage
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.5\textwidth]{nyquist.png}
+\end{figure}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.5\textwidth]{nyquist2.png}
+\end{figure}
+
+
+
+
+

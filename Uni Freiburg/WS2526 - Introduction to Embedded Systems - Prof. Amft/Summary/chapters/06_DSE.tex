@@ -1,0 +1,28 @@
+\section{Design Space Exploration and Optimization}
+The design space of ES has many different parameters and aspects that can be optimized, thus yielding a multiobjective optimisation problem. Examples are:\\[0.5em]
+\b{Design Space:} Cost, Performance, Energy, Quality, \dots\\[.5em]
+\b{Implementation:} \acp{asic}, memory architectures, interfaces (I$^2$C, SPI, CAN), Sensors \& Actuators, programmable devices (microcontrollers/-processors), ...\\[.5em]
+\b{Processing:} Clock frequency, OPS, Bandwidth, FPS, Worst-Case vs. Average-Case performance, ...\\[0.5em]
+Individual elements of the design space can be further split up into multiple aspects, e.g. cost \f{\rightarrow} manufacturing cost, design cost, administration, ...
+\begin{figure}[th!]
+    \centering
+    \includegraphics[width=.7\textwidth]{structure.png}
+\end{figure}
+
+\subsection{Power Consumption}
+One of the most important constraints is power consumption! Minimising power consumption is important for the design of the power supply, the design of voltage regulators, dimensioning of interconnects, and short term cooling. Additionally, energy is expensive, batteries have limited capacity, and many other reasons.\\
+
+Typical low-power design techniques include: (1) Low-power transistors (less speed), (2) dynamic power management (e.g. sleep modes), (3) dynamic voltage or frequency scaling.
+
+\subsection{Quality}
+Several aspects of quality must be taken into account when optimising cost:
+\begin{itemize}
+    \item \b{Defect Level (DL):} Fraction of defective parts delivered to customer (measured in DPM)
+    \item \b{Yield:} Fraction of defect-free parts
+    \item \b{Reliability:} Probability that a part will work correctly during its lifetime (safety-critical)
+\end{itemize}
+
+\subsection{Pareto-Frontier}
+Pareto-Frontier analysis can be used for multiple target optimization by quantifying the design targets (as parameter vectors):\\[0.5em]
+Given two solutions \f{A=(a_1, ..., a_m)} and \f{B=(b_1, ..., b_m)}, then \f{A} is dominating/pareto-superior to \f{B} iff \f{\forall j: a_j\geq b_j \wedge \exists i: a_i > b_i}. 
+

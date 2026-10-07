@@ -1,0 +1,141 @@
+\section{From Security Data to Features}
+
+While ML is usually defined over (high dimensional) vector spaces, security data (like raw bytes or network packets) is almost never available as vectors. Thus we need a good feature mapping \f{\phi : X \rightarrow \mathbb{R}^N} from objects to vector spaces. Afterwards we can define some similarity measure (e.g. dot-product) \f{k:X\times X \rightarrow \mathbb{R}} to calculate the similarity of objects.
+
+\subsection{Numerical Features}
+Defining features numerically (e.g. quantities, lengths, ...) is a natural approach for defining a feature space.
+\begin{itemize}
+    \item \b{Normalization}: Without normalization, features with larger scales will dominate the learning process.
+    \item \b{Standard-Norm}: Centers the mean \f{\mu} and scales by variance \f{\sigma} (roughly mapped to \f{[-1,1]}):
+    \cf{\hat{\phi}_{i}(x)=\frac{\phi_{i}(x)-\mu_{i}}{\sigma_{i}}}
+    \item \b{Min-Max Norm}: Maps values to a [0, 1] range
+    \cf{\hat{\phi}_{i}(x)=\frac{\phi_{i}(x)-min_{i}}{max_{i}-min_{i}}}
+\end{itemize}
+
+While numerical features are mathematically elegant, they often don't achieve a comprehensive set of measures. In other cases it is hard to encode known characteristics (i.e. hard to define a good feature set). They are also not suitable for structured data (e.g. objects).
+
+
+\subsection{Mapping Strings to Features}
+Security data is often represented as strings. Strings are represented by the finite occurrences of symbols from an alphabet $A$. These alphabets are application-specific (e.g. raw byte data: \f{A=\left\{\backslash\text{x00, ..., }\backslash\text{xFF}\right\}}).\\[1em]
+A feature space in this context is spanned by words \f{s} of a language \f{L \subseteq A^*}. The feature map is then defined as a function mapping strings to vectors (\f{w_s} is a weighting factor, e.g. number of occurences):
+\cf{
+    \phi : A^*\rightarrow \mathbb{R}^L \quad,\quad \phi : x \mapsto (w_s\cdot occ(s,x))_{s\in L}
+}
+\begin{itemize}
+    \item \b{Bag-of-Words}: Uses non-overlapping sub-strings; requires known word boundaries (like spaces) to extract words (suitable if string-structure is known, e.g. in NLP)
+    \item \b{n-grams}: Uses sub-strings of a fixed length $n$ with a sliding window; excellent for data with unknown structures like binary protocols. Fixes number of features (e.g. 4-grams \f{\rightarrow |A|^4})
+    \item \b{Word n-grams}: Combines both approaches (groups words instead of characters)
+    \item \b{Similarity measure}: We calculate the similarity between two objects by the dot product of their vectors, restricted to overlapping features to maintain efficiency in high-dimensional, sparse spaces:
+    \cf{\langle \phi(x), \phi(z) \rangle = \sum_{s \in x' \cap z'} w' \cdot occ(s, x) \cdot occ(s, z)}
+    % \item \b{Implementation}: Pass over character array (\f{O(|x|+|z|)}), extracted \f{n}-grams are stored using sorted lists
+\end{itemize}
+
+\subsection{Advanced Mapping: Kernel Trick}
+Kernels are "feature spaces on steroids". They allow us to calculate similarity between arbitrary objects without explicitly constructing a high-dimensional (sparse) vector space.
+\definition{Kernel}{
+    A kernel $k$ is any symmetric, positive semi-definite function that acts as an inner (dot) product in some implicit feature space $F$. In this feature space, one can calculate geometric products, lengths, and distances between objects (example: length of difference).
+    $$k(x,z) = \langle \phi(x), \phi(z) \rangle$$
+    \cf{\Vert \phi(x)-\phi(z)\Vert_2 = \sqrt{k(x,x)+k(z,z)+k(x,z)}}
+}
+
+\subsubsection*{Popular Kernel Variants:}
+\begin{itemize}
+    \item \b{Linear}: $k(x,z) = \langle x, z \rangle$
+    \item \b{Polynomial}: $k(x,z) = (\langle x, z \rangle + \theta)^p$
+    \item \b{Gaussian (RBF)}: $k(x,z) = \exp(\gamma \Vert x - z\Vert^2)$
+    \item \b{Strings}: $k(x,z) = \sum_{s\in L}occ(s,x)\cdot occ(s,z)$
+\end{itemize}
+
+\subsection{Practical Scalability: Hashing}
+When dealing with massive security data, specialized kernels can be slow. Feature Hashing maps objects into a fixed-size vector space by counting hash values of basic features. This is simpler and sufficiently effective in many cases, and can handle arbitrary objects that are composed from a set of basic features (e.g. words in string, nodes in tree, paths in graph).
+
+\definition{Feature Hashing \& Hash Kernel}{
+    Let \f{H: B\rightarrow N} with \f{1 \leq N\leq \infty} be a hash function mapping a feature to a number. The Feature Hashing Map function \f{\phi : X\rightarrow\mathbb{R}^N} then becomes:
+    \cf{
+        \phi : x \mapsto (occ(h,x'))_{h=H(b) \forall b\in B}\quad,\quad x' = \left\{H(b)|b\in x\right\}
+    }
+    The \b{hash kernel}, which could be implemented as a hash table or dictionary, is then defined as:
+    \cf{
+        k(x,z) = \sum_{b\in x'\cap z'}occ(h,x')\cdot occ(h,z')
+    } 
+}
+\definition{Bloom Filters}{
+    A one-dimensional bit array, addressed by \f{d} different hash functions to check set membership; it allows for false positives (by means of hash collisions) but ensures no false negatives. E.g. used for determining if a URL belongs to a blacklist.
+}
+\definition{Count-Min Sketches}{
+    Extends the idea of a Bloom Filter two a 2D array, where the columns hold the count of how often a value has been hashed by different objects (hash collisions). It may overestimate but never underestimate counts. \b{Note}: Increments can be done in arbitrary steps (e.g. if a hashed IP address \f{b} has a packet count of \f{v}, you add \f{+v} to the cells).
+}
+
+
+
+
+
+
+
+% \clearpage
+
+% \subsection{Security Data \& The Semantic Gap}
+% \definition{The Semantic Gap}{The discrepancy between the low-level representation of data (e.g., raw bytes, network packets) and the high-level semantic meaning or intent (e.g., malicious behavior). Bridging this gap is a core challenge in security analytics.}
+
+% \begin{itemize}
+% \item Common types of data in security include:
+% \begin{itemize}
+% \item \b{Bytes}: Network traffic, binary executables.
+% \item \b{Strings}: URLs, source code, text logs.
+% \item \b{Trees}: HTML/XML documents, Abstract Syntax Trees (ASTs).
+% \item \b{Graphs}: Control flow graphs, social networks, network topologies.
+% \end{itemize}
+% \end{itemize}
+
+% \definition{Feature Extraction}{The process of mapping raw security data \f{Z} to a suitable mathematical feature space \f{X} (often \f{X = I!R^D}) so that machine learning algorithms can process it. Formally: \f{\phi: Z \rightarrow X}.}
+
+% \subsection{Distances and Similarities}
+% \definition{Distance Metrics}{Mathematical functions that quantify how different two objects are. A valid distance metric \f{d(x, x')} must satisfy non-negativity, identity of indiscernibles, symmetry, and the triangle inequality.}
+
+% \begin{itemize}
+% \item \b{Minkowski Distance}: A generalized distance metric parameterized by \f{p}.
+% \cf{d_p(x, x') = \left(\sum_{i=1}^D |x_i - x'*i|^p\right)^{1/p}}
+% \item \b{Manhattan Distance (L1)}: \f{p=1}. Sum of absolute differences.
+% \cf{d_1(x, x') = \sum*{i=1}^D |x_i - x'*i|}
+% \item \b{Euclidean Distance (L2)}: \f{p=2}. The straight-line distance.
+% \cf{d_2(x, x') = \sqrt{\sum*{i=1}^D (x_i - x'*i)^2}}
+% \item \b{Chebyshev Distance (L\f{\infty})}: \f{p \rightarrow \infty}. The maximum absolute difference across any single dimension.
+% \cf{d*{\infty}(x, x') = \max_i |x_i - x'_i|}
+% \item \b{Hamming Distance}: The number of positions where two vectors (or strings) of equal length differ.
+% \item \b{Edit Distance (Levenshtein)}: The minimum number of single-character operations (insertions, deletions, substitutions) required to transform one string into another. Useful for comparing strings of unequal lengths.
+% \end{itemize}
+
+% \definition{Curse of Dimensionality}{As the number of dimensions increases, the volume of the feature space increases exponentially. Consequently, data becomes incredibly sparse, and the concept of distance becomes less meaningful (all pairs of points become almost equidistant).}
+
+% \subsection{Strings to Vectors}
+% \definition{Bag-of-Words (BoW)}{A simple representation model that maps a string or document to a vector by counting the frequency of its constituent words, ignoring grammar and order. It requires a pre-defined vocabulary \f{S}.}
+
+% \definition{N-grams}{Contiguous sequences of \f{n} items (characters, bytes, or words) extracted from a given sequence. They capture local context and order. For a sequence of length \f{L}, there are \f{L - n + 1} possible n-grams.}
+
+% \begin{itemize}
+% \item The feature space dimension for n-grams over an alphabet \f{|A|} is \f{|A|^n}, which grows exponentially and leads to massive sparsity.
+% \end{itemize}
+
+% \definition{TF-IDF (Term Frequency - Inverse Document Frequency)}{A statistical weighting scheme used to evaluate the importance of a term within a document relative to an entire corpus. It reduces the weight of overly common terms and highlights rare, discriminative terms.}
+
+% \begin{itemize}
+% \item \b{Term Frequency (TF)}: How often a term \f{t} appears in a document \f{d}.
+% \cf{tf(t, d) = \frac{count(t, d)}{|d|}}
+% \item \b{Inverse Document Frequency (IDF)}: Measures how much information the term provides across the whole corpus \f{D}.
+% \cf{idf(t, D) = \log \frac{|D|}{|{d \in D : t \in d}|}}
+% \item \b{TF-IDF Score}: The final weight is the product of TF and IDF.
+% \cf{tfidf(t, d, D) = tf(t, d) \cdot idf(t, D)}
+% \end{itemize}
+
+% \subsection{Feature Hashing (The Hashing Trick)}
+% \definition{Feature Hashing}{A memory-efficient technique to vectorize data by applying a hash function to the features (e.g., n-grams) and using the hash values directly as indices in a fixed-size vector space of dimension \f{D}.}
+
+% \begin{itemize}
+% \item The mapping is typically computed as \f{i = hash(x) \mod D}.
+% \item \b{Pros}: Extremely fast, memory efficient, and does not require building or storing a massive vocabulary dictionary in memory.
+% \item \b{Cons}: \b{Hash Collisions} occur when different distinct features map to the exact same index \f{i}.
+% \item \b{Signed Hashing}: To mitigate the noise caused by collisions, a secondary hash function is used to assign a sign (+1 or -1) to the mapped value, causing collisions to partially cancel each other out in expectation.
+% \end{itemize}
+
+% \subsection{Continuous Data Extraction}
+% \definition{Sliding Windows}{A technique for processing continuous or streaming data (such as network traffic) by moving a fixed-size window over the data sequence. Features are extracted independently from the data captured within each window step.}

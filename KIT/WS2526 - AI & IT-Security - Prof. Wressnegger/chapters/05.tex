@@ -1,0 +1,104 @@
+\section{Explainable AI for Computer Security}
+
+\subsection{Concepts of Explainability}
+
+\definition{Explainability Goals}{Explainable AI (XAI) aims to provide a functional understanding of how input data and model predictions relate to each other using an explanation method \f{h_\theta(\cdot)}. It focuses heavily on feature attribution, which highlights the relevance of individual features.\\[.5em]
+\b{Note}: Explainability (relevance of features) \f{\neq} Interpretability (understanding of features)}
+
+\begin{itemize}
+\item \b{Model Analysis}: Attempts to explain what the entire model has learned (about specific classes) and what concepts it describes. For example, finding a representative prototype or determining the input \f{x} that produces the highest activation for a specific class \f{c}: \f{\arg \max_{x} f_{\theta}(x)_{c}}.
+\item \b{Decision Analysis}: Explains why a single instance was classified as a specific label \f{y} by stating which features were the most discriminative.
+\item \b{Relevance Vector}: A vector \f{r=(r_{1},r_{2},...,r_{d})} where each single real value describes the importance or influence of a corresponding feature (e.g., pixels or API calls).
+\end{itemize}
+
+
+
+
+\subsection{White-Box Explanations}
+
+\definition{White-Box Explanations}{Explanations derived using complete knowledge of the model's internals, parameters, and architecture. They are typically complete, deterministic, fast, and the most precise method available.}
+
+\begin{itemize}
+\item \b{Linear Models}: The decision function allows for a direct mapping of the weight vector \f{w} to the features \f{X}, meaning relevance is simply \f{r_i = w_i}.
+\item \b{Non-Linear Models}: Because there is no direct relationship between weights and features (e.g. in Neural Networks or Kernels), gradients are used to measure relative changes. This evaluates how much the prediction \f{f_\theta(x)_y} changes with respect to a feature/input \f{x_i}: 
+\cf{x_i \rightarrow \frac{\partial f_{\theta}(x)_{y}}{\partial x_{i}}}
+\end{itemize}
+
+\subsubsection{Layer-wise Relevance Propagation (LRP)}
+\definition{LRP}{A white-box explanation method for NNs that propagates relevance backwards from the output layer to the input features.
+\begin{itemize}
+\item \b{Conservation Property}: LRP ensures that the total sum of relevance is conserved across all \f{L} layers of the network, approximately equaling the final prediction score for class \f{c}.
+\cf{\sum_{i}r_{i}^{(1)}=\sum_{i}r_{i}^{(2)}=...=\sum_{i}r_{i}^{(L)}\approx f_{\theta}(x)_{c}}
+\item \b{Relevance Propagation Rule}: The relevance score for a node \f{i} in layer \f{l} based on the contributions from layer \f{l+1} is derived as:
+\cf{r_{i}^{(l)}=\sum_{j}\frac{a_{i}^{(l)}W_{ij}^{(l)}}{\sum_{k}a_{k}^{(l)}W_{kj}^{(l)}}r_{j}^{(l+1)}}
+\end{itemize}
+}
+
+
+
+
+\subsection{Black-Box Explanations}
+
+\definition{Black-Box Explanations}{Explanations generated without any prior knowledge about the model internals or its parameters. They revert to approximating the decision function by replacing the original model with an explainable surrogate, making them model-agnostic.
+\begin{itemize}
+\item \b{Pros}: Can explain any model, even proprietary systems where parameters are hidden.
+\item \b{Cons}: Generally less precise and often less efficient (slower) than white-box approaches.
+\end{itemize}}
+
+\begin{itemize}
+\item \b{Global Surrogate Model}: Learns to approximate the output of the entire classifier across the whole feature space.
+\item \b{Local Surrogate Model}: Breaks the problem down to localized regions to approximate the decision boundary for specific instances.
+\end{itemize}
+
+\subsubsection{Local Interpretable Model-Agnostic Explanations (LIME)}
+\definition{LIME}{
+    A local surrogate method that searches for an interpretable model \f{g} testing nearby (random) perturbations (nearby samples \f{\hat{x}_i}).
+    \cf{\arg\min_{g\in G}\sum_{m_{i}\in\hat{M}_{x}}sim(x,\hat{x}_{i})\cdot(f_{\theta}(\hat{x}_{i})-g(m_{i}))^{2}}
+}
+
+\begin{itemize}
+\item It utilizes interpretable data representations (like a restricted bag-of-words or binary embeddings) that are independent of the original complex features.
+\item The objective is to minimize the loss between the surrogate \f{g} and the true model \f{f_\theta}, weighted by the similarity to the original instance \f{x} to enforce locality.
+\item Balances \b{Fidelity} (how well it approximates the model) against \b{Interpretability} (how simple the surrogate is).
+\end{itemize}
+
+
+
+\subsection{Evaluating Explanations for Security}
+
+\begin{itemize}
+\item \b{Descriptive Accuracy}: Measures how well the relevant features are captured. Evaluated indirectly by removing the \f{k} most relevant features and observing the decay in the prediction score: 
+\cf{DA_{k}(x,f_{\theta})=f_{\theta}(x|x_{1}=0,...,x_{k}=0)_c}
+\item \b{Descriptive Sparsity}: Explanations should provide precise pointers; indicating all features as important is not useful. Evaluated using the mass of a normalized histogram of relevance: 
+\cf{MAZ_{r}(x,h_{\theta})=\int_{-r}^{r}hist(h_{\theta}(x))d x}
+\item \b{Completeness}: Explanations must be derivable for all corner cases, as an adversary might intentionally craft pathological data. Not a measure, but rather a design property.
+\item \b{Stability}: Multiple runs of the explanation method on the same data should produce identical or highly similar results. Measured using the intersection size of the top features: 
+\cf{IS(h_{\theta}^{(1)}(x),h_{\theta}^{(2)}(x))>1-\epsilon}
+\item \b{Efficiency}: The runtime performance of generating explanations must not cause unacceptable delays in standard workflows.
+\item \b{Robustness}: Explanations must be resilient to manipulation.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+% \clearpage
+
+
+% \subsection{Case Study: Locating Leakage in Profiling Attacks}
+
+% \definition{Learning-Based Profiling Attacks}{A proactive security analysis applied to cryptographic hardware. An attacker profiles a clone device by correlating side-channel information (e.g., noisy power traces) with intermediate values to learn a model \f{f_{\theta}} that predicts key bytes on a target device.}
+
+% \begin{itemize}
+% \item \b{Guessing Entropy}: A metric used to evaluate these attacks, approximated as the mean rank of the correct key byte.
+% \item \b{XAI for Leakage Detection}: XAI can locate points in the power trace that reveal intermediate values.
+% \item \b{Aggregation-based Explanations}: Because individual traces are too noisy for instance-based explanations, relevance must be aggregated.
+% \begin{itemize}
+% \item \b{Key-focused}: Averages the explanations based on the known correct key byte. \f{E_{K}={\frac{1}{|X|}\sum_{x\in X}h_{\theta}(x,\phi(k_{i};m_{x}))|k_{i}\in[0,...,255]}}.
+% \item \b{Class-focused}: Aggregates explanations specifically per class output to collect evidence of leakage more precisely. \f{E_{C}={\frac{1}{|X|}\sum_{x\in X}{h^{\prime}}_{o}(x,z)|z\in[0,...,255]}^{*}}.
+% \end{itemize}
+% \end{itemize}

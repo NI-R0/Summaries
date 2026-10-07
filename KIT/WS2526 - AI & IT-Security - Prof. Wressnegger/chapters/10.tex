@@ -1,0 +1,79 @@
+\section{Model Extraction Attacks}
+Machine Learning as a Service (MLaaS) creates a conflict between providing high-precision results through rich APIs and maintaining model confidentiality for monetization. Models are valuable because training is resource-expensive, involves novel techniques, or uses sensitive/exclusive data.
+
+\definition{Model Extraction Attack}{An attack (usually grey-box) against MLaaS where an adversary aims to "steal" a remote ML model. The attacker queries the target model \f{F_{\theta}} with a dataset \f{Z} to learn a local surrogate model \f{g_{\hat{\theta}}}. The main challenge is minimizing the number of queries required.}
+
+\subsection{Attack Objectives}
+\begin{enumerate}
+\item \b{High-level objectives}: Economic incentives (avoiding query charges, copying a business model) or facilitating further attacks (adversarial examples, inference attacks).
+\item \b{Task-accuracy extraction}: Maximizing the expected task accuracy 
+\cf{\max(E_{(x,y)\sim P_{xy}}[g_{\hat{\theta}}(x)=y])}
+\item \b{Fidelity extraction}: Maximizing the behavioral similarity to the target model 
+\cf{\max(E_{x\sim P_{x}}[sim(g_{\hat{\theta}}(x),F_{\theta}(x))])}
+\item \b{Functionally-equivalent extraction}: Achieving exact identical outputs \f{g_{\hat{\theta}}(x)=F_{\theta}(x)\ \forall x \in X}
+\item \b{Exact copy}: Reconstructing the exact prediction function \f{g=F} and parameters \f{\hat{\theta}=\theta}.
+\item Other objectives: Extracting hyper-parameters, the model architecture, or specific learned parameters.
+\end{enumerate}
+
+
+
+\subsection{Attacker Capabilities}
+MEAs are rarely pure black-box attacks. More often than not, the attacker has at least some form of knowledge about the target, as well as different types of data availability.
+\begin{enumerate}
+\item[D1.] \b{Abundant Data}: Access to a large, representative dataset.
+\item[D2.] \b{Partial Data}: Access to only a small representative dataset.
+\item[D3.] \b{No Data}: No target-domain data available, forcing the attacker to synthesize query data.
+\item[]
+\item[K1.] \b{System Knowledge}: Knowledge of the learning algorithm, hyper-parameters, and the optimizer.
+\item[K2.] \b{Task-domain Knowledge}: Knowledge of the task \f{T} and implicitly the data distribution \f{D}.
+\item[K3.] \b{Output Knowledge}: Defined by the API interface (e.g., returning hard labels, softmax scores, or top-k probabilities).
+\item[K4.] \b{Model-view Knowledge}: Additional information such as assumed architecture, gradient information from XAI outputs, or side-channel information.
+\end{enumerate}
+
+
+
+\subsection{Attack Strategies}
+\begin{itemize}
+\item \b{Analytic Attacks}: Deriving the surrogate model through an analytic procedure (e.g., solving equations). Requires detailed information about the target (e.g., deriving bias and weights for a Linear SVM by carefully crafting inputs).\\[.5em]
+\b{Example}: For a linear SVM (\f{f(z)=zw^T+b}) an attacker can derive the bias ($b$) by querying $z=(0,...0)$ and then repeat for each dimension to find the weights ($w$) with \f{z=(0,1,0,...0)}.
+
+\item \b{Learning-based Attacks}: Querying input-output pairs to actively train a surrogate model.
+\end{itemize}
+
+
+
+\subsection{Connections to other ML Concepts}
+MEA is highly connected to other ML fields, often reusing their techniques to refine the surrogate model.
+
+\subsubsection{Active Learning (AL)}
+AL concepts are used to minimize labeling effort by querying the target model only for the most informative or uncertain samples (e.g. ActiveThief).
+
+\subsubsection{White-Box AdvEx (PRADA)}
+Used to generate synthetic adversarial pairs that accurately describe the decision boundary of the surrogate (e.g. PRADA using FGSM with partial data).
+
+\subsubsection{Black-Box AdvEx (MAZE)}
+A data-free model stealing attack that uses a generator to create synthetic data. A generator loss \f{L_G} maximizes the disagreement between the target and the surrogate, while a surrogate loss \f{L_S} maximizes their agreement. Because calculating \f{L_G} requires gradients from the target model, MAZE uses \b{Zeroth-Order Optimization} (gradient estimation).
+
+\subsubsection{Knowledge-Distillation (DisGUIDE)}
+Training a small student model (surrogate) based on the outputs of a large teacher model (target).\\[.5em]
+\b{Zero-shot KD}: Relates to "No-data ME" where training samples are synthesized with a generator.\\[.5em]
+\b{DisGUIDE}: A no-data extraction attack that improves query efficiency by using multiple student surrogates. It generates synthetic query samples specifically targeting regions where the two student surrogates disagree.
+
+
+
+\subsection{Defenses}
+Defending against model extraction is notoriously difficult because it is hard to quantify how much the adversary has already learned.
+
+\begin{itemize}
+\item \b{Stateful Application}: Monitoring access to the prediction function to detect unusual querying behavior. This is highly vulnerable to Sybil attacks.
+\item \b{Watermarking}: Ownership verification by introducing unique, robust patterns into the model.
+\begin{itemize}
+    \item \b{Black-box verification:} Backdooring the model so that a stolen surrogate will also respond to a specific set of secret adversarial examples (probabilistic result only).
+    \item \b{White-box verification:} Encoding patterns directly into the parameters.
+\end{itemize}
+\end{itemize}
+
+
+
+
+
